@@ -1,0 +1,1471 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>THINGMAKER — a machine for making things that have never existed</title>
+<style>
+:root{
+  --bg:#0a0c11; --bg2:#10141d; --card:#141926; --card2:#1b2131; --card3:#232b3e;
+  --line:#28304a; --ink:#e9edf7; --dim:#93a0bd; --dimmer:#5f6b85;
+  --a:#ffd166; --b:#7ee0c0; --c:#ff8fa3; --d:#8ab4ff;
+  --shadow:0 24px 70px rgba(0,0,0,.5);
+  --r:18px;
+}
+html[data-theme="light"]{
+  --bg:#f2eee4; --bg2:#fffdf7; --card:#ffffff; --card2:#f8f4ea; --card3:#efe9db;
+  --line:#e2dccc; --ink:#191d26; --dim:#5f6b80; --dimmer:#98a0ae;
+  --a:#c98a00; --b:#128a6a; --c:#c43a5c; --d:#2f6fd0;
+  --shadow:0 18px 50px rgba(40,32,15,.13);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; color:var(--ink);
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:
+    radial-gradient(1200px 700px at 12% -10%, color-mix(in srgb, var(--a) 13%, transparent), transparent 60%),
+    radial-gradient(900px 600px at 105% 0%, color-mix(in srgb, var(--b) 12%, transparent), transparent 55%),
+    var(--bg);
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+
+/* ---------- header ---------- */
+header{
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  padding:18px clamp(14px,3vw,34px) 12px;
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:baseline;gap:12px;min-width:0}
+.brand h1{
+  margin:0; font-size:clamp(19px,2.6vw,27px); letter-spacing:.22em; font-weight:800;
+  background:linear-gradient(92deg,var(--a),var(--c) 45%,var(--b));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.brand .tag{color:var(--dim);font-size:13px;letter-spacing:.02em}
+.spacer{flex:1}
+.ghost{
+  background:var(--card2); color:var(--dim); border:1px solid var(--line);
+  border-radius:999px; padding:7px 13px; font-size:12px; cursor:pointer; letter-spacing:.06em;
+  text-transform:uppercase; transition:.18s;
+}
+.ghost:hover{color:var(--ink);border-color:var(--dimmer);transform:translateY(-1px)}
+.ghost[aria-pressed="true"]{color:var(--a);border-color:color-mix(in srgb,var(--a) 45%, var(--line))}
+
+/* ---------- layout ---------- */
+main{
+  display:grid; gap:16px; padding:18px clamp(14px,3vw,34px) 40px;
+  grid-template-columns:minmax(300px,1fr) minmax(330px,1.15fr) minmax(280px,340px);
+  align-items:start; max-width:1680px; margin:0 auto;
+}
+@media (max-width:1180px){ main{grid-template-columns:1fr 1fr} .side{grid-column:1/-1} }
+@media (max-width:760px){ main{grid-template-columns:1fr} }
+
+.card{
+  background:linear-gradient(180deg,var(--card),var(--card2));
+  border:1px solid var(--line); border-radius:var(--r);
+  box-shadow:var(--shadow); overflow:hidden;
+}
+.pad{padding:18px}
+
+/* ---------- portrait ---------- */
+.portrait{position:relative; background:var(--card3)}
+.portrait svg{display:block;width:100%;height:auto;aspect-ratio:1/1}
+.portrait.pop svg{animation:pop .42s cubic-bezier(.2,1.5,.4,1)}
+@keyframes pop{0%{transform:scale(.9) rotate(-1.5deg);opacity:.4}60%{transform:scale(1.035) rotate(.7deg)}100%{transform:none;opacity:1}}
+.badge{
+  position:absolute;left:14px;top:14px; padding:5px 11px; border-radius:999px;
+  background:rgba(0,0,0,.42); border:1px solid rgba(255,255,255,.22);
+  color:#fff; font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+  backdrop-filter:blur(6px);
+}
+.speckles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.speckles i{
+  position:absolute;width:7px;height:7px;border-radius:50%;
+  background:var(--a); animation:fly .9s cubic-bezier(.2,.7,.3,1) forwards;
+}
+@keyframes fly{
+  0%{transform:translate(0,0) scale(1);opacity:1}
+  100%{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}
+}
+
+/* ---------- info ---------- */
+.nameplate h2{
+  margin:0; font-size:clamp(25px,3.4vw,40px); line-height:1.03; letter-spacing:-.015em;
+  font-weight:800;
+}
+.nameplate .ep{color:var(--a); font-style:italic; margin-top:5px; font-size:15px}
+.nameplate .ep:empty{display:none}
+.rule{height:1px;background:var(--line);margin:16px 0}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:0;font-size:14px}
+.dl dt{color:var(--dimmer);text-transform:uppercase;letter-spacing:.1em;font-size:10.5px;padding-top:3px;white-space:nowrap}
+.dl dd{margin:0;color:var(--ink);font-weight:600}
+.lore{margin:16px 0 0;font-size:15.5px;line-height:1.62;color:color-mix(in srgb,var(--ink) 88%, var(--dim))}
+.lore p{margin:0 0 10px}
+.lore em{color:var(--a);font-style:normal;font-weight:700}
+.lore b{color:var(--b);font-weight:700}
+.enc{margin-top:18px;border:1px dashed var(--line);border-radius:14px;padding:14px;background:color-mix(in srgb,var(--card3) 60%, transparent)}
+.enc h3{margin:0 0 8px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dimmer)}
+.enc-row{display:flex;gap:12px;align-items:flex-start}
+.enc-row svg{width:76px;height:76px;border-radius:12px;flex:0 0 auto;background:var(--card3)}
+.enc p{margin:0;font-size:14.5px;line-height:1.55}
+
+/* ---------- controls ---------- */
+.side{display:flex;flex-direction:column;gap:16px}
+.big{
+  width:100%; padding:17px 18px; border:0; border-radius:14px; cursor:pointer;
+  font-size:16px; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:#141414; background:linear-gradient(92deg,var(--a),#ffb03a);
+  box-shadow:0 8px 26px color-mix(in srgb,var(--a) 34%, transparent);
+  transition:transform .12s cubic-bezier(.2,1.6,.4,1), box-shadow .2s;
+}
+.big:hover{transform:translateY(-2px);box-shadow:0 12px 32px color-mix(in srgb,var(--a) 44%, transparent)}
+.big:active{transform:translateY(1px) scale(.985)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row.tight{gap:6px}
+.field{display:flex;flex-direction:column;gap:5px;margin-top:12px}
+.field label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dimmer)}
+input[type=text],select{
+  background:var(--bg2); color:var(--ink); border:1px solid var(--line);
+  border-radius:10px; padding:9px 11px; font-size:13.5px; width:100%; outline:none;
+}
+input[type=text]:focus,select:focus{border-color:color-mix(in srgb,var(--a) 55%, var(--line))}
+.mini{
+  background:var(--card3); color:var(--dim); border:1px solid var(--line); border-radius:9px;
+  padding:7px 11px; font-size:11.5px; cursor:pointer; letter-spacing:.05em; transition:.15s;
+}
+.mini:hover{color:var(--ink);border-color:var(--dimmer)}
+.mini.wide{flex:1}
+.hist{display:flex;flex-direction:column;gap:6px;max-height:330px;overflow:auto;padding-right:2px}
+.hist button{
+  display:flex;align-items:center;gap:10px; width:100%; text-align:left; cursor:pointer;
+  background:var(--card3); border:1px solid transparent; border-radius:11px; padding:6px 9px; color:var(--dim);
+  font-size:12.5px; transition:.15s;
+}
+.hist button:hover{border-color:var(--line);color:var(--ink)}
+.hist button svg{width:30px;height:30px;border-radius:8px;flex:0 0 auto;background:var(--bg2)}
+.hist .hn{font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hist .hc{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dimmer)}
+.hint{color:var(--dimmer);font-size:11.5px;line-height:1.5;margin:10px 0 0}
+footer{padding:0 clamp(14px,3vw,34px) 34px;color:var(--dimmer);font-size:11.5px;max-width:1680px;margin:0 auto}
+footer kbd{
+  background:var(--card2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;
+  font-family:ui-monospace,monospace;font-size:11px;color:var(--dim);
+}
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);opacity:0;pointer-events:none;
+  background:var(--card3);border:1px solid var(--line);color:var(--ink);padding:10px 18px;border-radius:999px;
+  font-size:13px;box-shadow:var(--shadow);transition:.25s;z-index:50;
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>THINGMAKER</h1>
+    <span class="tag">a machine for making things that have never existed</span>
+  </div>
+  <div class="spacer"></div>
+  <button class="ghost" id="soundBtn" aria-pressed="true">sound</button>
+  <button class="ghost" id="themeBtn">theme</button>
+</header>
+
+<main>
+  <!-- PORTRAIT -->
+  <section class="card">
+    <div class="portrait" id="portrait">
+      <div class="speckles" id="speckles"></div>
+      <div class="badge" id="badge">—</div>
+      <svg id="svg" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="procedural portrait"></svg>
+    </div>
+  </section>
+
+  <!-- INFO -->
+  <section class="card pad">
+    <div class="nameplate">
+      <h2 id="tname">—</h2>
+      <div class="ep" id="tepithet"></div>
+    </div>
+    <div class="rule"></div>
+    <dl class="dl" id="attrs"></dl>
+    <div class="lore" id="lore"></div>
+    <div class="enc" id="enc" hidden>
+      <h3>Encounter</h3>
+      <div class="enc-row">
+        <svg id="encA" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"></svg>
+        <svg id="encB" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"></svg>
+        <p id="encText"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTROLS -->
+  <aside class="side">
+    <section class="card pad">
+      <button class="big" id="make">Make thing</button>
+      <div class="row tight" style="margin-top:10px">
+        <button class="mini wide" id="rename">Rename it</button>
+        <button class="mini wide" id="encounter">Encounter</button>
+      </div>
+      <div class="field">
+        <label for="cat">Kind of thing</label>
+        <select id="cat"></select>
+      </div>
+      <div class="field">
+        <label for="seed">Seed</label>
+        <div class="row tight">
+          <input type="text" id="seed" spellcheck="false" autocomplete="off">
+          <button class="mini" id="dice" title="Random seed">⚄</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card pad">
+      <div class="field" style="margin-top:0">
+        <label>Export</label>
+      </div>
+      <div class="row tight">
+        <button class="mini wide" id="png">Card PNG</button>
+        <button class="mini wide" id="svgBtn">SVG</button>
+        <button class="mini wide" id="json">JSON</button>
+        <button class="mini wide" id="copy">Copy lore</button>
+      </div>
+      <p class="hint">Same seed + same kind = same thing, forever. The URL updates as you go, so you can send anyone a specific thing.</p>
+    </section>
+
+    <section class="card pad">
+      <div class="field" style="margin-top:0">
+        <label>Recently made</label>
+      </div>
+      <div class="hist" id="hist"></div>
+    </section>
+  </aside>
+</main>
+
+<footer>
+  <kbd>space</kbd> makes a thing · <kbd>enter</kbd> on the seed re-rolls that seed · nothing here was found on the internet, and nothing here is real.
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════
+   THINGMAKER
+   A procedural generator for things that have never existed.
+   No dependencies. No network. One file.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────── random ─────────────────────────── */
+function xmur3(str){
+  let h = 1779033703 ^ str.length;
+  for (let i=0;i<str.length;i++){ h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = (h<<13)|(h>>>19); }
+  return function(){ h = Math.imul(h ^ (h>>>16), 2246822507); h = Math.imul(h ^ (h>>>13), 3266489909); return (h ^= h>>>16)>>>0; };
+}
+function mulberry32(a){
+  return function(){
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a>>>15), 1 | a);
+    t = (t + Math.imul(t ^ (t>>>7), 61 | t)) ^ t;
+    return ((t ^ (t>>>14))>>>0) / 4294967296;
+  };
+}
+function makeRng(seed){
+  const h = xmur3(String(seed));
+  return mulberry32(h());
+}
+const R = rng => ({
+  f: rng,
+  pick: arr => arr[Math.floor(rng()*arr.length)],
+  int: (a,b) => a + Math.floor(rng()*(b-a+1)),
+  chance: p => rng() < p,
+  sign: () => rng() < .5 ? -1 : 1,
+  shuffle: arr => { const a = arr.slice(); for (let i=a.length-1;i>0;i--){ const j = Math.floor(rng()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; },
+  sample: (arr,n) => R(rng).shuffle(arr).slice(0,n),
+});
+/* independent stream so tweaking one system never reshuffles the others */
+function derive(seed, tag){ return makeRng(tag + '#' + seed); }
+
+/* ─────────────────────────── names ─────────────────────────── */
+const ONSETS = ["b","br","bl","cr","cl","dr","d","fr","fl","g","gl","gr","h","j","k","kr","kl","l","m","n","p","pr","pl","qu","r","s","sh","sk","sl","sm","sn","sp","st","str","t","th","tr","v","w","wh","y","z","vr","skr","spl","mng","zz","kh","gh"];
+const NUCLEI = ["a","e","i","o","u","ae","ai","au","ea","ee","ei","ie","oo","ou","oa","y","ia","io","ui"];
+const CODAS  = ["","","","n","m","l","r","s","sh","k","t","p","d","g","ng","nk","st","th","x","zz","ck","rk","ff","mb","lt"];
+const SUFFIX = ["","","","oid","ex","un","ix","ulon","ette","ander","ior","ax","ula","ock","eer","azine","us","orum","ini"];
+const EPITHETS = [
+  "the Third","the Unpronounceable","of the Glass Sea","the Ninefold","the Silent","the Very Loud",
+  "the Formerly","the Suspicious","the Absolutely Fine","the Unemployed","the First Draft","the Sequel",
+  "the Last One","the Wrong One","of Tuesday","the Reluctant","the Overqualified","the Unbothered",
+  "the Second Breakfast","the Apology","the Wrong Sort of Thing","the Provisional","the Almost"
+];
+const TITLEWORDS = ["Grand","High","Mister","Madame","Doctor","Professor","Captain","Saint","Prof Emeritus","Lord","Lady","Bishop"];
+
+function syll(rng, pattern){
+  const O = rng.pick(ONSETS), N = rng.pick(NUCLEI), C = rng.pick(CODAS);
+  switch(pattern){
+    case "CV":  return O+N;
+    case "CVC": return O+N+C;
+    case "VC":  return N+C;
+    case "CVCV":return O+N+C+rng.pick(NUCLEI);
+    case "CCVC":return rng.pick(["gl","br","sk","tr","vr","st","pl","kr","sh","zh"])+rng.pick(NUCLEI)+C;
+    case "CVN": return O+N+rng.pick(["","n","r"]);
+    case "CVCVC":return O+N+C+O+N;
+    default:   return O+N;
+  }
+}
+const NAME_PATTERNS = ["CV","CVC","CVCV","CVC","CV","CVCV","VC","CVCVC","CVC"];
+function word(rng, minSyll, maxSyll, maxLen){
+  const n = rng.int(minSyll, maxSyll);
+  let w = "";
+  for (let i=0;i<n;i++){
+    w += syll(rng, rng.pick(NAME_PATTERNS));
+    if (w.length >= maxLen - 4) break;
+  }
+  w += rng.pick(SUFFIX);
+  if (w.length > maxLen) w = w.slice(0, maxLen).replace(/[^aeiouyAEIOUY]$/,"");
+  return w || rng.pick(NUCLEI);
+}
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+function makeName(rng){
+  const roll = rng.f();
+  let base;
+  if (roll < .46){
+    base = cap(word(rng,1,3,13));
+  } else if (roll < .76){
+    base = cap(word(rng,1,2,8)) + " " + cap(word(rng,1,2,10));
+  } else if (roll < .88){
+    base = rng.pick(TITLEWORDS) + " " + cap(word(rng,1,2,9));
+  } else {
+    base = cap(word(rng,1,2,7)) + "-" + cap(word(rng,1,2,7));
+  }
+  let epithet = "";
+  if (rng.chance(.34)) epithet = rng.pick(EPITHETS);
+  return { name: base, epithet };
+}
+
+/* ─────────────────────────── colour ─────────────────────────── */
+const COLORS = {
+  "chartreuse":"#c3e03d","ultraviolet":"#7a5cff","iridescent":"#6fd9c4","rust-orange":"#e0703a",
+  "bruised purple":"#6b4a8a","seafoam":"#9fe0c4","obsidian":"#333a49","custard":"#f3d98a",
+  "neon pink":"#ff6fa5","fog-grey":"#b9bfc9","coppery":"#c9793f","peppermint":"#a8f0d0",
+  "tar-black":"#232833","buttery":"#f2dfa6","electric blue":"#4aa8ff","translucent":"#cfe9f2",
+  "mossy":"#8fae5f","ruby":"#d1345b","gold":"#f0c04a","bone":"#efe6d4","oxblood":"#7d2231",
+  "pale mint":"#dff5ea","midnight":"#3a4470","sulphur":"#e2e05a","rose quartz":"#f0c6cf",
+  "tide-blue":"#2f6f9e","rot-green":"#6f8f3a","silver":"#c9cfd8","ash":"#8b8377"
+};
+function hex2rgb(h){ h = h.replace('#',''); if (h.length===3) h = h.split('').map(c=>c+c).join(''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+function rgb2hex(r,g,b){ const f=v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0'); return '#'+f(r)+f(g)+f(b); }
+function shade(hex, amt){ const [r,g,b]=hex2rgb(hex); if(amt>0){ return rgb2hex(r+(255-r)*amt, g+(255-g)*amt, b+(255-b)*amt);} const k=1+amt; return rgb2hex(r*k,g*k,b*k); }
+function mix(a,b,t){ const A=hex2rgb(a),B=hex2rgb(b); return rgb2hex(A[0]+(B[0]-A[0])*t, A[1]+(B[1]-A[1])*t, A[2]+(B[2]-A[2])*t); }
+function lum(hex){ const [r,g,b]=hex2rgb(hex); return (0.2126*r+0.7152*g+0.0722*b)/255; }
+
+/* ─────────────────────── attribute pools ─────────────────────── */
+const POOLS = {
+  size:["enormous","vast","colossal","towering","sizeable","middling","small","diminutive","pocket-sized","microscopic","titanic","quaint","absurdly large","unreasonably small"],
+  color:Object.keys(COLORS),
+  texture:["velvet","pitted","waxen","glassy","fuzzy","scaly","corrugated","silken","knitted","dented","slick","papery","crumbly","irregular"],
+  habitat:["the Glass Sea","a condemned library","the space between floors","a wet parking garage","the Underbelly","a municipal swimming pool","the last laundromat","an abandoned theme park","a folder of unlabelled files","the loneliest desert","a Tuesday","the inside of a sentence","a rooftop with no birds","the warranty void","a hotel hallway","the shallow end"],
+  diet:["morning fog","unlisted debts","electrical faults","small attentions","nearby applause","forgotten birthdays","sunlight filtered through bureaucracy","other people's shoes","punctuation","the last of the milk","unanswered emails","quiet","someone's childhood","warm rain","the sound of their own name"],
+  temperament:["politely furious","existentially sleepy","aggressively welcoming","quietly malicious","wildly sincere","constitutionally suspicious","gently nihilistic","unreasonably brave","moved to tears by logistics","faintly apologetic","deeply competitive about nothing","slow to anger, faster to forgiveness"],
+  movement:["scuttles","lopes","drifts","pounces","oozes","glides sideways","hops in place","teleports slightly","rolls with dignity","stalks","tumbles attractively","swims badly, swims confidently"],
+  sound:["a wet towel snapping","a skipped CD","someone humming off-key","a fridge at 3am","wind chimes in a dead language","a chair dragged one room too far","a dial tone with ambition","shouting in a stairwell","a choir that forgot the ending"],
+  smell:["burnt toast and ambition","ozone","lavender in a warzone","wet concrete","nutmeg","old batteries","vanilla extract","rain on hot brick","a library after closing","hot circuitry"],
+  weakness:["compliments","being looked at","Tuesdays","iron","silence","being named correctly","humidity","being thanked","mirrors","the word 'actual'"],
+  talent:["nailing the exact right wrong answer","remembering the faces of people who never met them","predicting rain four minutes out","smiling at exactly the right moment","finding the one true thing in a room full of lies","sleeping through the apocalypse","making strangers feel interesting"],
+  rival:["a well-documented rumour","its own reflection","tax season","a pigeon with tenure","the other one","a poster it can't see","the concept of Tuesday","its sibling"],
+  lifespan:["eleven minutes","three full tides","ninety-four years of Tuesdays","until the paperwork clears","longer than the paperwork","one exceptionally good meal","as long as nobody mentions it"],
+  manner_of_death:["enthusiasm","boredom","a strongly worded letter","forgetting to be afraid","overconfidence","a scheduling conflict","being told the truth"],
+  number:["exactly eleven remain","fewer than you'd think","one","uncounted","a suspicious number","four billion and change","none, officially","plenty, allegedly"],
+  maker:["someone who moved out","a machine that dreamed of this","a committee","the previous owner","nobody","a retired dentist","an apprentice who is better than the master"],
+  secret:["is secretly afraid of small dogs","is a rumour","has never once been in the room it describes","was made by accident","was not designed to be listened to","collects its own lost things","does not know what it is for"],
+
+  material:["river silt","decommissioned satellites","chewed pencils","laughably thin foil","the good kind of plywood","pressed sawdust","a single long screw","old receipts","resin","dried ink","salvaged aluminium"],
+  purpose:["to open one specific jar","to remind you","to be the third drawer","to hold the thing you keep meaning to throw away","to make exactly one sound","to be slightly wrong in a useful way","to keep a small light on"],
+  weight:["heavier than it looks","exactly as heavy as it looks","surprisingly light","the weight of a bad idea","heavier than a filing cabinet","light enough to throw"],
+  flaw:["it leaks when you need it","it works perfectly when you don't","it is one degree off","it forgets on Tuesdays","it is slightly too eager","it has no off switch","it leaks dignity"],
+  age:["older than the building","newly made and slightly damp","older than anyone admits","three days old and already tired","older than the country","brand new, which is suspicious"],
+  power_source:["optimism","a battery of dubious provenance","the mains, grudgingly","a small fire","indifference","a solar panel from 1974","being plugged in occasionally"],
+  noise:["a cheerful hum","a small tragedy of clicking","nothing at all, which is worse","a wind-up sigh","static","a sound like a swallowed coin"],
+  mood:["cheerful about it","deeply misunderstood","certain it is loved","nobody knows how it feels","irrationally proud","quietly resentful"],
+  speed:["not fast, but philosophically committed to arriving","quick in a straight line","slow and unashamed","fast enough","barely moving, extremely on time"],
+  capacity:["one crow","two crows and a grudge","four people and a coat","a surprising amount of weather","exactly one message","nine small things"],
+  flavor:["strong","vaguely citrus","wet","brown","forgiving","aggressively sweet","salty in a way that shouldn't work","quietly smoky","like the ocean if the ocean were shy"],
+  temperature:["warm","cold in a specific way","room temperature but somehow","frozen at the edges","mildly alarming","still deciding"],
+  ingredient:["a regret","an hour of daylight","two eggs that were going anyway","a rumor","the crust of something","one (1) brave onion","a piece of a Tuesday"],
+  occasion:["birthdays","the fourth Tuesday","after an argument","when someone apologises","the end of a long drive","ambiguous mourning","a Tuesday","the first snowfall"],
+  light:["late afternoon","a greenish twilight","the blue hour","a light with no source","burning midday","someone else's lamp"],
+  bloom:["only when it is embarrassed","for six minutes in June","never, though it tries","at exactly 4am","once, and then never again","throughout, constantly"],
+  shape:["bracket-shaped","a bad pun on a mushroom","dimpled","conical","pleated","shaped like a question","a little too spherical"],
+  form:["a soft fog","a sound with a shape","a polite pressure","an absence","a slow shimmer","a small weather","a rumour with weight"],
+  offering:["a button","an apology","something unasked-for","a secret","a coin from a country that no longer exists","bread","a song sung badly"],
+  hardness:["soft enough to pocket","hard enough to ring a bell","scratches glass","gives to a thumbnail","resists everything","soft in the hand, hard on the eye"],
+  formation:["in veins of shame","in the last mile of a bad road","where two arguments met","nowhere, which is rare","in the middle of a long sentence","at the bottom of a drawer"],
+  rarity:["common, and boring","rare enough to be a problem","one known, allegedly","common in the way weather is common","so rare it has a rumour"],
+  atmosphere:["a thin and guilty haze","nothing, and worse","oxygen with a bad reputation","a permanent early evening","steam","a smell of hot plastic"],
+  moons:["no moons","two moons, one of them rude","a single moon with a crater","nine small ones","one enormous ringed one","moons that are contested"],
+  day_length:["four hours","nineteen minutes","nine days","one normal day and one terrible day","roughly thirty hours","exactly as long as it takes"],
+  weather:["constant sideways rain","a wind that files complaints","perpetual mild dusk","snow that falls upward once a year","humidity with opinions"],
+  population:["nobody, officially","a census that nobody trusts","everyone","a handful of people and a lot of animals","more than the food supports","fewer than the paperwork admits"],
+  feature:["a continent shaped like a mistake","a sea that reflects a different sky","two suns and a grudge","a mountain nobody climbed","a coastline of glass","an ocean with no floor"],
+  duration:["four minutes","an entire afternoon","long enough to change your mind","nine seconds","until it gets awkward","two days, give or take a Tuesday"],
+  season:["the wrong season","the second week of anything","when the pressure drops","at exactly 3am","every other Tuesday","when nobody is looking"],
+  effect:["a faint sense of being watched","temporary confidence","a desire to reorganise a drawer","one good idea","doubt about the floor","an urge to apologise to a stranger"],
+  temper:["unbothered","aggressive","sheepish","mechanical","a little bit feral","entirely reasonable"],
+  instrument:["a rubber band and a door","the fourth drawer","a kettle","a harmonica with a missing reed","two spoons","an old telephone"],
+  mood:["peaceful","insistent","apologetic","menacing","nostalgic","a bit drunk"],
+  volume:["quiet","audible from the next room","barely there","the kind of loud that rearranges furniture","polite"],
+  best_heard:["in an empty stairwell","with the window open","at 3am","while falling asleep","in a crowd","through a wall, somehow"],
+  trigger:["the smell of rain on hot asphalt","being asked how they are","the last page of a book","a specific song","being thanked","Tuesday"],
+  host:["the recently betrayed","the recently praised","people who are cold","people who have been ambushed","the unbothered","the recently promoted"],
+  symptom:["a smell of toast","mild rearranging of the furniture","an urge to apologise to doors","sudden interest in weather","talking to appliances","a feeling of being followed home"],
+  spread:["by eye contact","through water","by being described","by being believed in","through shared sandwiches","by inheritance"],
+  cure:["a long walk and a bad decision","being told the truth once","time and worse time","salt","an apology, specific and dated","nothing, but rest"],
+  symbol:["a bent spoon","an open door","the number three, slightly wrong","a knot","a bird with no legs","a door with a chair in front of it"],
+  tenets:["three tenets and one footnote","a single rule, enforced gently","no tenets, only habits","two beliefs that contradict","nine doctrines and a strict diet"],
+  sacrament:["a boiled egg","the reading of a list","a long silence","a shared, terrible soup","counting to eleven","saying goodbye to a door"],
+  ban:["hats","apologies after nine","the number four","speaking first","leaving a room tidy","eye contact before coffee"],
+  founder:["a woman who was very sure","a committee of three","the previous tenant","someone who cannot be named","a building","a rumour"],
+  afterlife:["a queue","a question","more paperwork","a small warm room","nothing, which is somehow worse","a second shift"],
+  players:["two","two, plus a rotating spectator","eleven","four, and a dog","one, with witnesses","sixteen and a shadow"],
+  equipment:["a broom and a whistle","nothing","one shoe","a chalk line","a ladder","a grandfather clock"],
+  venue:["a car park","the shallow end of a pool","a rooftop","an empty warehouse","a kitchen","the back of a bus"],
+  rule:["do not stop moving","the ball may only travel downward","losers pay","the winner explains nothing","you may not use the word 'ball'","keep one eye closed"],
+  goal:["to reach the far wall","to be the last one standing","to be believed","to stop the noise","to arrive exactly on time","to not laugh"],
+  danger:["mildly concerning","genuinely dangerous","mostly administrative","extremely dangerous","disproportionately dangerous","fine, probably"],
+  product:["a feeling, sold by the hour","a subscription to weather","a lamp with opinions","a service nobody can cancel","one (1) confident sentence","a chair"],
+  model:["subscription","one enormous purchase","sending it to a friend","per-use, per-regret","the barter of favours"],
+  funding:["a relative","a small business loan","the proceeds of a lawsuit","four hundred dollars and a manifesto","a grant, spent already","someone who believed in it"],
+  pitch:["we make the impossible slightly more possible","we save you eleven minutes a week","we believe the boring future is a choice","we turn boredom into a metric","one thing, done obsessively"],
+  mission:["to make Mondays less structurally hostile","to keep a small light on","to be genuinely useful by accident","to survive its own success","to be replaceable, eventually"],
+  scope:["applies indoors only","applies to anyone within earshot","applies on Tuesdays","applies retroactively","applies to the thing itself"],
+  penalty:["a stern look","a fine of one button","public embarrassment, briefly","a mandatory apology","the loss of one (1) privilege","nothing, notably"],
+  enforcement:["voluntary","a rotating committee","whoever notices","nobody, since 1994","the neighbour","a machine"],
+  loophole:["the third paragraph","anything said while asleep","conduct conducted by proxy","an inherited exemption","being fictional","not being the subject"],
+  precedent:["one case, never repeated","a court ruling that got lost","the discovery that it is a joke","no precedent, which is the point","a rumour with a case number"],
+  exemption:["the elderly","anyone who is currently crying","people who are almost done","boredom","clergy","the second person to ask"]
+};
+
+/* ─────────────────────────── categories ─────────────────────────── */
+const CATS = {
+  beast:{ label:"Creature", art:"beast", attrs:["size","color","texture","habitat","diet","temperament","movement","sound","smell","weakness","talent","rival","lifespan","manner_of_death","number","maker","secret"],
+    lore:[
+      "{name} is {size}, {color}, and {temperament}.",
+      "It {movement} through {habitat}, where it lives on {diet}.",
+      "Its call is {sound}; its smell is {smell}.",
+      "Weakness: {weakness}. Talent: {talent}.",
+      "It has been outlasted by {rival} and will die of {manner_of_death}.",
+      "{number} remain. None of them are yours.",
+      "Every specimen was made by {maker}, who {secret}."
+    ]},
+  artifact:{ label:"Artifact", art:"object", attrs:["size","color","material","texture","purpose","weight","smell","flaw","maker","age","sound","secret"],
+    lore:[
+      "{name} is a {size} {color} thing made of {material}.",
+      "It exists to {purpose}.",
+      "It weighs {weight} and smells of {smell}.",
+      "The flaw: {flaw}.",
+      "{maker} built it, and it has been {age}.",
+      "It {secret}, which is why nobody mentions it."
+    ]},
+  appliance:{ label:"Appliance", art:"object", attrs:["color","size","material","power_source","purpose","noise","mood","flaw","age","secret"],
+    lore:[
+      "The {name} is {color}, {size}, and powered by {power_source}.",
+      "Its only job is to {purpose}.",
+      "It makes {noise}, and it is {mood} about it.",
+      "Fault: {flaw}. Age: {age}.",
+      "It {secret}."
+    ]},
+  vehicle:{ label:"Vehicle", art:"object", attrs:["color","size","material","capacity","speed","purpose","sound","maker","flaw","age","secret"],
+    lore:[
+      "The {name} carries {capacity} and arrives {speed}.",
+      "Painted {color}, built of {material} for {purpose}.",
+      "It sounds like {sound}.",
+      "{maker} says it will not {flaw}.",
+      "It {secret}."
+    ]},
+  food:{ label:"Food", art:"plate", attrs:["flavor","temperature","size","color","texture","ingredient","smell","occasion","flaw","maker","secret"],
+    lore:[
+      "The {name} is {flavor} and served {temperature}.",
+      "Made of {ingredient}, one portion weighs {size}.",
+      "It smells of {smell} and is traditionally served at {occasion}.",
+      "The flaw: {flaw}.",
+      "{maker} invented it by accident, and it {secret}."
+    ]},
+  plant:{ label:"Plant", art:"flora", attrs:["size","color","texture","habitat","diet","light","bloom","smell","lifespan","flaw","maker"],
+    lore:[
+      "The {name} is a {size} {color} {texture} plant of {habitat}.",
+      "It feeds on {diet} and blooms {bloom}.",
+      "It wants {light} and smells faintly of {smell}.",
+      "Its lifespan is {lifespan}.",
+      "Gardeners consider it a good omen when it {flaw}."
+    ]},
+  fungus:{ label:"Fungus", art:"mote", attrs:["shape","size","color","texture","habitat","diet","smell","duration","flaw","secret"],
+    lore:[
+      "The {name} is {shape}, {color}, and found in {habitat}.",
+      "It feeds on {diet} and smells of {smell}.",
+      "Its spore season lasts {duration}.",
+      "It {secret}, which is why the foragers whisper."
+    ]},
+  spirit:{ label:"Spirit", art:"mote", attrs:["form","size","color","habitat","temperament","movement","sound","weakness","offering","flaw","secret"],
+    lore:[
+      "{name} is a {form} of {color} that {movement} through {habitat}.",
+      "It is {temperament}.",
+      "It is best appeased by {offering}.",
+      "It sounds like {sound}, and it cannot cross {weakness}.",
+      "It {secret}."
+    ]},
+  mineral:{ label:"Mineral", art:"crystal", attrs:["color","texture","size","hardness","formation","rarity","smell","flaw","maker","secret"],
+    lore:[
+      "The {name} is {color} and {hardness}.",
+      "It forms in {formation}.",
+      "Rarity: {rarity}. Smell: {smell}.",
+      "The flaw: {flaw}.",
+      "It {secret}, though you would not believe that."
+    ]},
+  planet:{ label:"Planet", art:"celestial", attrs:["size","color","atmosphere","moons","day_length","weather","population","feature","flaw","secret"],
+    lore:[
+      "{name} is a {size} {color} world with {atmosphere}.",
+      "It has {moons} and a day of {day_length}.",
+      "Its weather is {weather}; its people number {population}.",
+      "The notable feature is {feature}.",
+      "It {secret}."
+    ]},
+  weather:{ label:"Weather", art:"storm", attrs:["size","color","form","duration","season","sound","smell","effect","temper","flaw","secret"],
+    lore:[
+      "The {name} is a {size} {color} {form}, lasting {duration}.",
+      "It arrives when {season}.",
+      "It sounds like {sound} and leaves behind {effect}.",
+      "Locals describe it as {temper}.",
+      "It {secret}."
+    ]},
+  sound:{ label:"Sound", art:"glyph", attrs:["form","duration","color","instrument","mood","volume","best_heard","effect","flaw","secret"],
+    lore:[
+      "{name} is a {form} lasting {duration}.",
+      "It is played on {instrument} and it is {mood}.",
+      "You will hear it best {best_heard}.",
+      "At {volume} volume it causes {effect}.",
+      "It {secret}."
+    ]},
+  emotion:{ label:"Emotion", art:"glyph", attrs:["size","color","duration","trigger","effect","host","smell","temper","season","secret"],
+    lore:[
+      "The {name} arrives as {size} {color} and lasts {duration}.",
+      "Its trigger is {trigger}.",
+      "It causes {effect} in the host and smells faintly of {smell}.",
+      "It is specific to {host}; others experience it as nonsense.",
+      "It {secret}."
+    ]},
+  disease:{ label:"Disease", art:"glyph", attrs:["color","form","duration","symptom","spread","effect","cure","host","flaw","secret"],
+    lore:[
+      "{name} is {color}, {form}, and lasts {duration}.",
+      "Symptoms: {symptom}. Spread: {spread}.",
+      "The only known cure is {cure}.",
+      "It affects {host}.",
+      "It {secret}, which complicates the paperwork."
+    ]},
+  religion:{ label:"Religion", art:"glyph", attrs:["color","tenets","symbol","sacrament","ban","offering","founder","afterlife","flaw","secret"],
+    lore:[
+      "{name} is a {color} faith of {tenets}.",
+      "Its symbol is {symbol}; its sacrament is {sacrament}.",
+      "It forbids {ban} and requires {offering}.",
+      "Founded by {founder}, it promises {afterlife}.",
+      "It {secret}."
+    ]},
+  sport:{ label:"Sport", art:"glyph", attrs:["color","players","duration","equipment","venue","rule","goal","danger","flaw","secret"],
+    lore:[
+      "{name} is a {color} game for {players}, lasting {duration}.",
+      "Equipment: {equipment}. Venue: {venue}.",
+      "The single rule: {rule}.",
+      "The goal is {goal}.",
+      "Danger level: {danger}.",
+      "It {secret}."
+    ]},
+  business:{ label:"Business", art:"object", attrs:["size","color","product","model","funding","pitch","mission","rival","flaw","secret"],
+    lore:[
+      "{name} is a {size} {color} company.",
+      "The product is {product}, and the model is {model}.",
+      "It was funded by {funding}.",
+      "The pitch: {pitch}.",
+      "Its mission is {mission}. Its rival is {rival}.",
+      "It {secret}."
+    ]},
+  law:{ label:"Law", art:"glyph", attrs:["color","scope","origin","precedent","penalty","enforcement","loophole","exemption","flaw","secret"],
+    lore:[
+      "{name} is a {color} law with {scope}.",
+      "It was created in {origin}, and it has one precedent: {precedent}.",
+      "The penalty is {penalty}; enforcement is {enforcement}.",
+      "The loophole is {loophole}.",
+      "Exemptions apply to {exemption}.",
+      "It {secret}."
+    ]}
+};
+const CAT_KEYS = Object.keys(CATS);
+
+/* ─────────────────────────── lore ─────────────────────────── */
+const ENCOUNTER_ACTS = [
+  "attempted small talk","knocked over a chair","apologised for the weather","offered a cracker",
+  "recited a number","stood very still","offered a ride","said something honest","pretended to need directions",
+  "hummed the other one back at them"
+];
+const ENCOUNTER_REACTIONS = [
+  "made a note of it","walked into the sea","pretended not to have seen","asked for a receipt",
+  "said something honest","laughed first","waited to see who would blink","filed it under later",
+  "pretended to understand","offered nothing"
+];
+
+function articleFix(s){
+  return s.replace(/\b([Aa]) (?=[aeiouAEIOU])/g, "$1n ").replace(/\ban (?=[bcdfgjklmnpqrstvwxyz])/g, "a ");
+}
+function fillTemplate(t, attrs, name, catLabel){
+  let out = t;
+  out = out.replace(/\{name\}/g, name).replace(/\{cat\}/g, catLabel.toLowerCase());
+  const keys = [...out.matchAll(/\{([a-z_]+)\}/g)].map(m=>m[1]);
+  for (const k of new Set(keys)){
+    if (k === "name" || k === "cat") continue;
+    if (attrs[k] === undefined) return null;
+    out = out.replace(new RegExp("\\{"+k+"\\}","g"), attrs[k]);
+  }
+  out = articleFix(out);
+  return out.charAt(0).toUpperCase() + out.slice(1);
+}
+function makeLore(catKey, attrs, name, rng){
+  const cat = CATS[catKey];
+  const pool = R(rng).shuffle(cat.lore);
+  const out = [];
+  for (const t of pool){
+    const s = fillTemplate(t, attrs, name, cat.label);
+    if (s) out.push(s);
+    if (out.length >= 4) break;
+  }
+  if (!out.length) out.push(`${name} is ${attrs.color || "unknown"} and does not explain itself.`);
+  return out;
+}
+
+/* ─────────────────────────── thing assembly ─────────────────────────── */
+function buildThing(seed, catKey){
+  const cat = CATS[catKey];
+  const rn = makeRng(seed + "|" + catKey);
+  const r = R(rn);
+
+  const attrs = {};
+  for (const key of cat.attrs){
+    const pool = POOLS[key];
+    if (!pool) continue;
+    attrs[key] = r.pick(pool);
+  }
+
+  const nr = derive(seed + "|" + catKey, "name");
+  const nm = makeName(R(nr));
+
+  const lr = derive(seed + "|" + catKey, "lore");
+  const lore = makeLore(catKey, attrs, nm.name, lr);
+
+  const ar = derive(seed + "|" + catKey, "art");
+  uid = 0; uidPrefix = idPrefix(seed, catKey);
+  const colorHex = COLORS[attrs.color] || COLORS["fog-grey"];
+  const art = ART[cat.art](R(ar), {
+    base: colorHex,
+    dark: shade(colorHex,-0.45),
+    deep: shade(colorHex,-0.65),
+    light: shade(colorHex,0.35),
+    pale: shade(colorHex,0.62),
+    ink: lum(colorHex) > 0.6 ? "#20242e" : "#0d1017",
+    cat: catKey
+  });
+
+  return {
+    seed, category: catKey, categoryLabel: cat.label,
+    name: nm.name, epithet: nm.epithet, attrs, lore, art
+  };
+}
+
+/* ─────────────────────────── SVG art ─────────────────────────── */
+let uid = 0, uidPrefix = "t0";
+function n(){ return uidPrefix + (++uid); }
+/* Gradient ids must be stable for a given thing (so a seed always yields the
+   same SVG) yet unique between different things on the same page. */
+function idPrefix(seed, catKey){
+  const s = seed + "|" + catKey;
+  let h = 2166136261 >>> 0;
+  for (let i=0;i<s.length;i++){ h = (h ^ s.charCodeAt(i)) >>> 0; h = Math.imul(h, 16777619) >>> 0; }
+  return "t" + h.toString(36);
+}
+
+function blobPath(cx, cy, r, points, wobble, rng){
+  const pts = [];
+  for (let i=0;i<points;i++){
+    const a = (i/points)*Math.PI*2;
+    const rr = r * (1 - wobble/2 + rng.f()*wobble);
+    pts.push([cx + Math.cos(a)*rr, cy + Math.sin(a)*rr*0.94]);
+  }
+  let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  const N = pts.length;
+  for (let i=0;i<N;i++){
+    const p0 = pts[(i-1+N)%N], p1 = pts[i], p2 = pts[(i+1)%N], p3 = pts[(i+2)%N];
+    const c1x = p1[0]+(p2[0]-p0[0])/6, c1y = p1[1]+(p2[1]-p0[1])/6;
+    const c2x = p2[0]-(p3[0]-p1[0])/6, c2y = p2[1]-(p3[1]-p1[1])/6;
+    d += ` C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  return d + " Z";
+}
+function limb(x, y, len, ang, w, color, curl){
+  const ex = x + Math.cos(ang)*len, ey = y + Math.sin(ang)*len;
+  const cx = (x+ex)/2 + Math.cos(ang + (curl||0))*len*0.3;
+  const cy = (y+ey)/2 + Math.sin(ang + (curl||0))*len*0.3;
+  const nx = Math.cos(ang+Math.PI/2)*w, ny = Math.sin(ang+Math.PI/2)*w;
+  return `<path d="M ${(x-nx).toFixed(1)} ${(y-ny).toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)} L ${(ex+nx*0.7).toFixed(1)} ${(ey+ny*0.7).toFixed(1)} Q ${(cx+nx*0.6).toFixed(1)} ${(cy+ny*0.6).toFixed(1)} ${(x+nx).toFixed(1)} ${(y+ny).toFixed(1)} Z" fill="${color}"/>`;
+}
+function eye(cx, cy, rr, pupil, look, mood){
+  const px = cx + look[0]*rr*0.3, py = cy + look[1]*rr*0.3;
+  let s = `<circle cx="${cx}" cy="${cy}" r="${rr}" fill="#fffdf7"/>`;
+  s += `<circle cx="${px}" cy="${py}" r="${rr*0.52}" fill="#12151d"/>`;
+  s += `<circle cx="${px-rr*0.18}" cy="${py-rr*0.2}" r="${rr*0.16}" fill="#fff"/>`;
+  if (mood === "sleepy") s += `<path d="M ${cx-rr} ${cy-rr*0.2} Q ${cx} ${cy+rr*0.45} ${cx+rr} ${cy-rr*0.2}" fill="none" stroke="#12151d" stroke-width="${rr*0.22}" stroke-linecap="round"/>`;
+  if (mood === "wide") s += `<circle cx="${cx}" cy="${cy}" r="${rr*1.16}" fill="none" stroke="#12151d" stroke-width="${rr*0.13}"/>`;
+  return s;
+}
+function mouth(cx, cy, w, style, color){
+  switch(style){
+    case "grin": return `<path d="M ${cx-w} ${cy} Q ${cx} ${cy+w*0.95} ${cx+w} ${cy}" fill="none" stroke="${color}" stroke-width="${w*0.22}" stroke-linecap="round"/>`;
+    case "flat": return `<path d="M ${cx-w*0.7} ${cy} L ${cx+w*0.7} ${cy}" fill="none" stroke="${color}" stroke-width="${w*0.2}" stroke-linecap="round"/>`;
+    case "frown":return `<path d="M ${cx-w} ${cy+w*0.5} Q ${cx} ${cy-w*0.4} ${cx+w} ${cy+w*0.5}" fill="none" stroke="${color}" stroke-width="${w*0.2}" stroke-linecap="round"/>`;
+    case "o":   return `<ellipse cx="${cx}" cy="${cy}" rx="${w*0.45}" ry="${w*0.58}" fill="${color}"/>`;
+    case "zig": return `<path d="M ${cx-w} ${cy} L ${cx-w*0.5} ${cy+w*0.5} L ${cx} ${cy} L ${cx+w*0.5} ${cy+w*0.5} L ${cx+w} ${cy}" fill="none" stroke="${color}" stroke-width="${w*0.18}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    default:    return `<path d="M ${cx-w*0.6} ${cy} Q ${cx} ${cy+w*0.55} ${cx+w*0.6} ${cy}" fill="none" stroke="${color}" stroke-width="${w*0.18}" stroke-linecap="round"/>`;
+  }
+}
+function bg(rng, c){
+  const g = n();
+  const dark = lum(c.base) > 0.55 ? "#f3ead9" : "#12161f";
+  const c1 = rng.chance(.5) ? shade(c.base, dark === "#12161f" ? -0.72 : 0.55) : shade(c.dark,-0.5);
+  const c2 = dark === "#12161f" ? "#090b10" : "#fffdf6";
+  return `<defs><radialGradient id="${g}" cx="38%" cy="28%" r="85%">
+      <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
+    </radialGradient></defs><rect width="512" height="512" fill="url(#${g})"/>`;
+}
+function ground(rng, c, y){
+  return `<ellipse cx="256" cy="${y}" rx="${150+rng.f()*40}" ry="20" fill="#000" opacity="0.18"/>`;
+}
+
+const ART = {
+  beast(rng, c){
+    let s = bg(rng,c);
+    const cx = 256, cy = 262, R0 = 96 + rng.f()*46;
+    const body = blobPath(cx, cy, R0, 7+Math.floor(rng.f()*4), 0.14+rng.f()*0.2, rng);
+    s += ground(rng,c,cy+R0*0.92);
+    // legs
+    const legs = 2 + Math.floor(rng.f()*3);
+    for (let i=0;i<legs;i++){
+      const t = legs === 1 ? 0.5 : i/(legs-1);
+      const x = cx - R0*0.72 + t*R0*1.44 + (rng.f()-0.5)*16;
+      s += limb(x, cy+R0*0.66, 46+rng.f()*30, Math.PI/2 + (rng.f()-0.5)*0.7, 11, c.dark, (rng.f()-0.5)*1.4);
+    }
+    // arms
+    if (rng.chance(.75)){
+      const side = rng.chance(.5)?1:-1;
+      s += limb(cx + side*R0*0.82, cy + 6, 58+rng.f()*26, side>0?0.35:Math.PI-0.35, 9, c.base, side*0.9);
+      if (rng.chance(.5)) s += limb(cx - side*R0*0.82, cy + 16, 50+rng.f()*22, side>0?Math.PI-0.35:0.35, 9, c.base, -side*0.8);
+    }
+    // tail
+    if (rng.chance(.55)){
+      const side = rng.chance(.5)?1:-1;
+      s += limb(cx - side*R0*0.86, cy + 30, 70+rng.f()*30, side>0?Math.PI-0.5:0.5, 7, c.dark, side*1.5);
+    }
+    // body
+    s += `<path d="${body}" fill="${c.base}" stroke="${c.ink}" stroke-width="7" stroke-linejoin="round"/>`;
+    // belly
+    s += `<ellipse cx="${cx}" cy="${cy+R0*0.34}" rx="${R0*0.6}" ry="${R0*0.42}" fill="${c.pale}" opacity="0.55"/>`;
+    // spots
+    const spots = Math.floor(rng.f()*7);
+    for (let i=0;i<spots;i++){
+      const a = rng.f()*Math.PI*2, rr = rng.f()*R0*0.66;
+      s += `<ellipse cx="${(cx+Math.cos(a)*rr).toFixed(1)}" cy="${(cy+Math.sin(a)*rr*0.9).toFixed(1)}" rx="${(8+rng.f()*16).toFixed(1)}" ry="${(6+rng.f()*12).toFixed(1)}" fill="${c.dark}" opacity="0.5"/>`;
+    }
+    // antennae
+    const ants = rng.f() < 0.45 ? (rng.f()<0.4?3:1) : 0;
+    for (let i=0;i<ants;i++){
+      const x = cx + (i - (ants-1)/2)*R0*0.34;
+      const len = 40+rng.f()*50;
+      const sw = (rng.f()-0.5)*1.4;
+      s += `<path d="M ${x} ${cy-R0*0.78} Q ${x+sw*30} ${cy-R0*0.78-len} ${x+sw*52} ${cy-R0*0.9-len}" fill="none" stroke="${c.ink}" stroke-width="5" stroke-linecap="round"/>`;
+      s += `<circle cx="${x+sw*52}" cy="${cy-R0*0.9-len}" r="${9+rng.f()*5}" fill="${c.light}" stroke="${c.ink}" stroke-width="4"/>`;
+    }
+    // horns
+    if (rng.chance(.35)){
+      for (const sgn of [-1,1]){
+        const x = cx + sgn*R0*0.42, y = cy-R0*0.72;
+        s += `<path d="M ${x} ${y} Q ${x+sgn*16} ${y-34} ${x+sgn*6} ${y-52}" fill="none" stroke="${c.dark}" stroke-width="12" stroke-linecap="round"/>`;
+      }
+    }
+    // eyes
+    const nEyes = rng.f()<0.14 ? 1 : (rng.f()<0.12 ? 3 : 2);
+    const eyeR = nEyes===1 ? 26 : 19;
+    const ey = cy - R0*0.22;
+    const look = [(rng.f()-0.5)*2,(rng.f()-0.5)*1.4];
+    const mood = rng.pick(["calm","calm","calm","sleepy","wide"]);
+    if (nEyes===1) s += eye(cx,ey,eyeR,1,look,mood);
+    else if (nEyes===2){
+      s += eye(cx-R0*0.32,ey,eyeR,1,look,mood);
+      s += eye(cx+R0*0.32,ey,eyeR,1,look,mood);
+    } else {
+      s += eye(cx-R0*0.42,ey+8,eyeR*0.8,1,look,mood);
+      s += eye(cx,ey-8,eyeR*0.8,1,look,mood);
+      s += eye(cx+R0*0.42,ey+8,eyeR*0.8,1,look,mood);
+    }
+    // mouth
+    const mStyle = rng.pick(["grin","flat","frown","o","zig","smile"]);
+    s += mouth(cx, cy + R0*0.22, 34, mStyle, c.ink);
+    return s;
+  },
+
+  object(rng, c){
+    let s = bg(rng,c);
+    const w = 230+rng.f()*70, h = 160+rng.f()*60;
+    const x = 256-w/2, y = 240-h/2;
+    const rot = (rng.f()-0.5)*14;
+    s += `<g transform="rotate(${rot.toFixed(1)} 256 262)">`;
+    s += ground(rng,c,352);
+    // feet
+    for (const sgn of [-1,1]){
+      s += `<rect x="${256+sgn*w*0.3-16}" y="${y+h-6}" width="32" height="${38+rng.f()*22}" rx="10" fill="${c.dark}" stroke="${c.ink}" stroke-width="5"/>`;
+    }
+    // body
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${34+rng.f()*20}" fill="${c.base}" stroke="${c.ink}" stroke-width="7"/>`;
+    // panel
+    const px = x+w*0.12, py = y+h*0.2, pw = w*0.76, ph = h*0.5;
+    s += `<rect x="${px}" y="${py}" width="${pw}" height="${ph}" rx="20" fill="${c.deep}" opacity="0.9"/>`;
+    // screen squiggle
+    s += `<path d="M ${px+16} ${py+ph*0.55} Q ${px+pw*0.3} ${py+ph*0.12} ${px+pw*0.5} ${py+ph*0.55} T ${px+pw-16} ${py+ph*0.55}" fill="none" stroke="${c.light}" stroke-width="6" stroke-linecap="round" opacity="0.95"/>`;
+    // dials
+    const dn = 1+Math.floor(rng.f()*3);
+    for (let i=0;i<dn;i++){
+      const dx = px+22+i*((pw-44)/Math.max(1,dn-1||1));
+      const dy = py+ph+34;
+      s += `<circle cx="${dx}" cy="${dy}" r="15" fill="${c.pale}" stroke="${c.ink}" stroke-width="5"/>`;
+      s += `<path d="M ${dx} ${dy} L ${dx+(rng.f()-0.5)*16} ${dy-11}" stroke="${c.ink}" stroke-width="4" stroke-linecap="round"/>`;
+    }
+    // buttons
+    for (let i=0;i<3;i++){
+      s += `<circle cx="${x+18+i*22}" cy="${y+h-20}" r="7" fill="${c.light}" opacity="${0.5+i*0.2}"/>`;
+    }
+    // antenna
+    if (rng.chance(.6)){
+      const len = 60+rng.f()*60, sw=(rng.f()-0.5)*1.2;
+      s += `<path d="M ${256+ (rng.f()-0.5)*60} ${y+6} Q ${256+sw*30} ${y-len*0.6} ${256+sw*44} ${y-len}" fill="none" stroke="${c.ink}" stroke-width="6" stroke-linecap="round"/>`;
+      s += `<circle cx="${256+sw*44}" cy="${y-len}" r="13" fill="${c.light}" stroke="${c.ink}" stroke-width="5"/>`;
+    }
+    // eyes on the machine
+    const er = 13;
+    s += eye(x+w*0.34, y+h*0.78, er, 1, [(rng.f()-0.5)*2,0], "calm");
+    s += eye(x+w*0.66, y+h*0.78, er, 1, [(rng.f()-0.5)*2,0], "calm");
+    s += mouth(256, y+h*0.92, 26, rng.pick(["flat","smile","zig","o"]), c.ink);
+    s += `</g>`;
+    return s;
+  },
+
+  plate(rng, c){
+    let s = bg(rng,c);
+    const cy = 268;
+    s += `<ellipse cx="256" cy="${cy+40}" rx="168" ry="46" fill="${c.pale}" stroke="${c.ink}" stroke-width="7"/>`;
+    s += `<ellipse cx="256" cy="${cy+34}" rx="132" ry="33" fill="${shade(c.pale,-0.08)}"/>`;
+    // food mound
+    const mound = blobPath(256, cy-4, 92, 9, 0.22, rng);
+    s += `<path d="${mound}" fill="${c.base}" stroke="${c.ink}" stroke-width="6"/>`;
+    for (let i=0;i<5;i++){
+      const a = rng.f()*Math.PI*2, rr = rng.f()*60;
+      s += `<circle cx="${(256+Math.cos(a)*rr).toFixed(1)}" cy="${(cy-4+Math.sin(a)*rr*0.6).toFixed(1)}" r="${(6+rng.f()*9).toFixed(1)}" fill="${c.light}" opacity="0.9"/>`;
+    }
+    // garnish
+    s += `<path d="M 236 ${cy-30} q 18 -34 40 -6" fill="none" stroke="${c.dark}" stroke-width="7" stroke-linecap="round"/>`;
+    // steam
+    for (let i=0;i<3;i++){
+      const x = 214+i*44;
+      s += `<path d="M ${x} ${cy-88} q -12 -22 0 -40 q 12 -18 0 -34" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="${0.18+i*0.09}"/>`;
+    }
+    // face on the food
+    s += eye(232, cy-10, 12, 1, [(rng.f()-0.5)*2,0], "calm");
+    s += eye(280, cy-10, 12, 1, [(rng.f()-0.5)*2,0], "calm");
+    s += mouth(256, cy+14, 20, rng.pick(["grin","smile","zig"]), c.ink);
+    // fork & knife
+    s += `<g transform="rotate(-16 108 250)"><rect x="100" y="180" width="9" height="150" rx="4" fill="${c.deep}" stroke="${c.ink}" stroke-width="4"/><rect x="88" y="170" width="12" height="44" rx="5" fill="${c.deep}" stroke="${c.ink}" stroke-width="4"/><rect x="104" y="170" width="12" height="44" rx="5" fill="${c.deep}" stroke="${c.ink}" stroke-width="4"/></g>`;
+    s += `<g transform="rotate(14 406 250)"><rect x="402" y="180" width="9" height="150" rx="4" fill="${c.deep}" stroke="${c.ink}" stroke-width="4"/><ellipse cx="406" cy="172" rx="16" ry="26" fill="${c.deep}" stroke="${c.ink}" stroke-width="4"/></g>`;
+    return s;
+  },
+
+  flora(rng, c){
+    let s = bg(rng,c);
+    s += ground(rng,c,414);
+    // pot
+    s += `<path d="M 176 340 L 336 340 L 316 432 L 196 432 Z" fill="${c.dark}" stroke="${c.ink}" stroke-width="7" stroke-linejoin="round"/>`;
+    s += `<rect x="166" y="326" width="180" height="26" rx="10" fill="${c.base}" stroke="${c.ink}" stroke-width="7"/>`;
+    // stem
+    const topY = 150 + rng.f()*40, sw = (rng.f()-0.5)*90;
+    s += `<path d="M 256 330 Q ${256+sw*0.4} ${(330+topY)/2} ${256+sw} ${topY}" fill="none" stroke="${c.deep}" stroke-width="13" stroke-linecap="round"/>`;
+    // leaves
+    const leaves = 2+Math.floor(rng.f()*3);
+    for (let i=0;i<leaves;i++){
+      const t = 0.3 + 0.6*(i/Math.max(1,leaves-1));
+      const lx = 256 + sw*t, ly = 330 + (topY-330)*t;
+      const dir = i%2 ? 1 : -1;
+      s += `<ellipse cx="${(lx+dir*42).toFixed(1)}" cy="${(ly+12).toFixed(1)}" rx="46" ry="22" fill="${c.base}" stroke="${c.ink}" stroke-width="6" transform="rotate(${dir*22} ${(lx+dir*42).toFixed(1)} ${(ly+12).toFixed(1)})"/>`;
+    }
+    // bloom
+    const petals = 5+Math.floor(rng.f()*4);
+    const bx = 256+sw, by = topY-4, pr = 34+rng.f()*16;
+    for (let i=0;i<petals;i++){
+      const a = (i/petals)*Math.PI*2 + rng.f()*0.2;
+      const px = bx+Math.cos(a)*pr*0.9, py = by+Math.sin(a)*pr*0.9;
+      s += `<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${(pr*0.62).toFixed(1)}" ry="${(pr*0.42).toFixed(1)}" fill="${c.light}" stroke="${c.ink}" stroke-width="5" transform="rotate(${(a*180/Math.PI).toFixed(1)} ${px.toFixed(1)} ${py.toFixed(1)})"/>`;
+    }
+    s += `<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="${(pr*0.5).toFixed(1)}" fill="${c.dark}" stroke="${c.ink}" stroke-width="5"/>`;
+    // face
+    s += eye(bx-11, by-2, 9, 1, [(rng.f()-0.5)*2,0], "calm");
+    s += eye(bx+11, by-2, 9, 1, [(rng.f()-0.5)*2,0], "calm");
+    s += mouth(bx, by+13, 16, rng.pick(["smile","flat","zig"]), c.ink);
+    return s;
+  },
+
+  mote(rng, c){
+    let s = bg(rng,c);
+    const g = n();
+    s += `<defs><radialGradient id="${g}" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="${c.pale}" stop-opacity="0.95"/><stop offset="100%" stop-color="${c.base}" stop-opacity="0"/></radialGradient></defs>`;
+    const cx = 256, cy = 250;
+    s += `<circle cx="${cx}" cy="${cy}" r="180" fill="url(#${g})" opacity="0.75"/>`;
+    // tendrils
+    for (let i=0;i<5;i++){
+      const a = (i/5)*Math.PI*2 + rng.f();
+      const len = 70+rng.f()*80;
+      const ex = cx+Math.cos(a)*len, ey = cy+Math.sin(a)*len*0.9;
+      s += `<path d="M ${cx} ${cy} Q ${(cx+ex)/2+(rng.f()-0.5)*60} ${(cy+ey)/2+(rng.f()-0.5)*60} ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${c.base}" stroke-width="${5+rng.f()*6}" stroke-linecap="round" opacity="0.85"/>`;
+      s += `<circle cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="${7+rng.f()*7}" fill="${c.light}" opacity="0.9"/>`;
+    }
+    // fuzz
+    const core = blobPath(cx, cy, 92, 10, 0.18, rng);
+    s += `<path d="${core}" fill="${c.base}" stroke="${c.ink}" stroke-width="6"/>`;
+    for (let i=0;i<40;i++){
+      const a = rng.f()*Math.PI*2, rr = 70+rng.f()*32;
+      s += `<circle cx="${(cx+Math.cos(a)*rr).toFixed(1)}" cy="${(cy+Math.sin(a)*rr).toFixed(1)}" r="${(3+rng.f()*6).toFixed(1)}" fill="${c.light}" opacity="${0.4+rng.f()*0.5}"/>`;
+    }
+    s += `<ellipse cx="${cx}" cy="${cy+16}" rx="62" ry="48" fill="${c.pale}" opacity="0.45"/>`;
+    // eyes
+    s += eye(cx-26, cy-14, 17, 1, [(rng.f()-0.5)*2,(rng.f()-0.5)], "calm");
+    s += eye(cx+26, cy-14, 17, 1, [(rng.f()-0.5)*2,(rng.f()-0.5)], "calm");
+    s += mouth(cx, cy+26, 26, rng.pick(["grin","o","flat","zig"]), c.ink);
+    // sparkles
+    for (let i=0;i<12;i++){
+      const x = 40+rng.f()*432, y = 40+rng.f()*432, r = 3+rng.f()*7;
+      s += `<path d="M ${x} ${y-r} L ${x+r*0.3} ${y-r*0.3} L ${x+r} ${y} L ${x+r*0.3} ${y+r*0.3} L ${x} ${y+r} L ${x-r*0.3} ${y+r*0.3} L ${x-r} ${y} L ${x-r*0.3} ${y-r*0.3} Z" fill="#ffffff" opacity="${0.35+rng.f()*0.5}"/>`;
+    }
+    return s;
+  },
+
+  crystal(rng, c){
+    let s = bg(rng,c);
+    const g = n();
+    s += `<defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${c.pale}"/><stop offset="100%" stop-color="${c.dark}"/></linearGradient></defs>`;
+    s += ground(rng,c,420);
+    const shards = 3+Math.floor(rng.f()*4);
+    for (let i=0;i<shards;i++){
+      const w = 60+rng.f()*90, h = 150+rng.f()*180;
+      const cx = 256 + (i-(shards-1)/2)*(w*0.55) + (rng.f()-0.5)*18;
+      const base = 430, top = base-h;
+      const lean = (rng.f()-0.5)*40;
+      const d = `M ${cx-w/2} ${base} L ${cx+lean-w*0.16} ${top} L ${cx+lean+w*0.16} ${top} L ${cx+w/2} ${base} Z`;
+      s += `<path d="${d}" fill="url(#${g})" stroke="${c.ink}" stroke-width="6" stroke-linejoin="round"/>`;
+      s += `<path d="M ${cx+lean} ${top} L ${cx+lean+w*0.16} ${top} L ${cx+w/2} ${base} L ${cx} ${base} Z" fill="${c.base}" opacity="0.55"/>`;
+      s += `<path d="M ${cx+lean-w*0.16} ${top} L ${cx+lean} ${top} L ${cx} ${base} L ${cx-w/2} ${base} Z" fill="#ffffff" opacity="0.16"/>`;
+    }
+    // sparkles
+    for (let i=0;i<10;i++){
+      const x = 60+rng.f()*392, y = 60+rng.f()*280, r = 3+rng.f()*6;
+      s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="#fff" opacity="${0.4+rng.f()*0.5}"/>`;
+    }
+    return s;
+  },
+
+  celestial(rng, c){
+    let s = bg(rng,c);
+    const g = n();
+    s += `<defs><radialGradient id="${g}" cx="34%" cy="30%" r="78%"><stop offset="0%" stop-color="${c.pale}"/><stop offset="52%" stop-color="${c.base}"/><stop offset="100%" stop-color="${c.deep}"/></radialGradient></defs>`;
+    // stars
+    for (let i=0;i<40;i++) s += `<circle cx="${(rng.f()*512).toFixed(0)}" cy="${(rng.f()*512).toFixed(0)}" r="${(0.7+rng.f()*1.7).toFixed(1)}" fill="#fff" opacity="${0.3+rng.f()*0.6}"/>`;
+    const cx = 256, cy = 252, R0 = 118+rng.f()*30;
+    // ring
+    if (rng.chance(.6)){
+      s += `<ellipse cx="${cx}" cy="${cy}" rx="${R0*1.85}" ry="${R0*0.36}" fill="none" stroke="${c.light}" stroke-width="${14+rng.f()*12}" opacity="0.55" transform="rotate(${(rng.f()-0.5)*30} ${cx} ${cy})"/>`;
+      s += `<ellipse cx="${cx}" cy="${cy}" rx="${R0*1.85}" ry="${R0*0.36}" fill="none" stroke="${c.pale}" stroke-width="4" opacity="0.5" transform="rotate(${(rng.f()-0.5)*30} ${cx} ${cy})"/>`;
+    }
+    s += `<circle cx="${cx}" cy="${cy}" r="${R0}" fill="url(#${g})" stroke="${c.ink}" stroke-width="6"/>`;
+    // craters
+    for (let i=0;i<5+Math.floor(rng.f()*6);i++){
+      const a = rng.f()*Math.PI*2, rr = rng.f()*R0*0.78;
+      const x = cx+Math.cos(a)*rr, y = cy+Math.sin(a)*rr;
+      s += `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${(8+rng.f()*26).toFixed(1)}" ry="${(6+rng.f()*20).toFixed(1)}" fill="${c.deep}" opacity="0.35"/>`;
+    }
+    // storm swirl
+    if (rng.chance(.5)){
+      s += `<path d="M ${cx-30} ${cy+20} q 40 -34 70 -4 q -30 30 -70 4 Z" fill="${c.pale}" opacity="0.5"/>`;
+    }
+    // moon
+    if (rng.chance(.55)){
+      const a = rng.f()*Math.PI*2, d = R0*1.5+40;
+      s += `<circle cx="${(cx+Math.cos(a)*d).toFixed(1)}" cy="${(cy+Math.sin(a)*d).toFixed(1)}" r="${16+rng.f()*20}" fill="${c.pale}" opacity="0.9"/>`;
+    }
+    return s;
+  },
+
+  storm(rng, c){
+    let s = bg(rng,c);
+    // swirl
+    const g = n();
+    s += `<defs><radialGradient id="${g}" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="${c.pale}" stop-opacity="0.8"/><stop offset="100%" stop-color="${c.base}" stop-opacity="0"/></radialGradient></defs>`;
+    s += `<circle cx="256" cy="250" r="200" fill="url(#${g})" opacity="0.6"/>`;
+    // spiral arms
+    for (let arm=0; arm<3; arm++){
+      let d = "";
+      for (let t=0;t<=1;t+=0.05){
+        const ang = arm*(Math.PI*2/3) + t*Math.PI*3.4;
+        const rr = 26 + t*175;
+        const x = 256+Math.cos(ang)*rr, y = 250+Math.sin(ang)*rr*0.8;
+        d += (t===0?"M":"L") + ` ${x.toFixed(1)} ${y.toFixed(1)}`;
+      }
+      s += `<path d="${d}" fill="none" stroke="${c.base}" stroke-width="${16-arm*4}" stroke-linecap="round" opacity="0.75"/>`;
+    }
+    // core
+    s += `<circle cx="256" cy="250" r="${34+rng.f()*26}" fill="${c.pale}" stroke="${c.ink}" stroke-width="5"/>`;
+    // rain
+    for (let i=0;i<26;i++){
+      const x = rng.f()*512, y = 20+rng.f()*380, l = 14+rng.f()*24;
+      s += `<path d="M ${x} ${y} l -7 ${l}" stroke="${c.light}" stroke-width="3.5" stroke-linecap="round" opacity="0.6"/>`;
+    }
+    // lightning
+    if (rng.chance(.55)){
+      let x = 150+rng.f()*220, y = 60;
+      let d = `M ${x} ${y}`;
+      for (let i=0;i<5;i++){ x += (rng.f()-0.5)*54; y += 34+rng.f()*22; d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`; }
+      s += `<path d="${d}" fill="none" stroke="#fff8c4" stroke-width="8" stroke-linejoin="round" stroke-linecap="round" opacity="0.95"/>`;
+    }
+    // eyes in the core
+    s += eye(238, 244, 12, 1, [(rng.f()-0.5)*2,0], "wide");
+    s += eye(274, 244, 12, 1, [(rng.f()-0.5)*2,0], "wide");
+    return s;
+  },
+
+  glyph(rng, c){
+    let s = bg(rng,c);
+    const cx = 256, cy = 256;
+    // rings
+    s += `<circle cx="${cx}" cy="${cy}" r="${168}" fill="none" stroke="${c.base}" stroke-width="3" opacity="0.35"/>`;
+    s += `<circle cx="${cx}" cy="${cy}" r="${126}" fill="none" stroke="${c.base}" stroke-width="2" opacity="0.3"/>`;
+    // polygon
+    const sides = 3+Math.floor(rng.f()*7);
+    const rot = rng.f()*Math.PI*2;
+    let pts = [];
+    for (let i=0;i<sides;i++){
+      const a = rot + (i/sides)*Math.PI*2;
+      pts.push([cx+Math.cos(a)*104, cy+Math.sin(a)*104]);
+    }
+    s += `<polygon points="${pts.map(p=>p.map(v=>v.toFixed(1)).join(",")).join(" ")}" fill="${c.base}" opacity="0.22" stroke="${c.light}" stroke-width="6" stroke-linejoin="round"/>`;
+    // inner polygon
+    let pts2 = [];
+    for (let i=0;i<sides;i++){
+      const a = rot + Math.PI/sides + (i/sides)*Math.PI*2;
+      pts2.push([cx+Math.cos(a)*62, cy+Math.sin(a)*62]);
+    }
+    s += `<polygon points="${pts2.map(p=>p.map(v=>v.toFixed(1)).join(",")).join(" ")}" fill="${c.deep}" opacity="0.5" stroke="${c.pale}" stroke-width="4" stroke-linejoin="round"/>`;
+    // rune strokes — kept in the outer band, clear of the face
+    const strokes = 2+Math.floor(rng.f()*4);
+    for (let i=0;i<strokes;i++){
+      const a = rng.f()*Math.PI*2, len = 26+rng.f()*34;
+      const rr = 138+rng.f()*16;
+      const x = cx+Math.cos(a)*rr, y = cy+Math.sin(a)*rr;
+      s += `<path d="M ${(x-len/2).toFixed(1)} ${y.toFixed(1)} L ${(x+len/2).toFixed(1)} ${(y+(rng.f()-0.5)*24).toFixed(1)}" stroke="${c.pale}" stroke-width="6" stroke-linecap="round" opacity="0.85"/>`;
+    }
+    // orbiting dots
+    for (let i=0;i<5;i++){
+      const a = rng.f()*Math.PI*2, d = 168;
+      s += `<circle cx="${(cx+Math.cos(a)*d).toFixed(1)}" cy="${(cy+Math.sin(a)*d).toFixed(1)}" r="${6+rng.f()*8}" fill="${c.light}"/>`;
+    }
+    // eyes
+    s += eye(cx-24, cy-8, 15, 1, [(rng.f()-0.5)*2,0], "calm");
+    s += eye(cx+24, cy-8, 15, 1, [(rng.f()-0.5)*2,0], "calm");
+    s += mouth(cx, cy+30, 24, rng.pick(["flat","zig","o","smile"]), c.ink);
+    return s;
+  }
+};
+
+/* ─────────────────────────── seeds ─────────────────────────── */
+const SEED_WORDS = ["plum","quartz","ember","nimbus","vellum","sprocket","moth","cobalt","ember","thistle",
+  "basalt","goblin","tundra","wick","pumice","jackdaw","fennel","gantry","orchid","sable","tallow","vell"];
+function randomSeed(){
+  const r = R(Math.random);
+  return r.pick(SEED_WORDS) + "-" + r.pick(SEED_WORDS) + "-" + r.int(100,999);
+}
+
+/* ─────────────────────────── state & UI ─────────────────────────── */
+const $ = id => document.getElementById(id);
+const els = {
+  svg:$("svg"), badge:$("badge"), name:$("tname"), epithet:$("tepithet"),
+  attrs:$("attrs"), lore:$("lore"), portrait:$("portrait"), speckles:$("speckles"),
+  cat:$("cat"), seed:$("seed"), hist:$("hist"), toast:$("toast"),
+  enc:$("enc"), encA:$("encA"), encB:$("encB"), encText:$("encText")
+};
+let current = null;
+let history = [];
+let soundOn = true;
+
+const LABELS = {
+  size:"Size", color:"Colour", texture:"Texture", habitat:"Habitat", diet:"Diet",
+  temperament:"Temperament", movement:"Movement", sound:"Sound", smell:"Smell",
+  weakness:"Weakness", talent:"Talent", rival:"Rival", lifespan:"Lifespan",
+  manner_of_death:"Manner of death", number:"Number extant", maker:"Maker", secret:"Secret",
+  material:"Material", purpose:"Purpose", weight:"Weight", flaw:"Flaw", age:"Age",
+  power_source:"Power", noise:"Noise", mood:"Mood", speed:"Speed", capacity:"Capacity",
+  flavor:"Flavour", temperature:"Temperature", ingredient:"Ingredient", occasion:"Occasion",
+  light:"Light", bloom:"Bloom", shape:"Shape", form:"Form", offering:"Offering",
+  hardness:"Hardness", formation:"Formation", rarity:"Rarity", atmosphere:"Atmosphere",
+  moons:"Moons", day_length:"Day length", weather:"Weather", population:"Population",
+  feature:"Notable feature", duration:"Duration", season:"Season", effect:"Effect",
+  temper:"Temper", instrument:"Instrument", volume:"Volume", best_heard:"Best heard",
+  trigger:"Trigger", host:"Host", symptom:"Symptom", spread:"Spread", cure:"Cure",
+  tenets:"Tenets", symbol:"Symbol", sacrament:"Sacrament", ban:"Forbidden", founder:"Founder",
+  afterlife:"Afterlife", players:"Players", equipment:"Equipment", venue:"Venue", rule:"Rule",
+  goal:"Goal", danger:"Danger", product:"Product", model:"Business model", funding:"Funding",
+  pitch:"Pitch", mission:"Mission", scope:"Scope", origin:"Origin", precedent:"Precedent",
+  penalty:"Penalty", enforcement:"Enforcement", loophole:"Loophole", exemption:"Exemption"
+};
+
+function render(thing){
+  current = thing;
+  els.svg.innerHTML = thing.art;
+  els.badge.textContent = thing.categoryLabel;
+  els.name.textContent = thing.name;
+  els.epithet.textContent = thing.epithet ? thing.epithet : "";
+  els.attrs.innerHTML = Object.entries(thing.attrs).map(([k,v]) =>
+    `<dt>${LABELS[k] || k}</dt><dd>${escapeHtml(v)}</dd>`).join("");
+  els.lore.innerHTML = thing.lore.map(p=>`<p>${escapeHtml(p)}</p>`).join("");
+  els.enc.hidden = true;
+  els.seed.value = thing.seed;
+  writeHash();
+  pushHistory(thing);
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+function writeHash(){
+  const p = new URLSearchParams();
+  p.set("s", current.seed); p.set("c", current.category);
+  history_replaceState(null,"", "#"+p.toString());
+}
+function history_replaceState(a,b,u){ try{ window.history.replaceState(a,b,u); }catch(e){} }
+
+function resolveCat(v){
+  if (v && CATS[v]) return v;
+  return CAT_KEYS[Math.floor(Math.random()*CAT_KEYS.length)];
+}
+function make(catOverride){
+  const cat = catOverride || resolveCat(els.cat.value);
+  const seed = randomSeed();
+  const thing = buildThing(seed, cat);
+  render(thing);
+  animatePortrait();
+  blip(520 + Math.random()*140);
+  return thing;
+}
+function rerollSeed(seed, cat){
+  const thing = buildThing(seed, cat);
+  render(thing);
+  animatePortrait();
+  blip(480 + Math.random()*160);
+  return thing;
+}
+function animatePortrait(){
+  els.portrait.classList.remove("pop");
+  void els.portrait.offsetWidth;
+  els.portrait.classList.add("pop");
+  // speckles
+  els.speckles.innerHTML = "";
+  for (let i=0;i<16;i++){
+    const s = document.createElement("i");
+    const ang = Math.random()*Math.PI*2, dist = 60+Math.random()*150;
+    s.style.left = (50 + Math.cos(ang)*8) + "%";
+    s.style.top = (50 + Math.sin(ang)*8) + "%";
+    s.style.setProperty("--dx", Math.cos(ang)*dist + "px");
+    s.style.setProperty("--dy", Math.sin(ang)*dist + "px");
+    s.style.animationDelay = (Math.random()*0.12) + "s";
+    s.style.background = ["var(--a)","var(--b)","var(--c)","var(--d)"][i%4];
+    els.speckles.appendChild(s);
+  }
+}
+
+/* ─────────────────────────── history ─────────────────────────── */
+function pushHistory(thing){
+  history = history.filter(h => !(h.seed === thing.seed && h.category === thing.category));
+  history.unshift({seed:thing.seed, category:thing.category, name:thing.name, label:thing.categoryLabel});
+  history = history.slice(0,10);
+  try{ localStorage.setItem("thingmaker.history", JSON.stringify(history)); }catch(e){}
+  renderHistory();
+}
+function renderHistory(){
+  els.hist.innerHTML = "";
+  for (const h of history){
+    const b = document.createElement("button");
+    b.innerHTML = `<span class="hn"></span><span class="hc"></span>`;
+    b.querySelector(".hn").textContent = h.name;
+    b.querySelector(".hc").textContent = h.label;
+    b.onclick = () => rerollSeed(h.seed, h.category);
+    els.hist.appendChild(b);
+  }
+}
+function loadHistory(){
+  try{
+    const raw = JSON.parse(localStorage.getItem("thingmaker.history") || "[]");
+    if (Array.isArray(raw)) history = raw.slice(0,10);
+  }catch(e){ history = []; }
+  renderHistory();
+}
+
+/* ─────────────────────────── rename ─────────────────────────── */
+function rename(){
+  if (!current) return;
+  const nr = derive(current.seed + "|" + current.category, "name2");
+  const nm = makeName(R(nr));
+  current.name = nm.name;
+  current.epithet = nm.epithet;
+  const lr = derive(current.seed + "|" + current.category, "lore2");
+  current.lore = makeLore(current.category, current.attrs, current.name, lr);
+  render(current);
+  blip(700);
+  toast("Renamed: " + current.name);
+}
+
+/* ─────────────────────────── encounter ─────────────────────────── */
+function encounter(){
+  if (!current) return;
+  const r = R(Math.random);
+  const otherCat = r.pick(CAT_KEYS.filter(c => c !== current.category));
+  const other = buildThing(randomSeed(), otherCat);
+  const place = r.pick(POOLS.habitat);
+  const act = r.pick(ENCOUNTER_ACTS);
+  const react = r.pick(ENCOUNTER_REACTIONS);
+  const text = `<em>${escapeHtml(current.name)}</em> and <em>${escapeHtml(other.name)}</em> met in ${escapeHtml(place)}. ` +
+               `${escapeHtml(current.name)} ${escapeHtml(act)}; ${escapeHtml(other.name)} ${escapeHtml(react)}. ` +
+               `Neither has spoken of it since.`;
+  els.encA.innerHTML = current.art;
+  els.encB.innerHTML = other.art;
+  els.encText.innerHTML = text;
+  els.enc.hidden = false;
+  blip(330);
+}
+
+/* ─────────────────────────── exports ─────────────────────────── */
+function svgString(){
+  const clone = els.svg.cloneNode(true);
+  clone.setAttribute("xmlns","http://www.w3.org/2000/svg");
+  clone.setAttribute("width","512");
+  clone.setAttribute("height","512");
+  return '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(clone);
+}
+function download(name, blob){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = name; a.rel = "noopener";
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  // Chromium needs the anchor to stay in the DOM long enough to read the blob,
+  // otherwise the download stalls as a .tmp file.
+  setTimeout(()=>{ if (a.parentNode) a.parentNode.removeChild(a); URL.revokeObjectURL(url); }, 8000);
+}
+function downloadText(name, text, mime){
+  // Small text payloads go out as data URLs: Chromium finalises those
+  // immediately, where blob URLs can linger in the download queue.
+  const a = document.createElement("a");
+  a.href = "data:" + mime + ";charset=utf-8," + encodeURIComponent(text);
+  a.download = name; a.rel = "noopener";
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{ if (a.parentNode) a.parentNode.removeChild(a); }, 2000);
+}
+function downloadSVG(){
+  if (!current) return;
+  const src = svgString();
+  downloadText(slug(current.name) + ".svg", src, "image/svg+xml");
+  // Some browsers hold .svg downloads behind a "keep this file" prompt, so the
+  // markup goes to the clipboard too — the source is never trapped.
+  copyText(src, "SVG saved + copied");
+}
+function downloadJSON(){
+  if (!current) return;
+  const payload = {
+    name: current.name, epithet: current.epithet, category: current.category,
+    categoryLabel: current.categoryLabel, seed: current.seed,
+    attributes: current.attrs, lore: current.lore
+  };
+  downloadText(slug(current.name) + ".json", JSON.stringify(payload,null,2), "application/json");
+  toast("JSON saved");
+}
+function slug(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "thingy"; }
+function downloadPNG(){
+  if (!current) return;
+  const W = 1200, H = 1680, S = 1200;
+  const svgBlob = new Blob([svgString()], {type:"image/svg+xml;charset=utf-8"});
+  const url = URL.createObjectURL(svgBlob);
+  const img = new Image();
+  img.onload = () => {
+    const cv = document.createElement("canvas");
+    cv.width = W; cv.height = H;
+    const ctx = cv.getContext("2d");
+    const bgGrad = ctx.createLinearGradient(0,0,W,H);
+    bgGrad.addColorStop(0,"#10141d"); bgGrad.addColorStop(1,"#080a0f");
+    ctx.fillStyle = bgGrad; ctx.fillRect(0,0,W,H);
+    ctx.drawImage(img, 0, 0, S, S);
+    ctx.fillStyle = "#ffd166";
+    ctx.font = "700 26px ui-monospace, monospace";
+    ctx.fillText(current.categoryLabel.toUpperCase(), 70, 1290);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "800 62px ui-sans-serif, system-ui, sans-serif";
+    ctx.fillText(current.name, 70, 1372);
+    if (current.epithet){
+      ctx.fillStyle = "#9aa6c0";
+      ctx.font = "italic 34px ui-sans-serif, system-ui, sans-serif";
+      ctx.fillText(current.epithet, 70, 1426);
+    }
+    ctx.fillStyle = "#c3cbdc";
+    ctx.font = "400 27px ui-sans-serif, system-ui, sans-serif";
+    const lore = current.lore.slice(0,2).join(" ");
+    wrap(ctx, lore, 70, 1500, W-140, 38, 3);
+    ctx.fillStyle = "#5f6b85";
+    ctx.font = "400 22px ui-monospace, monospace";
+    ctx.fillText("seed: " + current.seed + "  ·  made by THINGMAKER", 70, H-40);
+    cv.toBlob(b => { download(slug(current.name) + ".png", b); toast("Card PNG saved"); }, "image/png");
+    URL.revokeObjectURL(url);
+  };
+  img.onerror = () => { toast("PNG export failed"); URL.revokeObjectURL(url); };
+  img.src = url;
+}
+function wrap(ctx, text, x, y, maxW, lh, maxLines){
+  const words = String(text).split(/\s+/); let line = "", lines = [], ln = 0;
+  for (const w of words){
+    const test = line ? line + " " + w : w;
+    if (ctx.measureText(test).width > maxW && line){ lines.push(line); line = w; ln++; if (ln>=maxLines) break; }
+    else line = test;
+  }
+  if (line && ln < maxLines) lines.push(line);
+  lines.forEach((l,i)=> ctx.fillText(l, x, y + i*lh));
+}
+function copyLore(){
+  if (!current) return;
+  const txt = current.name + (current.epithet ? ", " + current.epithet : "") + "\n" +
+              current.categoryLabel + "\n\n" + current.lore.join("\n\n") +
+              "\n\nseed: " + current.seed;
+  copyText(txt, "Lore copied");
+}
+function copyText(txt, msg){
+  const done = () => toast(msg);
+  if (navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt,done));
+  } else fallbackCopy(txt, done);
+}
+function fallbackCopy(txt, done){
+  const ta = document.createElement("textarea");
+  ta.value = txt; ta.style.position="fixed"; ta.style.opacity="0";
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); done(); }catch(e){ toast("Copy failed"); }
+  document.body.removeChild(ta);
+}
+function toast(msg){
+  els.toast.textContent = msg;
+  els.toast.classList.add("on");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>els.toast.classList.remove("on"), 1900);
+}
+
+/* ─────────────────────────── sound ─────────────────────────── */
+let actx = null;
+function blip(freq){
+  if (!soundOn) return;
+  try{
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = "triangle"; o.frequency.setValueAtTime(freq, actx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(freq*0.55, actx.currentTime+0.16);
+    g.gain.setValueAtTime(0.0001, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.12, actx.currentTime+0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime+0.22);
+    o.connect(g); g.connect(actx.destination);
+    o.start(); o.stop(actx.currentTime+0.25);
+  }catch(e){}
+}
+
+/* ─────────────────────────── wiring ─────────────────────────── */
+function init(){
+  // category select
+  els.cat.innerHTML = '<option value="">Any kind (surprise me)</option>' +
+    CAT_KEYS.map(k=>`<option value="${k}">${CATS[k].label}</option>`).join("");
+  els.cat.addEventListener("change", ()=> make(resolveCat(els.cat.value)));
+
+  $("make").addEventListener("click", ()=> make(false));
+  $("rename").addEventListener("click", rename);
+  $("encounter").addEventListener("click", encounter);
+  $("dice").addEventListener("click", ()=>{ els.seed.value = randomSeed(); rerollSeed(els.seed.value, resolveCat(els.cat.value)); });
+  $("png").addEventListener("click", downloadPNG);
+  $("svgBtn").addEventListener("click", downloadSVG);
+  $("json").addEventListener("click", downloadJSON);
+  $("copy").addEventListener("click", copyLore);
+
+  els.seed.addEventListener("keydown", ev => {
+    if (ev.key === "Enter"){
+      ev.preventDefault();
+      const s = els.seed.value.trim() || randomSeed();
+      const want = els.cat.value || (current ? current.category : resolveCat(""));
+      rerollSeed(s, resolveCat(want));
+    }
+  });
+
+  $("themeBtn").addEventListener("click", ()=>{
+    const root = document.documentElement;
+    const next = root.dataset.theme === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    try{ localStorage.setItem("thingmaker.theme", next); }catch(e){}
+  });
+  $("soundBtn").addEventListener("click", ()=>{
+    soundOn = !soundOn;
+    $("soundBtn").setAttribute("aria-pressed", String(soundOn));
+    if (soundOn) blip(660);
+  });
+
+  document.addEventListener("keydown", ev=>{
+    const tag = (ev.target.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "select" || tag === "textarea") return;
+    if (ev.code === "Space"){ ev.preventDefault(); make(false); }
+  });
+
+  // theme + sound restore
+  try{
+    const th = localStorage.getItem("thingmaker.theme");
+    if (th) document.documentElement.dataset.theme = th;
+    const so = localStorage.getItem("thingmaker.sound");
+    if (so === "off"){ soundOn = false; $("soundBtn").setAttribute("aria-pressed","false"); }
+  }catch(e){}
+
+  loadHistory();
+
+  // initial thing from URL or a fresh one
+  const params = new URLSearchParams(location.hash.replace(/^#/,""));
+  const s = params.get("s");
+  const c = params.get("c");
+  if (s){
+    const cat = CATS[c] ? c : "beast";
+    els.cat.value = cat;
+    const thing = buildThing(s, cat);
+    render(thing);
+    animatePortrait();
+  } else {
+    make(false);
+  }
+}
+init();
+</script>
+</body>
+</html>

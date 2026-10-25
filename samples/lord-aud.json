@@ -1,0 +1,32 @@
+{
+  "name": "Lord Aud",
+  "epithet": "",
+  "category": "beast",
+  "categoryLabel": "Creature",
+  "seed": "jackdaw-tallow-558",
+  "attributes": {
+    "size": "quaint",
+    "color": "ruby",
+    "texture": "silken",
+    "habitat": "the space between floors",
+    "diet": "unlisted debts",
+    "temperament": "wildly sincere",
+    "movement": "hops in place",
+    "sound": "a fridge at 3am",
+    "smell": "a library after closing",
+    "weakness": "iron",
+    "talent": "finding the one true thing in a room full of lies",
+    "rival": "its own reflection",
+    "lifespan": "one exceptionally good meal",
+    "manner_of_death": "a strongly worded letter",
+    "number": "fewer than you'd think",
+    "maker": "a machine that dreamed of this",
+    "secret": "is a rumour"
+  },
+  "lore": [
+    "Weakness: iron. Talent: finding the one true thing in a room full of lies.",
+    "It has been outlasted by its own reflection and will die of a strongly worded letter.",
+    "Lord Aud is quaint, ruby, and wildly sincere.",
+    "It hops in place through the space between floors, where it lives on unlisted debts."
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "Mngofraiuckoi",
+  "epithet": "",
+  "category": "appliance",
+  "categoryLabel": "Appliance",
+  "seed": "basalt-plum-389",
+  "attributes": {
+    "color": "tar-black",
+    "size": "enormous",
+    "material": "old receipts",
+    "power_source": "a battery of dubious provenance",
+    "purpose": "to make exactly one sound",
+    "noise": "a cheerful hum",
+    "mood": "apologetic",
+    "flaw": "it leaks when you need it",
+    "age": "older than the building",
+    "secret": "has never once been in the room it describes"
+  },
+  "lore": [
+    "Fault: it leaks when you need it. Age: older than the building.",
+    "It makes a cheerful hum, and it is apologetic about it.",
+    "It has never once been in the room it describes.",
+    "Its only job is to to make exactly one sound."
+  ]
+}
