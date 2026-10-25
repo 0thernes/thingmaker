@@ -2,6 +2,8 @@
 
 **A machine for making things that have never existed.**
 
+> **Live:** https://0thernes.github.io/thingmaker/
+
 Open `index.html` in any browser. That's the whole install — one HTML file,
 no build step, no dependencies, no network calls. It works offline from a USB
 stick.
