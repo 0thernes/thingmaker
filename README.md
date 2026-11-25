@@ -4,13 +4,12 @@
 
 > **Live:** https://0thernes.github.io/thingmaker/
 
-Open `index.html` in any browser. That's the whole install — one HTML file,
-no build step, no dependencies, no network calls. It works offline from a USB
-stick.
+Open `index.html` in any browser. That is the whole install — one HTML file, no build
+step, no dependencies, no network calls. It works offline from a USB stick.
 
-Press **space**. A creature, artifact, food, weather, planet, religion, law,
-sport, business or sound appears, with a portrait, a name, a set of
-improbable attributes, and a short piece of lore that takes it entirely
+Press **space**. A creature, artifact, food, weather, planet, religion, law, sport,
+business or sound appears with a portrait, a name, a set of improbable attributes,
+a field note, something it says, and a short piece of lore that takes it entirely
 seriously.
 
 ---
@@ -21,10 +20,13 @@ seriously.
 |---|---|
 | **18 kinds of thing** | Creature, Artifact, Appliance, Vehicle, Food, Plant, Fungus, Spirit, Mineral, Planet, Weather, Sound, Emotion, Disease, Religion, Sport, Business, Law |
 | **9 portrait engines** | Each category has its own procedural SVG illustrator — blob beasts, machines, plated food, flora, fuzzy spirits, crystal shards, planets, storm systems, geometric glyphs |
-| **~70 attribute pools** | Size, colour, texture, habitat, diet, temperament, smell, flaw, maker, secret, and dozens more, each with a hand-written set of values |
-| **Seeded** | The same seed and kind always produce the same thing, byte for byte. Seeds are human-readable (`vellum-pumice-594`) so you can write one down |
+| **8 silhouette families** | Every creature picks a body shape vocabulary — blob, tall, wide, pear, spiky, segmented, mushroom, teardrop — then gets shaded, lit and rim‑lit |
+| **The lore core** | Four sentences of lore, a field note in the category's own register, a first‑person quote, and a classification line (*Genus Vexella, family Volventidae* · *Specimen MN‑492/45.12*). Every category has its own voice |
+| **Seeded** | The same seed and kind always produce the same thing, down to the pixel. Seeds are human‑readable (`vellum-pumice-594`) so you can write one down |
 | **Shareable** | The URL updates with every thing. Copy the address bar and someone else opens exactly your thing |
-| **Shareable artefacts** | Export a 1200×1680 PNG card, the raw SVG, or JSON, or copy the lore to the clipboard |
+| **7 skins** | Void, Paper, Bubblegum, Toxic, Sunset, Abyss, Mono — plus a dark/light switch. A skin only changes colour; type, space and motion stay identical |
+| **3‑D stage** | The portrait sits in a perspective stage with a lit floor, a sheen layer and pointer tilt |
+| **Wireframe mode** | Press `W` to reveal the layout skeleton — every panel outlined, the grid exposed |
 
 ## Controls
 
@@ -34,72 +36,96 @@ seriously.
 | Make a thing of one kind | Pick a kind from **KIND OF THING** |
 | Re-roll a specific seed | Type in the **SEED** field, press **enter** |
 | A fresh random seed | The **⚄** button |
-| Rename the current thing | **Rename it** |
-| Two things meet | **Encounter** — generates a second thing and a vignette of the two of them |
-| Light / dark | **theme** (remembered) |
-| Sound | **sound** (remembered; a small synthesised blip on each make) |
+| Rename the current thing | **Rename it** (`R`) |
+| Two things meet | **Encounter** (`E`) — generates a partner and a vignette of the two of them |
+| Export | Card PNG (`P`), SVG (`V`), JSON (`J`), lore to clipboard (`C`) |
+| Skins, mode, wireframe, keys | `S`, `T`, `W`, `?` |
+| Walk the last ten things | `↑` / `↓` |
 
-The last ten things stay in **RECENTLY MADE** and can be revisited by clicking
-them. History is kept in `localStorage`, so it survives a reload.
+The last ten things stay in **RECENTLY MADE** and survive a reload.
 
 ## How the generation works
 
-Four independent random streams are derived from `seed + "|" + kind`, so
-changing one system never reshuffles the others:
+Four independent random streams are derived from `seed + "|" + kind`, so changing one
+system never reshuffles the others:
 
-1. **Attributes** — each attribute picks one value from its pool.
-2. **Name** — a syllable grammar (`ONSET + NUCLEI + CODA` over nine patterns)
-   assembled into a single word, a two-word name, a titled name, or a hyphenated
-   one, with an optional epithet (*"the Very Loud"*, *"of the Glass Sea"*).
-3. **Lore** — the category's templates are shuffled and filled from the
-   attributes, with an a/an pass so *"a enormous"* becomes *"an enormous"*.
-4. **Portrait** — the art engine draws into the SVG using its own stream, so a
-   thing's portrait is stable across reloads and identical in every export.
+1. **Attributes** — each attribute picks one value from its pool (~70 pools).
+2. **Name** — a syllable grammar (`ONSET + NUCLEI + CODA` over nine patterns) assembled
+   into a single word, a two‑word name, a titled name, or a hyphenated one, with an
+   optional epithet (*"the Very Loud"*, *"of the Glass Sea"*).
+3. **Lore** — the category's templates are shuffled and filled from the attributes, with
+   an a/an pass so *"a enormous"* becomes *"an enormous"*. Each thing also gets a
+   deterministic near‑relative, so the lore has somewhere to point.
+4. **Portrait** — the art engine draws into the SVG using its own stream, then a shared
+   shader pass adds film grain, a soft ground shadow and a vignette.
 
 Everything is deterministic: `xmur3` seeds a `mulberry32` PRNG, and there is no
-`Math.random` anywhere in the generator path except for deliberately unseeded
-things (a fresh seed, an encounter partner).
+`Math.random` in the generator path except for deliberately unseeded things (a fresh
+seed, an encounter partner).
 
 ## Exports
 
-- **Card PNG** — a 1200×1680 shareable card: portrait, category, name, epithet,
-  the first two sentences of lore, and the seed so the thing can be rebuilt.
-- **SVG** — the raw portrait markup. Some browsers put `.svg` downloads behind
-  a "keep this file" prompt, so the SVG button *also* copies the markup to the
-  clipboard — the source is never trapped.
-- **JSON** — name, epithet, category, seed, every attribute, every lore line.
-  Useful for feeding the generator's output somewhere else.
-- **Copy lore** — plain text, name and lore only.
+- **Card PNG** — a 1200×1680 shareable card: portrait, category, name, epithet, the first
+  two sentences of lore, the classification and the seed, so the thing can be rebuilt.
+- **SVG** — the raw portrait markup. Some browsers put `.svg` downloads behind a "keep this
+  file" prompt, so the SVG button *also* copies the markup to the clipboard — the source is
+  never trapped.
+- **JSON** — name, epithet, classification, seed, every attribute, every lore line, the
+  field note and the quote.
+- **Copy lore** — plain text.
 
-## Self-test
+## Checks
 
-The generator is exercised without a browser:
+Everything runs without a package manager, without dependencies and without network:
 
 ```bash
-node tools/selftest.mjs
+node tools/lint-html.mjs      # markup, ids, aria refs, offline-ness, inline JS compiles
+node tools/selftest.mjs       # the generator, across all 18 categories
+node tools/size-budget.mjs    # index.html <= 160 KB, samples/ <= 25 MB, no file > 10 MB
 ```
 
-It loads the inline `<script>` out of `index.html` into a VM with a stub
-DOM and then draws 40 things for each of the 18 categories, asserting that
-names are well-formed and bounded, that every lore slot is filled, that there
-are no `the the` doubles or `a`/`an` slips, that the art is real markup, and
-that the same seed reproduces the same thing exactly.
+The self‑test loads the inline `<script>` out of `index.html` into a `node:vm` sandbox
+with a stub DOM and draws 40 things per category, asserting that names are well‑formed
+and bounded, that every lore slot is filled, that there are no `the the` doubles or
+`a`/`an` slips, that every category yields a field note, a quote and a classification,
+and that the same seed reproduces the same thing exactly.
 
 ```
 categories      : 18 over 9 art engines
 deterministic   : true
 distinct names  : 719 over 720 draws
 distinct attrs  : 400 over 400 draws
+avg art length  : 4838 chars
+avg lore lines  : 4
+avg attributes  : 10.83
+
 All checks passed.
 ```
+
+## CI/CD
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| `ci.yml` | pull request, push to `main` | lint → self‑test → size budget, Node 20, least privilege, cancels superseded runs |
+| `pages.yml` | push to `main` | stages the site, uploads the Pages artifact, deploys with an `id-token` |
+| `release.yml` | tag `v*` | builds a release zip, checksums it, creates a GitHub Release with generated notes |
+| `dependabot.yml` | weekly | keeps the GitHub Actions pinned up to date |
+
+Pages deploys from the Actions workflow; `main` is the branch that ships.
 
 ## Files
 
 ```
 Thingmaker/
-├── index.html          the entire machine (markup, styles, logic, art)
-├── tools/selftest.mjs       headless generator test
-└── samples/                 a few things it has already made
+├── index.html              the entire machine (markup, styles, logic, art)
+├── tools/
+│   ├── selftest.mjs        headless generator test
+│   ├── lint-html.mjs       markup / a11y / offline / JS-syntax linter
+│   └── size-budget.mjs     size ceilings
+├── .github/
+│   ├── workflows/          ci · pages · release
+│   └── dependabot.yml
+└── samples/                a few things it has already made
 ```
 
 ## Notes

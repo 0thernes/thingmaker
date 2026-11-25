@@ -55,6 +55,7 @@ const el = makeEl();
 const documentStub = {
   getElementById: () => el,
   createElement: () => makeEl(),
+  documentElement: { dataset: { skin: "void", mode: "dark", wireframe: "off" }, style: {}, setAttribute() {}, classList: { add() {}, remove() {} } },
   body: { appendChild() {}, removeChild() {} },
   execCommand: () => true,
   addEventListener() {},
@@ -77,6 +78,9 @@ const sandbox = {
     setItem: (k, v) => store.set(k, String(v)),
   },
   navigator: {},
+  matchMedia: () => ({ matches: false, addListener() {}, removeListener() {}, addEventListener() {}, removeEventListener() {} }),
+  requestAnimationFrame: (fn) => 0,
+  cancelAnimationFrame: () => {},
   location: { hash: "" },
   history: { replaceState() {} },
   URLSearchParams,
@@ -134,6 +138,14 @@ const report = vm.runInContext(`(() => {
       if (/\\{[a-z_]+\\}/.test(loreText)) errs.push("unfilled lore slot");
       if (/(^|\\s)a (aeiou)/.test(loreText)) errs.push("a/an error");
       if (/\\s\\bthe the\\b/.test(loreText)) errs.push("doubled word");
+      // the lore core: every category must yield a field note, a voice and a classification
+      if (!t.note) errs.push("no field note (unresolvable note template?)");
+      else if (/\\{[a-z_]+\\}/.test(t.note)) errs.push("unfilled slot in field note: " + t.note);
+      if (!t.quote || !/^"/.test(t.quote)) errs.push("missing or malformed quote");
+      if (!t.classification || !t.classification.label) errs.push("missing classification");
+      else if (/\\{[a-z_]+\\}/.test(t.classification.value)) errs.push("unfilled slot in classification");
+      else if (t.classification.value.length < 3) errs.push("empty classification value");
+
       if (errs.length) failures.push({ seed, cat, errs });
       names.add(t.name);
       arts += t.art.length;

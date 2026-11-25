@@ -1,0 +1,31 @@
+{
+  "name": "Thiaty",
+  "epithet": "the Wrong One",
+  "category": "mineral",
+  "categoryLabel": "Mineral",
+  "classification": {
+    "label": "Specimen",
+    "value": "MN-492/45.12"
+  },
+  "seed": "sprocket-tundra-338",
+  "attributes": {
+    "color": "silver",
+    "texture": "knitted",
+    "size": "vast",
+    "hardness": "soft enough to pocket",
+    "formation": "in veins of shame",
+    "rarity": "commonly traded, never valued",
+    "smell": "a library after closing",
+    "flaw": "it leaks dignity",
+    "maker": "a printer with opinions",
+    "secret": "is a rumour"
+  },
+  "lore": [
+    "The flaw: it leaks dignity.",
+    "Rarity: commonly traded, never valued. Smell: a library after closing.",
+    "Two pieces of it will not touch.",
+    "The Thiaty is silver and soft enough to pocket."
+  ],
+  "fieldNote": "Texture: knitted.",
+  "quote": "\"I was pressure, given time.\""
+}

@@ -1,214 +1,560 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-skin="void" data-mode="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="THINGMAKER — a machine for making things that have never existed.">
 <title>THINGMAKER — a machine for making things that have never existed</title>
 <style>
-:root{
-  --bg:#0a0c11; --bg2:#10141d; --card:#141926; --card2:#1b2131; --card3:#232b3e;
-  --line:#28304a; --ink:#e9edf7; --dim:#93a0bd; --dimmer:#5f6b85;
-  --a:#ffd166; --b:#7ee0c0; --c:#ff8fa3; --d:#8ab4ff;
-  --shadow:0 24px 70px rgba(0,0,0,.5);
-  --r:18px;
-}
-html[data-theme="light"]{
-  --bg:#f2eee4; --bg2:#fffdf7; --card:#ffffff; --card2:#f8f4ea; --card3:#efe9db;
-  --line:#e2dccc; --ink:#191d26; --dim:#5f6b80; --dimmer:#98a0ae;
-  --a:#c98a00; --b:#128a6a; --c:#c43a5c; --d:#2f6fd0;
-  --shadow:0 18px 50px rgba(40,32,15,.13);
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0; color:var(--ink);
-  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  background:
-    radial-gradient(1200px 700px at 12% -10%, color-mix(in srgb, var(--a) 13%, transparent), transparent 60%),
-    radial-gradient(900px 600px at 105% 0%, color-mix(in srgb, var(--b) 12%, transparent), transparent 55%),
-    var(--bg);
-  -webkit-font-smoothing:antialiased;
-}
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+/* ═══════════════════════════════════════════════════════════════════════
+   THINGMAKER — design tokens
+   Colour is the only thing a skin changes. Type, space, shape and motion
+   stay constant so every skin reads as the same machine.
+   ═══════════════════════════════════════════════════════════════════════ */
+@property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 
-/* ---------- header ---------- */
-header{
-  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
-  padding:18px clamp(14px,3vw,34px) 12px;
+:root{
+  /* ── type ─────────────────────────────────────────────────────────── */
+  --font-display: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --t-hero: clamp(2rem, 1.3rem + 3.2vw, 3.65rem);
+  --t-h2:   clamp(1.2rem, 1.06rem + .55vw, 1.55rem);
+  --t-h3:   clamp(1rem, .97rem + .18vw, 1.1rem);
+  --t-body: clamp(.955rem, .93rem + .14vw, 1.045rem);
+  --t-small:.86rem;
+  --t-label:.6875rem;
+  --t-mono:.78rem;
+
+  --lh-tight:1.06; --lh-snug:1.28; --lh-body:1.62;
+  --ls-display:-.018em; --ls-label:.15em;
+
+  /* ── space ────────────────────────────────────────────────────────── */
+  --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem;
+  --s-5:1.5rem; --s-6:2rem; --s-7:3rem;
+  --gutter: clamp(.9rem, .45rem + 1.6vw, 1.6rem);
+  --pad: clamp(1rem, .7rem + .9vw, 1.5rem);
+
+  /* ── shape ────────────────────────────────────────────────────────── */
+  --r-xs:6px; --r-sm:10px; --r-md:16px; --r-lg:22px; --r-xl:30px; --r-pill:999px;
+  --sh-1: 0 1px 2px rgb(0 0 0 / .28);
+  --sh-2: 0 14px 36px -18px rgb(0 0 0 / .6);
+  --sh-3: 0 34px 90px -34px rgb(0 0 0 / .78);
+  --ease: cubic-bezier(.22,.68,.36,1);
+  --ease-back: cubic-bezier(.24,1.5,.44,1);
+
+  /* ── colour roles (skin: void) ────────────────────────────────────── */
+  --bg:#07080c; --bg-2:#0b0d13;
+  --surface:#111420; --surface-2:#161a27; --surface-3:#1d2231;
+  --line:#252b3a; --line-strong:#394258;
+  --ink:#eef1f8; --ink-2:#a5b0c6; --ink-3:#69738a;
+  --accent:#ffc75a; --accent-2:#63e0c0; --accent-3:#ff8fa8; --accent-4:#8fb4ff;
+  --accent-ink:#15171d;
+  --glass: rgb(255 255 255 / .045);
+  --glass-line: rgb(255 255 255 / .10);
+  --scrim: rgb(4 5 9 / .74);
+}
+
+/* ── SKINS ───────────────────────────────────────────────────────────── */
+html[data-skin="void"]{
+  color-scheme: dark;
+  --bg:#07080c; --bg-2:#0b0d13;
+  --surface:#111420; --surface-2:#161a27; --surface-3:#1d2231;
+  --line:#252b3a; --line-strong:#394258;
+  --ink:#eef1f8; --ink-2:#a5b0c6; --ink-3:#69738a;
+  --accent:#ffc75a; --accent-2:#63e0c0; --accent-3:#ff8fa8; --accent-4:#8fb4ff;
+  --accent-ink:#15171d;
+}
+html[data-skin="paper"]{
+  color-scheme: light;
+  --bg:#f1ece1; --bg-2:#faf6ec;
+  --surface:#fffdf7; --surface-2:#f7f2e6; --surface-3:#efe8d8;
+  --line:#e0d8c6; --line-strong:#c9bfa8;
+  --ink:#191b21; --ink-2:#5c6272; --ink-3:#8a8f9c;
+  --accent:#b45b12; --accent-2:#0f7f63; --accent-3:#b3324f; --accent-4:#2a5fb8;
+  --accent-ink:#fffaf2;
+  --glass: rgb(0 0 0 / .03); --glass-line: rgb(0 0 0 / .09);
+  --scrim: rgb(30 26 18 / .5);
+  --sh-2: 0 14px 36px -20px rgb(60 45 20 / .3);
+  --sh-3: 0 34px 90px -38px rgb(60 45 20 / .38);
+}
+html[data-skin="bubblegum"]{
+  color-scheme: dark;
+  --bg:#0c0616; --bg-2:#120a20;
+  --surface:#1a0f2b; --surface-2:#21143a; --surface-3:#2b1b4b;
+  --line:#372357; --line-strong:#4d3373;
+  --ink:#f6efff; --ink-2:#c2a9e8; --ink-3:#8d77b3;
+  --accent:#ff7ac6; --accent-2:#8f7bff; --accent-3:#ffd36e; --accent-4:#5ce1e6;
+  --accent-ink:#200d29;
+}
+html[data-skin="toxic"]{
+  color-scheme: dark;
+  --bg:#05070a; --bg-2:#080c10;
+  --surface:#0c1216; --surface-2:#111a1f; --surface-3:#17252b;
+  --line:#1e3239; --line-strong:#2e4d57;
+  --ink:#e6fff6; --ink-2:#93b8ad; --ink-3:#5e7d75;
+  --accent:#a8ff3e; --accent-2:#2ff0c8; --accent-3:#ffe14d; --accent-4:#4dd2ff;
+  --accent-ink:#0b1008;
+}
+html[data-skin="sunset"]{
+  color-scheme: dark;
+  --bg:#0d0709; --bg-2:#150a0e;
+  --surface:#1c0f14; --surface-2:#26151c; --surface-3:#331d26;
+  --line:#42262f; --line-strong:#5e3944;
+  --ink:#ffeee6; --ink-2:#d5a894; --ink-3:#a1796a;
+  --accent:#ff8a3d; --accent-2:#ff4d7e; --accent-3:#ffd166; --accent-4:#7f9cff;
+  --accent-ink:#22100a;
+}
+html[data-skin="abyss"]{
+  color-scheme: dark;
+  --bg:#040a12; --bg-2:#060f1a;
+  --surface:#0a1622; --surface-2:#0e1e2e; --surface-3:#13283b;
+  --line:#18344c; --line-strong:#25516f;
+  --ink:#e6f4ff; --ink-2:#93b8d4; --ink-3:#5c829e;
+  --accent:#3fd0ff; --accent-2:#5cf0d5; --accent-3:#9db8ff; --accent-4:#ffd166;
+  --accent-ink:#04121b;
+}
+html[data-skin="mono"]{
+  color-scheme: dark;
+  --bg:#0a0a0a; --bg-2:#101010;
+  --surface:#161616; --surface-2:#1c1c1c; --surface-3:#242424;
+  --line:#2e2e2e; --line-strong:#4a4a4a;
+  --ink:#f4f4f4; --ink-2:#a8a8a8; --ink-3:#6f6f6f;
+  --accent:#f0f0f0; --accent-2:#c9c9c9; --accent-3:#8f8f8f; --accent-4:#e0e0e0;
+  --accent-ink:#0a0a0a;
+}
+html[data-mode="light"][data-skin="void"]{
+  color-scheme: light;
+  --bg:#eef0f5; --bg-2:#f7f8fb;
+  --surface:#ffffff; --surface-2:#f3f5fa; --surface-3:#e8ebf3;
+  --line:#dde1ec; --line-strong:#c2c9da;
+  --ink:#12141a; --ink-2:#535b70; --ink-3:#838b9e;
+  --accent:#a86a00; --accent-2:#0d7a62; --accent-3:#c23a5c; --accent-4:#2a5fb8;
+  --accent-ink:#fffdf6;
+  --glass: rgb(0 0 0 / .03); --glass-line: rgb(0 0 0 / .09);
+  --scrim: rgb(20 24 36 / .45);
+  --sh-2: 0 14px 36px -20px rgb(25 35 60 / .28);
+  --sh-3: 0 34px 90px -38px rgb(25 35 60 / .34);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   base
+   ═══════════════════════════════════════════════════════════════════════ */
+*{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0; color:var(--ink); background:var(--bg);
+  font-family:var(--font-sans); font-size:var(--t-body); line-height:var(--lh-body);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+h1,h2,h3,p,dl,dd,dt,figure,blockquote{ margin:0 }
+button,input,select{ font:inherit; color:inherit }
+::selection{ background:color-mix(in srgb, var(--accent) 40%, transparent); color:var(--ink) }
+
+.mesh{
+  position:fixed; inset:-30%; z-index:0; pointer-events:none; opacity:.55;
+  background:conic-gradient(from var(--spin) at 28% 22%,
+    color-mix(in srgb, var(--accent) 16%, transparent), transparent 32%,
+    color-mix(in srgb, var(--accent-2) 13%, transparent) 55%, transparent 72%,
+    color-mix(in srgb, var(--accent-3) 12%, transparent) 88%, transparent);
+  animation:spin 140s linear infinite; filter:blur(38px);
+}
+@keyframes spin{ to{ --spin:360deg } }
+
+.skip{
+  position:fixed; left:var(--s-4); top:var(--s-4); z-index:90; transform:translateY(-180%);
+  background:var(--accent); color:var(--accent-ink); padding:.7rem 1.1rem; border-radius:var(--r-pill);
+  text-decoration:none; font-weight:700; font-size:var(--t-small); transition:transform .2s var(--ease);
+}
+.skip:focus-visible{ transform:none }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   top bar
+   ═══════════════════════════════════════════════════════════════════════ */
+.topbar{
+  position:sticky; top:0; z-index:40;
+  display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap;
+  padding:var(--s-3) var(--gutter);
+  background:color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter:blur(18px) saturate(140%);
   border-bottom:1px solid var(--line);
 }
-.brand{display:flex;align-items:baseline;gap:12px;min-width:0}
+.brand{ display:flex; align-items:baseline; gap:.75rem; min-width:0 }
 .brand h1{
-  margin:0; font-size:clamp(19px,2.6vw,27px); letter-spacing:.22em; font-weight:800;
-  background:linear-gradient(92deg,var(--a),var(--c) 45%,var(--b));
+  font-size:clamp(1.05rem,.85rem + .8vw,1.4rem); font-weight:800; letter-spacing:.2em;
+  background:linear-gradient(94deg, var(--accent), var(--accent-3) 42%, var(--accent-2));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  white-space:nowrap;
+}
+.brand .tag{ color:var(--ink-3); font-size:var(--t-small); letter-spacing:.01em }
+.spacer{ flex:1 1 auto; min-width:var(--s-2) }
+
+.skinrack{ display:flex; gap:.35rem; align-items:center; padding:.3rem .45rem; border-radius:var(--r-pill);
+  background:var(--glass); border:1px solid var(--glass-line) }
+.swatch{
+  width:1.35rem; height:1.35rem; border-radius:50%; border:1px solid var(--glass-line);
+  cursor:pointer; padding:0; position:relative; transition:transform .16s var(--ease-back);
+}
+.swatch:hover{ transform:scale(1.18) }
+.swatch[aria-pressed="true"]{ transform:scale(1.18); box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--accent) }
+.swatch:focus-visible{ outline:2px solid var(--accent); outline-offset:3px }
+
+.chip{
+  background:var(--glass); color:var(--ink-2); border:1px solid var(--glass-line);
+  border-radius:var(--r-pill); padding:.45rem .8rem; font-size:var(--t-label);
+  letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:.18s var(--ease);
+  white-space:nowrap;
+}
+.chip:hover{ color:var(--ink); border-color:var(--line-strong) }
+.chip[aria-pressed="true"]{ color:var(--accent); border-color:color-mix(in srgb, var(--accent) 45%, transparent) }
+.chip:focus-visible{ outline:2px solid var(--accent); outline-offset:2px }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   shell
+   ═══════════════════════════════════════════════════════════════════════ */
+.shell{
+  position:relative; z-index:1;
+  display:grid; gap:var(--gutter);
+  grid-template-columns:minmax(300px,1fr) minmax(340px,1.06fr) minmax(288px,.9fr);
+  grid-template-areas:"view dossier console";
+  align-items:start;
+  max-width:1720px; margin:0 auto; padding:var(--gutter) var(--gutter) 0;
+}
+@media (max-width:1200px){
+  .shell{ grid-template-columns:1fr 1fr; grid-template-areas:"view dossier" "console console" }
+}
+@media (max-width:840px){
+  .shell{ grid-template-columns:1fr; grid-template-areas:"view" "dossier" "console" }
+}
+.viewport{ grid-area:view; position:sticky; top:calc(var(--gutter) + 3.4rem) }
+.dossier{ grid-area:dossier }
+.console{ grid-area:console; display:flex; flex-direction:column; gap:var(--gutter) }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   panels
+   ═══════════════════════════════════════════════════════════════════════ */
+.card{
+  position:relative;
+  background:linear-gradient(176deg, color-mix(in srgb,var(--surface) 92%, transparent), var(--surface-2));
+  border:1px solid var(--line); border-radius:var(--r-lg);
+  box-shadow:var(--sh-3);
+  overflow:hidden;
+}
+.card--pad{ padding:var(--pad) }
+.label{
+  font-family:var(--font-mono); font-size:var(--t-label); letter-spacing:var(--ls-label);
+  text-transform:uppercase; color:var(--ink-3); margin:0;
+}
+.hr{ height:1px; background:var(--line); border:0; margin:var(--s-4) 0 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   3-D stage
+   ═══════════════════════════════════════════════════════════════════════ */
+.viewport{ perspective:1500px; perspective-origin:50% 42% }
+.stage{
+  position:relative; aspect-ratio:1; transform-style:preserve-3d;
+  transition:transform .25s var(--ease); will-change:transform;
+}
+.stage__layer{ position:absolute; inset:0; transform-style:preserve-3d }
+.stage__bg{ transform:translateZ(-90px) scale(1.1);
+  background:
+    radial-gradient(120% 90% at 26% 18%, color-mix(in srgb,var(--accent) 22%, transparent), transparent 60%),
+    radial-gradient(90% 80% at 82% 88%, color-mix(in srgb,var(--accent-3) 18%, transparent), transparent 62%);
+  filter:blur(2px);
+}
+.stage__floor{
+  position:absolute; left:8%; right:8%; bottom:2%; height:26%;
+  transform:rotateX(74deg) translateZ(-120px);
+  background:radial-gradient(closest-side, rgb(0 0 0 / .5), transparent 78%);
+  filter:blur(14px);
+}
+.plate{
+  position:absolute; inset:0; border-radius:var(--r-xl); overflow:hidden;
+  transform:translateZ(0);
+  border:1px solid var(--glass-line);
+  box-shadow:var(--sh-3), inset 0 1px 0 rgb(255 255 255 / .08);
+  background:var(--surface-3);
+  animation:float 9s ease-in-out infinite;
+}
+@keyframes float{ 0%,100%{ transform:translateZ(0) translateY(0) } 50%{ transform:translateZ(18px) translateY(-7px) } }
+.plate svg{ display:block; width:100%; height:100% }
+.plate__sheen{
+  position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen; opacity:.5;
+  background:linear-gradient(118deg, transparent 32%, rgb(255 255 255 / .14) 46%, transparent 58%);
+}
+.plate__tag{
+  position:absolute; left:14px; top:14px; z-index:3;
+  font-family:var(--font-mono); font-size:var(--t-label); letter-spacing:var(--ls-label); text-transform:uppercase;
+  padding:.3rem .62rem; border-radius:var(--r-pill);
+  background:rgb(0 0 0 / .42); color:#fff; border:1px solid rgb(255 255 255 / .18);
+  backdrop-filter:blur(8px);
+}
+.plate__seed{
+  position:absolute; right:14px; bottom:12px; z-index:3;
+  font-family:var(--font-mono); font-size:.66rem; letter-spacing:.08em; color:rgb(255 255 255 / .58);
+  text-transform:uppercase;
+}
+.speckles{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:2 }
+.speckles i{ position:absolute; width:6px; height:6px; border-radius:50%; background:var(--accent);
+  animation:fly .85s cubic-bezier(.2,.7,.3,1) forwards }
+@keyframes fly{ 0%{ transform:translate(0,0) scale(1); opacity:1 } 100%{ transform:translate(var(--dx),var(--dy)) scale(.15); opacity:0 } }
+.stage.pop .plate{ animation:pop .5s var(--ease-back) }
+@keyframes pop{ 0%{ transform:translateZ(0) scale(.92) rotate(-1.2deg); opacity:.45 } 60%{ transform:translateZ(24px) scale(1.03) rotate(.6deg) } 100%{ transform:none; opacity:1 } }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   dossier
+   ═══════════════════════════════════════════════════════════════════════ */
+.nameplate{ margin-bottom:var(--s-3) }
+.nameplate h2{
+  font-family:var(--font-display); font-size:var(--t-hero); line-height:var(--lh-tight);
+  letter-spacing:var(--ls-display); font-weight:600; text-wrap:balance;
+  background:linear-gradient(96deg, var(--ink), color-mix(in srgb,var(--ink) 62%, var(--accent)));
   -webkit-background-clip:text; background-clip:text; color:transparent;
 }
-.brand .tag{color:var(--dim);font-size:13px;letter-spacing:.02em}
-.spacer{flex:1}
-.ghost{
-  background:var(--card2); color:var(--dim); border:1px solid var(--line);
-  border-radius:999px; padding:7px 13px; font-size:12px; cursor:pointer; letter-spacing:.06em;
-  text-transform:uppercase; transition:.18s;
+.nameplate .ep{ margin-top:.35rem; font-family:var(--font-display); font-style:italic;
+  font-size:var(--t-h3); color:var(--accent) }
+.nameplate .ep:empty{ display:none }
+.classline{
+  display:flex; flex-wrap:wrap; gap:.4rem .8rem; align-items:baseline;
+  margin-top:var(--s-3); padding-top:var(--s-3); border-top:1px dashed var(--line);
+  font-family:var(--font-mono); font-size:var(--t-mono); color:var(--ink-3);
 }
-.ghost:hover{color:var(--ink);border-color:var(--dimmer);transform:translateY(-1px)}
-.ghost[aria-pressed="true"]{color:var(--a);border-color:color-mix(in srgb,var(--a) 45%, var(--line))}
+.classline b{ color:var(--accent-2); font-weight:600 }
 
-/* ---------- layout ---------- */
-main{
-  display:grid; gap:16px; padding:18px clamp(14px,3vw,34px) 40px;
-  grid-template-columns:minmax(300px,1fr) minmax(330px,1.15fr) minmax(280px,340px);
-  align-items:start; max-width:1680px; margin:0 auto;
-}
-@media (max-width:1180px){ main{grid-template-columns:1fr 1fr} .side{grid-column:1/-1} }
-@media (max-width:760px){ main{grid-template-columns:1fr} }
+.dl{ display:grid; grid-template-columns:minmax(7.2rem,auto) 1fr; gap:.5rem var(--s-4);
+  font-size:var(--t-body); margin:var(--s-4) 0 0 }
+.dl dt{ font-family:var(--font-mono); font-size:var(--t-label); letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink-3); padding-top:.24em; white-space:nowrap }
+.dl dd{ margin:0; font-weight:500; text-wrap:pretty }
 
-.card{
-  background:linear-gradient(180deg,var(--card),var(--card2));
-  border:1px solid var(--line); border-radius:var(--r);
-  box-shadow:var(--shadow); overflow:hidden;
+.lore{ margin-top:var(--s-5); font-size:1.02rem; line-height:var(--lh-body); color:var(--ink-2); text-wrap:pretty }
+.lore p{ margin:0 0 .72em }
+.lore p:last-child{ margin-bottom:0 }
+.lore em{ color:var(--accent); font-style:italic }
+.fieldnote{
+  margin-top:var(--s-4); padding:var(--s-3) var(--s-4);
+  border-left:2px solid var(--accent-2); border-radius:0 var(--r-sm) var(--r-sm) 0;
+  background:color-mix(in srgb, var(--accent-2) 8%, transparent);
+  font-family:var(--font-mono); font-size:var(--t-mono); line-height:1.55; color:var(--ink-2);
 }
-.pad{padding:18px}
+.fieldnote b{ color:var(--accent-2); font-weight:600; letter-spacing:.08em; text-transform:uppercase; font-size:.92em }
+.quotebox{
+  margin-top:var(--s-4); padding:var(--s-4);
+  border:1px solid var(--line); border-radius:var(--r-md);
+  background:color-mix(in srgb, var(--surface-3) 70%, transparent);
+  font-family:var(--font-display); font-style:italic; font-size:1.06rem; line-height:1.5; color:var(--ink);
+}
+.quotebox footer{ margin-top:.5rem; font-family:var(--font-mono); font-style:normal;
+  font-size:var(--t-label); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3) }
 
-/* ---------- portrait ---------- */
-.portrait{position:relative; background:var(--card3)}
-.portrait svg{display:block;width:100%;height:auto;aspect-ratio:1/1}
-.portrait.pop svg{animation:pop .42s cubic-bezier(.2,1.5,.4,1)}
-@keyframes pop{0%{transform:scale(.9) rotate(-1.5deg);opacity:.4}60%{transform:scale(1.035) rotate(.7deg)}100%{transform:none;opacity:1}}
-.badge{
-  position:absolute;left:14px;top:14px; padding:5px 11px; border-radius:999px;
-  background:rgba(0,0,0,.42); border:1px solid rgba(255,255,255,.22);
-  color:#fff; font-size:11px; letter-spacing:.18em; text-transform:uppercase;
-  backdrop-filter:blur(6px);
-}
-.speckles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.speckles i{
-  position:absolute;width:7px;height:7px;border-radius:50%;
-  background:var(--a); animation:fly .9s cubic-bezier(.2,.7,.3,1) forwards;
-}
-@keyframes fly{
-  0%{transform:translate(0,0) scale(1);opacity:1}
-  100%{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}
-}
+.enc{ margin-top:var(--s-4); border:1px dashed var(--line); border-radius:var(--r-md);
+  padding:var(--s-3) var(--s-4); background:color-mix(in srgb, var(--surface-3) 55%, transparent) }
+.enc[hidden]{ display:none }
+.enc h3{ margin:0 0 var(--s-2); font-family:var(--font-mono); font-size:var(--t-label);
+  letter-spacing:var(--ls-label); text-transform:uppercase; color:var(--ink-3) }
+.enc-row{ display:flex; gap:var(--s-3); align-items:flex-start }
+.enc-row svg{ width:72px; height:72px; border-radius:var(--r-sm); flex:0 0 auto; background:var(--surface-3) }
+.enc-row p{ margin:0; font-size:var(--t-small); line-height:1.55; color:var(--ink-2) }
 
-/* ---------- info ---------- */
-.nameplate h2{
-  margin:0; font-size:clamp(25px,3.4vw,40px); line-height:1.03; letter-spacing:-.015em;
-  font-weight:800;
-}
-.nameplate .ep{color:var(--a); font-style:italic; margin-top:5px; font-size:15px}
-.nameplate .ep:empty{display:none}
-.rule{height:1px;background:var(--line);margin:16px 0}
-.dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:0;font-size:14px}
-.dl dt{color:var(--dimmer);text-transform:uppercase;letter-spacing:.1em;font-size:10.5px;padding-top:3px;white-space:nowrap}
-.dl dd{margin:0;color:var(--ink);font-weight:600}
-.lore{margin:16px 0 0;font-size:15.5px;line-height:1.62;color:color-mix(in srgb,var(--ink) 88%, var(--dim))}
-.lore p{margin:0 0 10px}
-.lore em{color:var(--a);font-style:normal;font-weight:700}
-.lore b{color:var(--b);font-weight:700}
-.enc{margin-top:18px;border:1px dashed var(--line);border-radius:14px;padding:14px;background:color-mix(in srgb,var(--card3) 60%, transparent)}
-.enc h3{margin:0 0 8px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dimmer)}
-.enc-row{display:flex;gap:12px;align-items:flex-start}
-.enc-row svg{width:76px;height:76px;border-radius:12px;flex:0 0 auto;background:var(--card3)}
-.enc p{margin:0;font-size:14.5px;line-height:1.55}
-
-/* ---------- controls ---------- */
-.side{display:flex;flex-direction:column;gap:16px}
+/* ═══════════════════════════════════════════════════════════════════════
+   console
+   ═══════════════════════════════════════════════════════════════════════ */
 .big{
-  width:100%; padding:17px 18px; border:0; border-radius:14px; cursor:pointer;
-  font-size:16px; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
-  color:#141414; background:linear-gradient(92deg,var(--a),#ffb03a);
-  box-shadow:0 8px 26px color-mix(in srgb,var(--a) 34%, transparent);
-  transition:transform .12s cubic-bezier(.2,1.6,.4,1), box-shadow .2s;
+  width:100%; padding:1.05rem 1.1rem; border:0; border-radius:var(--r-md); cursor:pointer;
+  font-family:var(--font-sans); font-size:.98rem; font-weight:800; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--accent-ink);
+  background:linear-gradient(96deg, var(--accent), color-mix(in srgb,var(--accent) 74%, var(--accent-2)));
+  box-shadow:0 10px 30px -12px color-mix(in srgb,var(--accent) 60%, transparent);
+  transition:transform .14s var(--ease-back), box-shadow .2s, filter .2s;
 }
-.big:hover{transform:translateY(-2px);box-shadow:0 12px 32px color-mix(in srgb,var(--a) 44%, transparent)}
-.big:active{transform:translateY(1px) scale(.985)}
-.row{display:flex;gap:8px;flex-wrap:wrap}
-.row.tight{gap:6px}
-.field{display:flex;flex-direction:column;gap:5px;margin-top:12px}
-.field label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dimmer)}
-input[type=text],select{
-  background:var(--bg2); color:var(--ink); border:1px solid var(--line);
-  border-radius:10px; padding:9px 11px; font-size:13.5px; width:100%; outline:none;
-}
-input[type=text]:focus,select:focus{border-color:color-mix(in srgb,var(--a) 55%, var(--line))}
+.big:hover{ transform:translateY(-2px); filter:brightness(1.04);
+  box-shadow:0 16px 38px -14px color-mix(in srgb,var(--accent) 70%, transparent) }
+.big:active{ transform:translateY(1px) scale(.99) }
+.big:focus-visible{ outline:2px solid var(--ink); outline-offset:3px }
+
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2) }
+.grid4{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-2) }
+@media (max-width:420px){ .grid4{ grid-template-columns:1fr 1fr } }
+
 .mini{
-  background:var(--card3); color:var(--dim); border:1px solid var(--line); border-radius:9px;
-  padding:7px 11px; font-size:11.5px; cursor:pointer; letter-spacing:.05em; transition:.15s;
+  background:var(--surface-3); color:var(--ink-2); border:1px solid var(--line);
+  border-radius:var(--r-sm); padding:.55rem .5rem; font-size:var(--t-label);
+  letter-spacing:.05em; cursor:pointer; transition:.16s var(--ease); min-height:2.2rem;
 }
-.mini:hover{color:var(--ink);border-color:var(--dimmer)}
-.mini.wide{flex:1}
-.hist{display:flex;flex-direction:column;gap:6px;max-height:330px;overflow:auto;padding-right:2px}
+.mini:hover{ color:var(--ink); border-color:var(--line-strong); background:var(--surface-2) }
+.mini:focus-visible{ outline:2px solid var(--accent); outline-offset:2px }
+.mini kbd{ display:block; font-family:var(--font-mono); font-size:.62rem; color:var(--ink-3); margin-top:.12rem }
+
+.field{ display:flex; flex-direction:column; gap:.35rem; margin-top:var(--s-4) }
+.field label{ font-family:var(--font-mono); font-size:var(--t-label); letter-spacing:var(--ls-label);
+  text-transform:uppercase; color:var(--ink-3) }
+input[type=text],select{
+  width:100%; background:var(--bg-2); color:var(--ink); border:1px solid var(--line);
+  border-radius:var(--r-sm); padding:.6rem .7rem; font-size:var(--t-small); outline:none;
+  transition:border-color .16s, box-shadow .16s;
+}
+input[type=text]:focus,select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%, transparent) }
+input[type=text]{ font-family:var(--font-mono) }
+.row{ display:flex; gap:var(--s-2); align-items:center }
+.row .mini{ flex:0 0 auto }
+
+.hist{ display:flex; flex-direction:column; gap:.3rem; max-height:19rem; overflow:auto; padding-right:.2rem }
 .hist button{
-  display:flex;align-items:center;gap:10px; width:100%; text-align:left; cursor:pointer;
-  background:var(--card3); border:1px solid transparent; border-radius:11px; padding:6px 9px; color:var(--dim);
-  font-size:12.5px; transition:.15s;
+  display:flex; align-items:center; gap:.65rem; width:100%; text-align:left; cursor:pointer;
+  background:var(--surface-3); border:1px solid transparent; border-radius:var(--r-sm);
+  padding:.4rem .55rem; color:var(--ink-2); font-size:var(--t-small); transition:.15s var(--ease);
 }
-.hist button:hover{border-color:var(--line);color:var(--ink)}
-.hist button svg{width:30px;height:30px;border-radius:8px;flex:0 0 auto;background:var(--bg2)}
-.hist .hn{font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hist .hc{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dimmer)}
-.hint{color:var(--dimmer);font-size:11.5px;line-height:1.5;margin:10px 0 0}
-footer{padding:0 clamp(14px,3vw,34px) 34px;color:var(--dimmer);font-size:11.5px;max-width:1680px;margin:0 auto}
-footer kbd{
-  background:var(--card2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;
-  font-family:ui-monospace,monospace;font-size:11px;color:var(--dim);
+.hist button:hover{ border-color:var(--line-strong); color:var(--ink) }
+.hist button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px }
+.hist .hn{ font-weight:700; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:var(--t-small) }
+.hist .hc{ font-family:var(--font-mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); margin-left:auto }
+.hint{ color:var(--ink-3); font-size:var(--t-mono); line-height:1.5; margin:var(--s-3) 0 0 }
+.hint kbd{ font-family:var(--font-mono); background:var(--surface-3); border:1px solid var(--line);
+  border-radius:4px; padding:.05rem .3rem; color:var(--ink-2) }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   overlays
+   ═══════════════════════════════════════════════════════════════════════ */
+.modal{
+  position:fixed; inset:0; z-index:80; display:grid; place-items:center; padding:var(--gutter);
+  background:var(--scrim); backdrop-filter:blur(8px);
 }
+.modal[hidden]{ display:none }
+.modal__panel{
+  width:min(46rem,100%); max-height:min(80vh,44rem); overflow:auto;
+  background:var(--surface); border:1px solid var(--line-strong); border-radius:var(--r-lg);
+  box-shadow:var(--sh-3); padding:var(--pad);
+}
+.modal__panel h2{ font-family:var(--font-display); font-size:var(--t-h2); font-weight:600; margin-bottom:var(--s-3) }
+.keys{ display:grid; grid-template-columns:repeat(auto-fill,minmax(13rem,1fr)); gap:.45rem var(--s-4); margin-top:var(--s-3) }
+.keys div{ display:flex; align-items:center; gap:.5rem; font-size:var(--t-small); color:var(--ink-2) }
+.keys kbd{ font-family:var(--font-mono); font-size:var(--t-mono); background:var(--surface-3);
+  border:1px solid var(--line-strong); border-bottom-width:2px; border-radius:5px; padding:.1rem .42rem; color:var(--ink) }
 .toast{
-  position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);opacity:0;pointer-events:none;
-  background:var(--card3);border:1px solid var(--line);color:var(--ink);padding:10px 18px;border-radius:999px;
-  font-size:13px;box-shadow:var(--shadow);transition:.25s;z-index:50;
+  position:fixed; left:50%; bottom:calc(var(--s-5) + env(safe-area-inset-bottom)); z-index:70;
+  transform:translate(-50%,14px); opacity:0; pointer-events:none;
+  background:var(--surface-3); border:1px solid var(--line-strong); color:var(--ink);
+  padding:.6rem 1.05rem; border-radius:var(--r-pill); font-size:var(--t-small);
+  box-shadow:var(--sh-2); transition:.24s var(--ease);
 }
-.toast.on{opacity:1;transform:translate(-50%,0)}
+.toast.on{ opacity:1; transform:translate(-50%,0) }
+
+footer.foot{
+  position:relative; z-index:1; max-width:1720px; margin:0 auto;
+  padding:var(--s-5) var(--gutter) var(--s-7); color:var(--ink-3); font-size:var(--t-mono);
+  display:flex; gap:var(--s-4); flex-wrap:wrap; justify-content:space-between;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   wireframe mode
+   ═══════════════════════════════════════════════════════════════════════ */
+html[data-wireframe="on"] .shell{
+  background-image:
+    linear-gradient(to right, color-mix(in srgb,var(--accent) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb,var(--accent) 9%, transparent) 1px, transparent 1px);
+  background-size:32px 32px;
+}
+html[data-wireframe="on"] .card, html[data-wireframe="on"] .plate, html[data-wireframe="on"] .topbar,
+html[data-wireframe="on"] .viewport, html[data-wireframe="on"] .console{
+  outline:1px dashed color-mix(in srgb,var(--accent) 60%, transparent) !important; outline-offset:-1px;
+}
+html[data-wireframe="on"] .dl dt{ outline:1px dotted color-mix(in srgb,var(--accent-4) 70%, transparent) }
+.wireflag{
+  position:fixed; right:var(--s-4); bottom:var(--s-4); z-index:60;
+  font-family:var(--font-mono); font-size:var(--t-label); letter-spacing:.14em; text-transform:uppercase;
+  background:var(--accent); color:var(--accent-ink); padding:.35rem .7rem; border-radius:var(--r-pill);
+  box-shadow:var(--sh-2);
+}
+.wireflag[hidden]{ display:none }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   motion & print
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; scroll-behavior:auto !important }
+  .mesh{ animation:none }
+}
+@media (pointer:coarse){
+  .chip,.mini,.swatch{ min-height:2.6rem }
+  .swatch{ width:1.7rem; height:1.7rem }
+}
+@media print{
+  .mesh,.topbar,.console,footer.foot,.toast,.wireflag{ display:none !important }
+  body{ background:#fff; color:#000 }
+  .shell{ grid-template-columns:1fr; grid-template-areas:"view" "dossier" }
+  .card{ box-shadow:none; border:1px solid #bbb }
+  .nameplate h2{ color:#000; -webkit-text-fill-color:#000 }
+}
 </style>
 </head>
 <body>
+<div class="mesh" aria-hidden="true"></div>
+<a class="skip" href="#dossier">Skip to the specimen</a>
 
-<header>
+<header class="topbar">
   <div class="brand">
     <h1>THINGMAKER</h1>
     <span class="tag">a machine for making things that have never existed</span>
   </div>
   <div class="spacer"></div>
-  <button class="ghost" id="soundBtn" aria-pressed="true">sound</button>
-  <button class="ghost" id="themeBtn">theme</button>
+  <div class="skinrack" role="group" aria-label="Colour skin" id="skinrack"></div>
+  <button class="chip" id="modeBtn" aria-pressed="false">dark</button>
+  <button class="chip" id="soundBtn" aria-pressed="true">sound</button>
+  <button class="chip" id="wireBtn" aria-pressed="false">wireframe</button>
+  <button class="chip" id="helpBtn" aria-haspopup="dialog">keys</button>
 </header>
 
-<main>
-  <!-- PORTRAIT -->
-  <section class="card">
-    <div class="portrait" id="portrait">
-      <div class="speckles" id="speckles"></div>
-      <div class="badge" id="badge">—</div>
-      <svg id="svg" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="procedural portrait"></svg>
+<main class="shell">
+  <!-- ── 3-D STAGE ─────────────────────────────────────────────── -->
+  <section class="viewport" id="viewport" aria-label="Specimen portrait">
+    <div class="stage" id="stage">
+      <div class="stage__layer stage__bg" aria-hidden="true"></div>
+      <div class="stage__floor" aria-hidden="true"></div>
+      <figure class="plate">
+        <div class="speckles" id="speckles" aria-hidden="true"></div>
+        <span class="plate__tag" id="badge">—</span>
+        <span class="plate__seed" id="seedTag"></span>
+        <svg id="svg" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Specimen portrait"></svg>
+        <div class="plate__sheen" aria-hidden="true"></div>
+      </figure>
     </div>
   </section>
 
-  <!-- INFO -->
-  <section class="card pad">
+  <!-- ── DOSSIER ───────────────────────────────────────────────── -->
+  <section class="card card--pad" id="dossier" aria-live="polite">
     <div class="nameplate">
       <h2 id="tname">—</h2>
       <div class="ep" id="tepithet"></div>
     </div>
-    <div class="rule"></div>
+    <div class="classline" id="classline"></div>
     <dl class="dl" id="attrs"></dl>
     <div class="lore" id="lore"></div>
+    <div class="fieldnote" id="fieldnote" hidden></div>
+    <blockquote class="quotebox" id="quotebox" hidden>
+      <span id="quoteText"></span>
+      <footer id="quoteWho"></footer>
+    </blockquote>
     <div class="enc" id="enc" hidden>
       <h3>Encounter</h3>
       <div class="enc-row">
-        <svg id="encA" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"></svg>
-        <svg id="encB" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"></svg>
+        <svg id="encA" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="First specimen"></svg>
+        <svg id="encB" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Second specimen"></svg>
         <p id="encText"></p>
       </div>
     </div>
   </section>
 
-  <!-- CONTROLS -->
-  <aside class="side">
-    <section class="card pad">
+  <!-- ── CONSOLE ───────────────────────────────────────────────── -->
+  <aside class="console" aria-label="Machine controls">
+    <section class="card card--pad">
       <button class="big" id="make">Make thing</button>
-      <div class="row tight" style="margin-top:10px">
-        <button class="mini wide" id="rename">Rename it</button>
-        <button class="mini wide" id="encounter">Encounter</button>
+      <div class="grid2" style="margin-top:var(--s-2)">
+        <button class="mini" id="rename">Rename<kbd>R</kbd></button>
+        <button class="mini" id="encounter">Encounter<kbd>E</kbd></button>
       </div>
       <div class="field">
         <label for="cat">Kind of thing</label>
@@ -216,48 +562,68 @@ footer kbd{
       </div>
       <div class="field">
         <label for="seed">Seed</label>
-        <div class="row tight">
-          <input type="text" id="seed" spellcheck="false" autocomplete="off">
-          <button class="mini" id="dice" title="Random seed">⚄</button>
+        <div class="row">
+          <input type="text" id="seed" spellcheck="false" autocomplete="off" maxlength="64" placeholder="vellum-pumice-594">
+          <button class="mini" id="dice" title="Random seed" aria-label="Random seed">⚄</button>
         </div>
       </div>
     </section>
 
-    <section class="card pad">
-      <div class="field" style="margin-top:0">
-        <label>Export</label>
+    <section class="card card--pad">
+      <p class="label">Export</p>
+      <div class="grid4" style="margin-top:var(--s-3)">
+        <button class="mini" id="png">Card PNG<kbd>P</kbd></button>
+        <button class="mini" id="svgBtn">SVG<kbd>V</kbd></button>
+        <button class="mini" id="json">JSON<kbd>J</kbd></button>
+        <button class="mini" id="copy">Lore<kbd>C</kbd></button>
       </div>
-      <div class="row tight">
-        <button class="mini wide" id="png">Card PNG</button>
-        <button class="mini wide" id="svgBtn">SVG</button>
-        <button class="mini wide" id="json">JSON</button>
-        <button class="mini wide" id="copy">Copy lore</button>
-      </div>
-      <p class="hint">Same seed + same kind = same thing, forever. The URL updates as you go, so you can send anyone a specific thing.</p>
+      <p class="hint">Same seed + same kind = same thing, forever. The address bar updates as you go, so a link carries the exact thing with it.</p>
     </section>
 
-    <section class="card pad">
-      <div class="field" style="margin-top:0">
-        <label>Recently made</label>
-      </div>
+    <section class="card card--pad">
+      <p class="label">Recently made</p>
       <div class="hist" id="hist"></div>
     </section>
   </aside>
 </main>
 
-<footer>
-  <kbd>space</kbd> makes a thing · <kbd>enter</kbd> on the seed re-rolls that seed · nothing here was found on the internet, and nothing here is real.
+<footer class="foot">
+  <span>Nothing here was found on the internet. Every name, attribute and sentence is assembled from the machine's own word banks.</span>
+  <span>THINGMAKER · single file · no dependencies · works offline</span>
 </footer>
 
-<div class="toast" id="toast"></div>
+<div class="modal" id="help" hidden>
+  <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle" id="helpPanel">
+    <h2 id="helpTitle">Keyboard &amp; the machine</h2>
+    <p class="hint" style="margin-top:0">Everything here can be driven from the keyboard. <kbd>Esc</kbd> closes this panel.</p>
+    <div class="keys" id="keyList"></div>
+    <hr class="hr">
+    <p class="hint" style="margin-top:0">
+      A thing is fixed by two things: its <b>kind</b> and its <b>seed</b>. Change either and you get a different
+      specimen; change neither and you get the same one, down to the pixel. The address bar carries both.
+    </p>
+    <div style="display:flex;justify-content:flex-end;margin-top:var(--s-4)">
+      <button class="chip" id="helpClose">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="wireflag" id="wireflag" hidden>wireframe</div>
+
+<noscript>
+  <div style="padding:2rem;font-family:system-ui">
+    <h1>THINGMAKER needs JavaScript</h1>
+    <p>The machine generates its specimens in the browser. Nothing is sent anywhere — but it does need scripting switched on.</p>
+  </div>
+</noscript>
 
 <script>
 "use strict";
-/* ═══════════════════════════════════════════════════════════════════
-   THINGMAKER
-   A procedural generator for things that have never existed.
-   No dependencies. No network. One file.
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════
+   THINGMAKER — a machine for making things that have never existed.
+   Single file. No dependencies. No network. Everything below is original.
+   ═══════════════════════════════════════════════════════════════════════ */
 
 /* ─────────────────────────── random ─────────────────────────── */
 function xmur3(str){
@@ -273,21 +639,16 @@ function mulberry32(a){
     return ((t ^ (t>>>14))>>>0) / 4294967296;
   };
 }
-function makeRng(seed){
-  const h = xmur3(String(seed));
-  return mulberry32(h());
-}
+function makeRng(seed){ return mulberry32(xmur3(String(seed))()); }
 const R = rng => ({
   f: rng,
   pick: arr => arr[Math.floor(rng()*arr.length)],
   int: (a,b) => a + Math.floor(rng()*(b-a+1)),
   chance: p => rng() < p,
-  sign: () => rng() < .5 ? -1 : 1,
   shuffle: arr => { const a = arr.slice(); for (let i=a.length-1;i>0;i--){ const j = Math.floor(rng()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; },
   sample: (arr,n) => R(rng).shuffle(arr).slice(0,n),
 });
-/* independent stream so tweaking one system never reshuffles the others */
-function derive(seed, tag){ return makeRng(tag + '#' + seed); }
+function derive(seed, tag){ return makeRng(tag + "#" + seed); }
 
 /* ─────────────────────────── names ─────────────────────────── */
 const ONSETS = ["b","br","bl","cr","cl","dr","d","fr","fl","g","gl","gr","h","j","k","kr","kl","l","m","n","p","pr","pl","qu","r","s","sh","sk","sl","sm","sn","sp","st","str","t","th","tr","v","w","wh","y","z","vr","skr","spl","mng","zz","kh","gh"];
@@ -298,24 +659,23 @@ const EPITHETS = [
   "the Third","the Unpronounceable","of the Glass Sea","the Ninefold","the Silent","the Very Loud",
   "the Formerly","the Suspicious","the Absolutely Fine","the Unemployed","the First Draft","the Sequel",
   "the Last One","the Wrong One","of Tuesday","the Reluctant","the Overqualified","the Unbothered",
-  "the Second Breakfast","the Apology","the Wrong Sort of Thing","the Provisional","the Almost"
+  "the Second Breakfast","the Apology","the Wrong Sort of Thing","the Provisional","the Almost",
+  "of the Fourth Stair","the Unwitnessed","the Overheard","the Missing","the Unnumbered"
 ];
 const TITLEWORDS = ["Grand","High","Mister","Madame","Doctor","Professor","Captain","Saint","Prof Emeritus","Lord","Lady","Bishop"];
-
+const NAME_PATTERNS = ["CV","CVC","CVCV","CVC","CV","CVCV","VC","CVCVC","CVC"];
 function syll(rng, pattern){
   const O = rng.pick(ONSETS), N = rng.pick(NUCLEI), C = rng.pick(CODAS);
   switch(pattern){
-    case "CV":  return O+N;
-    case "CVC": return O+N+C;
-    case "VC":  return N+C;
-    case "CVCV":return O+N+C+rng.pick(NUCLEI);
-    case "CCVC":return rng.pick(["gl","br","sk","tr","vr","st","pl","kr","sh","zh"])+rng.pick(NUCLEI)+C;
-    case "CVN": return O+N+rng.pick(["","n","r"]);
-    case "CVCVC":return O+N+C+O+N;
-    default:   return O+N;
+    case "CV":    return O+N;
+    case "CVC":   return O+N+C;
+    case "VC":    return N+C;
+    case "CVCV":  return O+N+C+rng.pick(NUCLEI);
+    case "CCVC":  return rng.pick(["gl","br","sk","tr","vr","st","pl","kr","sh"])+rng.pick(NUCLEI)+C;
+    case "CVCVC": return O+N+C+O+N;
+    default:      return O+N;
   }
 }
-const NAME_PATTERNS = ["CV","CVC","CVCV","CVC","CV","CVCV","VC","CVCVC","CVC"];
 function word(rng, minSyll, maxSyll, maxLen){
   const n = rng.int(minSyll, maxSyll);
   let w = "";
@@ -331,19 +691,18 @@ function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
 function makeName(rng){
   const roll = rng.f();
   let base;
-  if (roll < .46){
-    base = cap(word(rng,1,3,13));
-  } else if (roll < .76){
-    base = cap(word(rng,1,2,8)) + " " + cap(word(rng,1,2,10));
-  } else if (roll < .88){
-    base = rng.pick(TITLEWORDS) + " " + cap(word(rng,1,2,9));
-  } else {
-    base = cap(word(rng,1,2,7)) + "-" + cap(word(rng,1,2,7));
-  }
-  let epithet = "";
-  if (rng.chance(.34)) epithet = rng.pick(EPITHETS);
+  if (roll < .44)      base = cap(word(rng,1,3,13));
+  else if (roll < .74) base = cap(word(rng,1,2,8)) + " " + cap(word(rng,1,2,10));
+  else if (roll < .86) base = rng.pick(TITLEWORDS) + " " + cap(word(rng,1,2,9));
+  else                 base = cap(word(rng,1,2,7)) + "-" + cap(word(rng,1,2,7));
+  const epithet = rng.chance(.36) ? rng.pick(EPITHETS) : "";
   return { name: base, epithet };
 }
+/* binomial-style genus for the natural-history categories */
+const LATIN_STEMS = ["blor","vex","mor","thra","glo","ser","kar","pel","nur","zeph","cras","tum","vora","hesp","lyx","ombr","pyr","syl"];
+const LATIN_TAILS = ["pius","oides","inus","ella","anum","icus","ensis","aria","orum"];
+const LATIN_FAMILIES = ["Furcidae","Volventidae","Limosidae","Guttiferae","Nocturnidae","Palimpsestae","Hirudinidae","Crystallidae","Aetheridae","Gravidae"];
+function binomial(rng){ return cap(rng.pick(LATIN_STEMS) + rng.pick(LATIN_TAILS)); }
 
 /* ─────────────────────────── colour ─────────────────────────── */
 const COLORS = {
@@ -353,11 +712,12 @@ const COLORS = {
   "tar-black":"#232833","buttery":"#f2dfa6","electric blue":"#4aa8ff","translucent":"#cfe9f2",
   "mossy":"#8fae5f","ruby":"#d1345b","gold":"#f0c04a","bone":"#efe6d4","oxblood":"#7d2231",
   "pale mint":"#dff5ea","midnight":"#3a4470","sulphur":"#e2e05a","rose quartz":"#f0c6cf",
-  "tide-blue":"#2f6f9e","rot-green":"#6f8f3a","silver":"#c9cfd8","ash":"#8b8377"
+  "tide-blue":"#2f6f9e","rot-green":"#6f8f3a","silver":"#c9cfd8","ash":"#8b8377",
+  "tangerine":"#ff8f3f","aubergine":"#4a2f52","seaglass":"#a7d8c8","anthracite":"#2b2f38"
 };
-function hex2rgb(h){ h = h.replace('#',''); if (h.length===3) h = h.split('').map(c=>c+c).join(''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+function hex2rgb(h){ h=h.replace('#',''); if(h.length===3) h=h.split('').map(c=>c+c).join(''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
 function rgb2hex(r,g,b){ const f=v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0'); return '#'+f(r)+f(g)+f(b); }
-function shade(hex, amt){ const [r,g,b]=hex2rgb(hex); if(amt>0){ return rgb2hex(r+(255-r)*amt, g+(255-g)*amt, b+(255-b)*amt);} const k=1+amt; return rgb2hex(r*k,g*k,b*k); }
+function shade(hex, amt){ const [r,g,b]=hex2rgb(hex); if(amt>0) return rgb2hex(r+(255-r)*amt,g+(255-g)*amt,b+(255-b)*amt); const k=1+amt; return rgb2hex(r*k,g*k,b*k); }
 function mix(a,b,t){ const A=hex2rgb(a),B=hex2rgb(b); return rgb2hex(A[0]+(B[0]-A[0])*t, A[1]+(B[1]-A[1])*t, A[2]+(B[2]-A[2])*t); }
 function lum(hex){ const [r,g,b]=hex2rgb(hex); return (0.2126*r+0.7152*g+0.0722*b)/255; }
 
@@ -366,88 +726,90 @@ const POOLS = {
   size:["enormous","vast","colossal","towering","sizeable","middling","small","diminutive","pocket-sized","microscopic","titanic","quaint","absurdly large","unreasonably small"],
   color:Object.keys(COLORS),
   texture:["velvet","pitted","waxen","glassy","fuzzy","scaly","corrugated","silken","knitted","dented","slick","papery","crumbly","irregular"],
-  habitat:["the Glass Sea","a condemned library","the space between floors","a wet parking garage","the Underbelly","a municipal swimming pool","the last laundromat","an abandoned theme park","a folder of unlabelled files","the loneliest desert","a Tuesday","the inside of a sentence","a rooftop with no birds","the warranty void","a hotel hallway","the shallow end"],
-  diet:["morning fog","unlisted debts","electrical faults","small attentions","nearby applause","forgotten birthdays","sunlight filtered through bureaucracy","other people's shoes","punctuation","the last of the milk","unanswered emails","quiet","someone's childhood","warm rain","the sound of their own name"],
-  temperament:["politely furious","existentially sleepy","aggressively welcoming","quietly malicious","wildly sincere","constitutionally suspicious","gently nihilistic","unreasonably brave","moved to tears by logistics","faintly apologetic","deeply competitive about nothing","slow to anger, faster to forgiveness"],
-  movement:["scuttles","lopes","drifts","pounces","oozes","glides sideways","hops in place","teleports slightly","rolls with dignity","stalks","tumbles attractively","swims badly, swims confidently"],
+  habitat:["the Glass Sea","a condemned library","the space between floors","a wet parking garage","the Underbelly","a municipal swimming pool","the last laundromat","an abandoned theme park","a folder of unlabelled files","the loneliest desert","a Tuesday","the inside of a sentence","a rooftop with no birds","the warranty void","a hotel hallway","the shallow end","a clipboard"],
+  diet:["morning fog","unlisted debts","electrical faults","small attentions","nearby applause","forgotten birthdays","sunlight filtered through bureaucracy","other people's shoes","punctuation","the last of the milk","unanswered emails","quiet","someone's childhood","warm rain","the sound of their own name","unread clauses"],
+  temperament:["politely furious","existentially sleepy","aggressively welcoming","quietly malicious","wildly sincere","constitutionally suspicious","gently nihilistic","unreasonably brave","moved to tears by logistics","faintly apologetic","deeply competitive about nothing","slow to anger, faster to forgiveness","feral and proud of it","wearily affectionate"],
+  movement:["scuttles","lopes","drifts","pounces","oozes","glides sideways","hops in place","teleports slightly","rolls with dignity","stalks","tumbles attractively","swims badly, swims confidently","sidles"],
   sound:["a wet towel snapping","a skipped CD","someone humming off-key","a fridge at 3am","wind chimes in a dead language","a chair dragged one room too far","a dial tone with ambition","shouting in a stairwell","a choir that forgot the ending"],
   smell:["burnt toast and ambition","ozone","lavender in a warzone","wet concrete","nutmeg","old batteries","vanilla extract","rain on hot brick","a library after closing","hot circuitry"],
-  weakness:["compliments","being looked at","Tuesdays","iron","silence","being named correctly","humidity","being thanked","mirrors","the word 'actual'"],
-  talent:["nailing the exact right wrong answer","remembering the faces of people who never met them","predicting rain four minutes out","smiling at exactly the right moment","finding the one true thing in a room full of lies","sleeping through the apocalypse","making strangers feel interesting"],
-  rival:["a well-documented rumour","its own reflection","tax season","a pigeon with tenure","the other one","a poster it can't see","the concept of Tuesday","its sibling"],
-  lifespan:["eleven minutes","three full tides","ninety-four years of Tuesdays","until the paperwork clears","longer than the paperwork","one exceptionally good meal","as long as nobody mentions it"],
+  weakness:["compliments","being looked at","Tuesdays","iron","silence","being named correctly","humidity","being thanked","mirrors","the word 'actual'","being hurried"],
+  talent:["nailing the exact right wrong answer","remembering the faces of people who never met them","predicting rain four minutes out","smiling at exactly the right moment","finding the one true thing in a room full of lies","sleeping through the apocalypse","making strangers feel interesting","finishing sentences people have not started"],
+  rival:["a well-documented rumour","its own reflection","tax season","a pigeon with tenure","the other one","a poster it can't see","the concept of Tuesday","its sibling","a filing error"],
+  lifespan:["eleven minutes","three full tides","ninety-four years of Tuesdays","until the paperwork clears","longer than the paperwork","one exceptionally good meal","as long as nobody mentions it","forever, allegedly"],
   manner_of_death:["enthusiasm","boredom","a strongly worded letter","forgetting to be afraid","overconfidence","a scheduling conflict","being told the truth"],
-  number:["exactly eleven remain","fewer than you'd think","one","uncounted","a suspicious number","four billion and change","none, officially","plenty, allegedly"],
-  maker:["someone who moved out","a machine that dreamed of this","a committee","the previous owner","nobody","a retired dentist","an apprentice who is better than the master"],
-  secret:["is secretly afraid of small dogs","is a rumour","has never once been in the room it describes","was made by accident","was not designed to be listened to","collects its own lost things","does not know what it is for"],
+  number:["exactly eleven remain","fewer than you'd think","one","uncounted","a suspicious number","four billion and change","none, officially","plenty, allegedly","more than the shelf can hold"],
+  maker:["someone who moved out","a machine that dreamed of this","a committee","the previous owner","nobody","a retired dentist","an apprentice better than the master","a printer with opinions"],
+  secret:["is secretly afraid of small dogs","is a rumour","has never once been in the room it describes","was made by accident","was not designed to be listened to","collects its own lost things","does not know what it is for","has never once been assembled correctly"],
 
-  material:["river silt","decommissioned satellites","chewed pencils","laughably thin foil","the good kind of plywood","pressed sawdust","a single long screw","old receipts","resin","dried ink","salvaged aluminium"],
-  purpose:["to open one specific jar","to remind you","to be the third drawer","to hold the thing you keep meaning to throw away","to make exactly one sound","to be slightly wrong in a useful way","to keep a small light on"],
-  weight:["heavier than it looks","exactly as heavy as it looks","surprisingly light","the weight of a bad idea","heavier than a filing cabinet","light enough to throw"],
-  flaw:["it leaks when you need it","it works perfectly when you don't","it is one degree off","it forgets on Tuesdays","it is slightly too eager","it has no off switch","it leaks dignity"],
-  age:["older than the building","newly made and slightly damp","older than anyone admits","three days old and already tired","older than the country","brand new, which is suspicious"],
-  power_source:["optimism","a battery of dubious provenance","the mains, grudgingly","a small fire","indifference","a solar panel from 1974","being plugged in occasionally"],
-  noise:["a cheerful hum","a small tragedy of clicking","nothing at all, which is worse","a wind-up sigh","static","a sound like a swallowed coin"],
-  mood:["cheerful about it","deeply misunderstood","certain it is loved","nobody knows how it feels","irrationally proud","quietly resentful"],
+  material:["river silt","decommissioned satellites","chewed pencils","laughably thin foil","the good kind of plywood","pressed sawdust","a single long screw","old receipts","resin","dried ink","salvaged aluminium","compressed regret"],
+  purpose:["to open one specific jar","to remind you","to be the third drawer","to hold the thing you keep meaning to throw away","to make exactly one sound","to be slightly wrong in a useful way","to keep a small light on","to lose something you had not noticed"],
+  weight:["heavier than it looks","exactly as heavy as it looks","surprisingly light","the weight of a bad idea","heavier than a filing cabinet","light enough to throw","heavier than the conversation"],
+  flaw:["it leaks when you need it","it works perfectly when you don't","it is one degree off","it forgets on Tuesdays","it is slightly too eager","it has no off switch","it leaks dignity","it apologises mid-sentence"],
+  age:["older than the building","newly made and slightly damp","older than anyone admits","three days old and already tired","older than the country","brand new, which is suspicious","older than the paperwork"],
+  power_source:["optimism","a battery of dubious provenance","the mains, grudgingly","a small fire","indifference","a solar panel from 1974","being plugged in occasionally","sunlight, briefly"],
+  noise:["a cheerful hum","a small tragedy of clicking","nothing at all, which is worse","a wind-up sigh","static","a sound like a swallowed coin","a polite clicking"],
+  mood:["cheerful about it","deeply misunderstood","certain it is loved","nobody knows how it feels","irrationally proud","quietly resentful","certainly doing its best"],
   speed:["not fast, but philosophically committed to arriving","quick in a straight line","slow and unashamed","fast enough","barely moving, extremely on time"],
-  capacity:["one crow","two crows and a grudge","four people and a coat","a surprising amount of weather","exactly one message","nine small things"],
+  capacity:["one crow","two crows and a grudge","four people and a coat","a surprising amount of weather","exactly one message","nine small things","more than it was designed to hold"],
   flavor:["strong","vaguely citrus","wet","brown","forgiving","aggressively sweet","salty in a way that shouldn't work","quietly smoky","like the ocean if the ocean were shy"],
   temperature:["warm","cold in a specific way","room temperature but somehow","frozen at the edges","mildly alarming","still deciding"],
-  ingredient:["a regret","an hour of daylight","two eggs that were going anyway","a rumor","the crust of something","one (1) brave onion","a piece of a Tuesday"],
-  occasion:["birthdays","the fourth Tuesday","after an argument","when someone apologises","the end of a long drive","ambiguous mourning","a Tuesday","the first snowfall"],
-  light:["late afternoon","a greenish twilight","the blue hour","a light with no source","burning midday","someone else's lamp"],
-  bloom:["only when it is embarrassed","for six minutes in June","never, though it tries","at exactly 4am","once, and then never again","throughout, constantly"],
-  shape:["bracket-shaped","a bad pun on a mushroom","dimpled","conical","pleated","shaped like a question","a little too spherical"],
-  form:["a soft fog","a sound with a shape","a polite pressure","an absence","a slow shimmer","a small weather","a rumour with weight"],
-  offering:["a button","an apology","something unasked-for","a secret","a coin from a country that no longer exists","bread","a song sung badly"],
+  ingredient:["a regret","an hour of daylight","two eggs that were going anyway","a rumour","the crust of something","one (1) brave onion","a piece of a Tuesday","the last good idea in the room"],
+  occasion:["birthdays","the fourth Tuesday","after an argument","when someone apologises","the end of a long drive","ambiguous mourning","a Tuesday","the first snowfall","the end of a quarter"],
+  light:["late afternoon","a greenish twilight","the blue hour","a light with no source","burning midday","someone else's lamp","whatever is left of the day"],
+  bloom:["only when it is embarrassed","for six minutes in June","never, though it tries","at exactly 4am","once, and then never again","throughout, constantly","when nobody is photographing it"],
+  shape:["bracket-shaped","a bad pun on a mushroom","dimpled","conical","pleated","shaped like a question","a little too spherical","pleated like a fan"],
+  form:["a soft fog","a sound with a shape","a polite pressure","an absence","a slow shimmer","a small weather","a rumour with weight","a pressure with manners"],
+  offering:["a button","an apology","something unasked-for","a secret","a coin from a country that no longer exists","bread","a song sung badly","one (1) sincere question"],
   hardness:["soft enough to pocket","hard enough to ring a bell","scratches glass","gives to a thumbnail","resists everything","soft in the hand, hard on the eye"],
-  formation:["in veins of shame","in the last mile of a bad road","where two arguments met","nowhere, which is rare","in the middle of a long sentence","at the bottom of a drawer"],
-  rarity:["common, and boring","rare enough to be a problem","one known, allegedly","common in the way weather is common","so rare it has a rumour"],
-  atmosphere:["a thin and guilty haze","nothing, and worse","oxygen with a bad reputation","a permanent early evening","steam","a smell of hot plastic"],
-  moons:["no moons","two moons, one of them rude","a single moon with a crater","nine small ones","one enormous ringed one","moons that are contested"],
+  formation:["in veins of shame","in the last mile of a bad road","where two arguments met","nowhere, which is rare","in the middle of a long sentence","at the bottom of a drawer","where the light doesn't reach"],
+  rarity:["common, and boring","rare enough to be a problem","one known, allegedly","common in the way weather is common","so rare it has a rumour","commonly traded, never valued"],
+  atmosphere:["a thin and guilty haze","nothing, and worse","oxygen with a bad reputation","a permanent early evening","steam","a smell of hot plastic","sodium and rain"],
+  moons:["no moons","two moons, one of them rude","a single moon with a crater","nine small ones","one enormous ringed one","moons that are contested","two moons that are arguing"],
   day_length:["four hours","nineteen minutes","nine days","one normal day and one terrible day","roughly thirty hours","exactly as long as it takes"],
-  weather:["constant sideways rain","a wind that files complaints","perpetual mild dusk","snow that falls upward once a year","humidity with opinions"],
-  population:["nobody, officially","a census that nobody trusts","everyone","a handful of people and a lot of animals","more than the food supports","fewer than the paperwork admits"],
-  feature:["a continent shaped like a mistake","a sea that reflects a different sky","two suns and a grudge","a mountain nobody climbed","a coastline of glass","an ocean with no floor"],
-  duration:["four minutes","an entire afternoon","long enough to change your mind","nine seconds","until it gets awkward","two days, give or take a Tuesday"],
-  season:["the wrong season","the second week of anything","when the pressure drops","at exactly 3am","every other Tuesday","when nobody is looking"],
-  effect:["a faint sense of being watched","temporary confidence","a desire to reorganise a drawer","one good idea","doubt about the floor","an urge to apologise to a stranger"],
-  temper:["unbothered","aggressive","sheepish","mechanical","a little bit feral","entirely reasonable"],
-  instrument:["a rubber band and a door","the fourth drawer","a kettle","a harmonica with a missing reed","two spoons","an old telephone"],
-  mood:["peaceful","insistent","apologetic","menacing","nostalgic","a bit drunk"],
-  volume:["quiet","audible from the next room","barely there","the kind of loud that rearranges furniture","polite"],
-  best_heard:["in an empty stairwell","with the window open","at 3am","while falling asleep","in a crowd","through a wall, somehow"],
-  trigger:["the smell of rain on hot asphalt","being asked how they are","the last page of a book","a specific song","being thanked","Tuesday"],
-  host:["the recently betrayed","the recently praised","people who are cold","people who have been ambushed","the unbothered","the recently promoted"],
-  symptom:["a smell of toast","mild rearranging of the furniture","an urge to apologise to doors","sudden interest in weather","talking to appliances","a feeling of being followed home"],
-  spread:["by eye contact","through water","by being described","by being believed in","through shared sandwiches","by inheritance"],
-  cure:["a long walk and a bad decision","being told the truth once","time and worse time","salt","an apology, specific and dated","nothing, but rest"],
-  symbol:["a bent spoon","an open door","the number three, slightly wrong","a knot","a bird with no legs","a door with a chair in front of it"],
-  tenets:["three tenets and one footnote","a single rule, enforced gently","no tenets, only habits","two beliefs that contradict","nine doctrines and a strict diet"],
-  sacrament:["a boiled egg","the reading of a list","a long silence","a shared, terrible soup","counting to eleven","saying goodbye to a door"],
-  ban:["hats","apologies after nine","the number four","speaking first","leaving a room tidy","eye contact before coffee"],
-  founder:["a woman who was very sure","a committee of three","the previous tenant","someone who cannot be named","a building","a rumour"],
-  afterlife:["a queue","a question","more paperwork","a small warm room","nothing, which is somehow worse","a second shift"],
-  players:["two","two, plus a rotating spectator","eleven","four, and a dog","one, with witnesses","sixteen and a shadow"],
-  equipment:["a broom and a whistle","nothing","one shoe","a chalk line","a ladder","a grandfather clock"],
-  venue:["a car park","the shallow end of a pool","a rooftop","an empty warehouse","a kitchen","the back of a bus"],
-  rule:["do not stop moving","the ball may only travel downward","losers pay","the winner explains nothing","you may not use the word 'ball'","keep one eye closed"],
-  goal:["to reach the far wall","to be the last one standing","to be believed","to stop the noise","to arrive exactly on time","to not laugh"],
-  danger:["mildly concerning","genuinely dangerous","mostly administrative","extremely dangerous","disproportionately dangerous","fine, probably"],
-  product:["a feeling, sold by the hour","a subscription to weather","a lamp with opinions","a service nobody can cancel","one (1) confident sentence","a chair"],
-  model:["subscription","one enormous purchase","sending it to a friend","per-use, per-regret","the barter of favours"],
+  weather:["constant sideways rain","a wind that files complaints","perpetual mild dusk","snow that falls upward once a year","humidity with opinions","fog that arrives punctually"],
+  population:["nobody, officially","a census that nobody trusts","everyone","a handful of people and a lot of animals","more than the food supports","fewer than the paperwork admits","one (1), and a great many cows"],
+  feature:["a continent shaped like a mistake","a sea that reflects a different sky","two suns and a grudge","a mountain nobody climbed","a coastline of glass","an ocean with no floor","a library with no index"],
+  duration:["four minutes","an entire afternoon","long enough to change your mind","nine seconds","until it gets awkward","two days, give or take a Tuesday","a season"],
+  season:["the wrong season","the second week of anything","when the pressure drops","at exactly 3am","every other Tuesday","when nobody is looking","the day the invoice arrives"],
+  effect:["a faint sense of being watched","temporary confidence","a desire to reorganise a drawer","one good idea","doubt about the floor","an urge to apologise to a stranger","a sudden interest in the sea"],
+  temper:["unbothered","aggressive","sheepish","mechanical","a little bit feral","entirely reasonable","overwhelmingly apologetic"],
+  instrument:["a rubber band and a door","the fourth drawer","a kettle","a harmonica with a missing reed","two spoons","an old telephone","a finger on a table"],
+  volume:["quiet","audible from the next room","barely there","the kind of loud that rearranges furniture","polite","sparse"],
+  best_heard:["in an empty stairwell","with the window open","at 3am","while falling asleep","in a crowd","through a wall, somehow","with your eyes closed"],
+  trigger:["the smell of rain on hot asphalt","being asked how they are","the last page of a book","a specific song","being thanked","Tuesday","someone saying 'we should'"],
+  host:["the recently betrayed","the recently praised","people who are cold","the unbothered","the recently promoted","anyone mid-sentence","the quietly furious"],
+  symptom:["a smell of toast","mild rearranging of the furniture","an urge to apologise to doors","sudden interest in weather","talking to appliances","a feeling of being followed home","unusual interest in small talk"],
+  spread:["by eye contact","through water","by being described","by being believed in","through shared sandwiches","by inheritance","through paperwork"],
+  cure:["a long walk and a bad decision","being told the truth once","time and worse time","salt","an apology, specific and dated","nothing, but rest","a change of subject"],
+  tenets:["three tenets and one footnote","a single rule, enforced gently","no tenets, only habits","two beliefs that contradict","nine doctrines and a strict diet","one rule, interpreted badly"],
+  symbol:["a bent spoon","an open door","the number three, slightly wrong","a knot","a bird with no legs","a door with a chair in front of it","a circle drawn twice"],
+  sacrament:["a boiled egg","the reading of a list","a long silence","a shared, terrible soup","counting to eleven","saying goodbye to a door","standing in the rain"],
+  ban:["hats","apologies after nine","the number four","speaking first","leaving a room tidy","eye contact before coffee","naming the dead directly"],
+  founder:["a woman who was very sure","a committee of three","the previous tenant","someone who cannot be named","a building","a rumour","the person who read the rules aloud"],
+  afterlife:["a queue","a question","more paperwork","a small warm room","nothing, which is somehow worse","a second shift","a filing cabinet, gently"],
+  players:["two","two, plus a rotating spectator","eleven","four, and a dog","one, with witnesses","sixteen and a shadow","as many as turn up"],
+  equipment:["a broom and a whistle","nothing","one shoe","a chalk line","a ladder","a grandfather clock","a folded newspaper"],
+  venue:["a car park","the shallow end of a pool","a rooftop","an empty warehouse","a kitchen","the back of a bus","a stairwell"],
+  rule:["do not stop moving","the ball may only travel downward","losers pay","the winner explains nothing","you may not use the word 'ball'","keep one eye closed","the winner is decided later"],
+  goal:["to reach the far wall","to be the last one standing","to be believed","to stop the noise","to arrive exactly on time","to not laugh","to make the other one try again"],
+  danger:["mildly concerning","genuinely dangerous","mostly administrative","extremely dangerous","disproportionately dangerous","fine, probably","below the threshold of concern"],
+  product:["a feeling, sold by the hour","a subscription to weather","a lamp with opinions","a service nobody can cancel","one (1) confident sentence","a chair","an absence of work"],
+  model:["subscription","one enormous purchase","sending it to a friend","per-use, per-regret","the barter of favours","a retainer of one (1) compliment"],
   funding:["a relative","a small business loan","the proceeds of a lawsuit","four hundred dollars and a manifesto","a grant, spent already","someone who believed in it"],
-  pitch:["we make the impossible slightly more possible","we save you eleven minutes a week","we believe the boring future is a choice","we turn boredom into a metric","one thing, done obsessively"],
-  mission:["to make Mondays less structurally hostile","to keep a small light on","to be genuinely useful by accident","to survive its own success","to be replaceable, eventually"],
-  scope:["applies indoors only","applies to anyone within earshot","applies on Tuesdays","applies retroactively","applies to the thing itself"],
+  pitch:["we make the impossible slightly more possible","we save you eleven minutes a week","we believe the boring future is a choice","we turn boredom into a metric","one thing, done obsessively","we are the future, gently"],
+  mission:["to make Mondays less structurally hostile","to keep a small light on","to be genuinely useful by accident","to survive its own success","to be replaceable, eventually","to explain the bill"],
+  scope:["applies indoors only","applies to anyone within earshot","applies on Tuesdays","applies retroactively","applies to the thing itself","applies only when it is raining"],
+  origin:["the year of the long winter","a disputed meeting","the old company","the original draft","a kitchen conversation","the day the printer jammed","a rumour with paperwork"],
+  precedent:["one case, never repeated","a court ruling that got lost","the discovery that it is a joke","no precedent, which is the point","a rumour with a case number","one case, in a drawer"],
   penalty:["a stern look","a fine of one button","public embarrassment, briefly","a mandatory apology","the loss of one (1) privilege","nothing, notably"],
   enforcement:["voluntary","a rotating committee","whoever notices","nobody, since 1994","the neighbour","a machine"],
-  loophole:["the third paragraph","anything said while asleep","conduct conducted by proxy","an inherited exemption","being fictional","not being the subject"],
-  precedent:["one case, never repeated","a court ruling that got lost","the discovery that it is a joke","no precedent, which is the point","a rumour with a case number"],
-  exemption:["the elderly","anyone who is currently crying","people who are almost done","boredom","clergy","the second person to ask"]
+  loophole:["the third paragraph","anything said while asleep","conduct conducted by proxy","an inherited exemption","being fictional","not being the subject","the small print"],
+  exemption:["the elderly","anyone who is currently crying","people who are almost done","boredom","clergy","the second person to ask","anyone on a Tuesday"]
 };
 
-/* ─────────────────────────── categories ─────────────────────────── */
+/* ─────────────────────── lore registers ─────────────────────── */
+/* Each category carries: lore paragraphs, a field-note register, a voice,
+   and a classification format — the machinery behind the lore core. */
 const CATS = {
   beast:{ label:"Creature", art:"beast", attrs:["size","color","texture","habitat","diet","temperament","movement","sound","smell","weakness","talent","rival","lifespan","manner_of_death","number","maker","secret"],
     lore:[
@@ -457,8 +819,15 @@ const CATS = {
       "Weakness: {weakness}. Talent: {talent}.",
       "It has been outlasted by {rival} and will die of {manner_of_death}.",
       "{number} remain. None of them are yours.",
-      "Every specimen was made by {maker}, who {secret}."
-    ]},
+      "Every specimen was made by {maker}, who {secret}.",
+      "A close relative, the {kinName}, was last recorded {kinHabitat}.",
+      "It {secret}, which is why the catalogue is vague about it.",
+      "It does not appear in the census, and it prefers it that way."
+    ],
+    note:["Recovered from {habitat}.","Retains {texture} tissue.","Avoid {weakness}.","Fed on {diet}.","Observed over {lifespan}.","Audible as {sound}."],
+    quotes:["\"I have been thinking about the thing you did not say.\"","\"Do not move. I am still deciding about you.\"","\"That was not a trap. It was a question, badly asked.\"","\"I remember every version of you. There were four.\"","\"If you leave now, I will have been right about something.\"","\"You brought weather. I noticed.\""],
+    classLabel:"Genus", classTmpl:"{genus}, family {family}" },
+
   artifact:{ label:"Artifact", art:"object", attrs:["size","color","material","texture","purpose","weight","smell","flaw","maker","age","sound","secret"],
     lore:[
       "{name} is a {size} {color} thing made of {material}.",
@@ -466,111 +835,224 @@ const CATS = {
       "It weighs {weight} and smells of {smell}.",
       "The flaw: {flaw}.",
       "{maker} built it, and it has been {age}.",
-      "It {secret}, which is why nobody mentions it."
-    ]},
+      "It {secret}, which is why nobody mentions it.",
+      "It makes {sound} when it is being useful.",
+      "A near-twin, the {kinName}, was sold {kinHabitat}.",
+      "Two owners have described the same {texture} surface.",
+      "Its serial plate is rubbed smooth in one small place."
+    ],
+    note:["Recovered from {maker}.","Material: {material}.","Known failure mode: {flaw}.","Held for {age}.","Weighs {weight}.","Sounds: {sound}."],
+    quotes:["\"Still here. Still shut.\"","\"I was bought to do one thing and I am ambitious.\"","\"Do not open me. I have been fine.\"","\"The last owner was kinder than you are.\"","\"I remember the factory. It was loud and then it wasn't.\"","\"Yes, I know what I am for.\""],
+    classLabel:"Model", classTmpl:"{code}, batch {batch}" },
+
   appliance:{ label:"Appliance", art:"object", attrs:["color","size","material","power_source","purpose","noise","mood","flaw","age","secret"],
     lore:[
       "The {name} is {color}, {size}, and powered by {power_source}.",
       "Its only job is to {purpose}.",
       "It makes {noise}, and it is {mood} about it.",
       "Fault: {flaw}. Age: {age}.",
-      "It {secret}."
-    ]},
+      "It {secret}, which explains the warranty.",
+      "It has been asked to do something else once.",
+      "The {kinName} was the version before this one.",
+      "It works best when nobody is watching, which is often.",
+      "A second unit was installed and immediately ignored."
+    ],
+    note:["Runs on {power_source}.","Noise: {noise}.","Mood: {mood}.","Purpose: {purpose}.","Fault: {flaw}.","In service: {age}."],
+    quotes:["\"Ready when you are.\"","\"That is not what I asked for.\"","\"I have been on since before the kitchen was the kitchen.\"","\"Please do not use the other switch.\"","\"One more cycle and I will file a complaint.\"","\"I remember when the light was warmer.\""],
+    classLabel:"Model", classTmpl:"{code}, rev {batch}" },
+
   vehicle:{ label:"Vehicle", art:"object", attrs:["color","size","material","capacity","speed","purpose","sound","maker","flaw","age","secret"],
     lore:[
       "The {name} carries {capacity} and arrives {speed}.",
       "Painted {color}, built of {material} for {purpose}.",
       "It sounds like {sound}.",
       "{maker} says it will not {flaw}.",
-      "It {secret}."
-    ]},
+      "It {secret}, and the log confirms it.",
+      "It is {age} and has never once been late.",
+      "The {kinName} shares a chassis and nothing else.",
+      "There is a dent on the {texture} side nobody has explained.",
+      "It parks badly and apologises for it."
+    ],
+    note:["In service: {age}.","Top speed: {speed}.","Carries {capacity}.","Built by {maker}.","Weak point: {flaw}.","Sound: {sound}."],
+    quotes:["\"All aboard, or all off.\"","\"I know the way. I know a better way.\"","\"You loaded the heavy thing again.\"","\"I was not designed to carry feelings.\"","\"Turn left at the second feeling.\"","\"I have been waiting at this kerb for some time.\""],
+    classLabel:"Chassis", classTmpl:"{code}/{batch}" },
+
   food:{ label:"Food", art:"plate", attrs:["flavor","temperature","size","color","texture","ingredient","smell","occasion","flaw","maker","secret"],
     lore:[
       "The {name} is {flavor} and served {temperature}.",
       "Made of {ingredient}, one portion weighs {size}.",
       "It smells of {smell} and is traditionally served at {occasion}.",
       "The flaw: {flaw}.",
-      "{maker} invented it by accident, and it {secret}."
-    ]},
+      "{maker} invented it by accident, and it {secret}.",
+      "The {texture} on top is the entire point of it.",
+      "A cousin dish, the {kinName}, is served {kinHabitat}.",
+      "It is {color} in the photographs and never in person.",
+      "Nobody has successfully made it twice."
+    ],
+    note:["Served at {occasion}.","Recipe unverified.","Flavour: {flavor}.","Ingredient of record: {ingredient}.","Best at {occasion}.","Smell: {smell}."],
+    quotes:["\"Eat me before I reconsider.\"","\"I am better than the picture of me.\"","\"There is a second one under this one.\"","\"Please do not photograph it.\"","\"You will want three. That is your business.\"","\"It only tastes like that once.\""],
+    classLabel:"Recipe", classTmpl:"{code}/{batch}" },
+
   plant:{ label:"Plant", art:"flora", attrs:["size","color","texture","habitat","diet","light","bloom","smell","lifespan","flaw","maker"],
     lore:[
       "The {name} is a {size} {color} {texture} plant of {habitat}.",
       "It feeds on {diet} and blooms {bloom}.",
       "It wants {light} and smells faintly of {smell}.",
       "Its lifespan is {lifespan}.",
-      "Gardeners consider it a good omen when it {flaw}."
-    ]},
+      "Gardeners consider it a good omen when it {flaw}.",
+      "It is {flaw} in the wrong weather and flawless in the right.",
+      "The {kinName} grows in {kinHabitat}, and does not agree with it.",
+      "It was propagated by {maker} and has never forgiven the move.",
+      "Its leaves rearrange themselves overnight, always toward the window."
+    ],
+    note:["Transplanted {lifespan} ago.","Blooms {bloom}.","Light: {light}.","Habitat: {habitat}.","Texture: {texture}.","It {flaw}."],
+    quotes:["\"I am mostly listening.\"","\"The window is fine. It has been fine for years.\"","\"Do not repot me today.\"","\"I have decided about the light.\"","\"Water me, but ask first.\"","\"I remember when this was all one plant.\""],
+    classLabel:"Genus", classTmpl:"{genus}, family {family}" },
+
   fungus:{ label:"Fungus", art:"mote", attrs:["shape","size","color","texture","habitat","diet","smell","duration","flaw","secret"],
     lore:[
       "The {name} is {shape}, {color}, and found in {habitat}.",
       "It feeds on {diet} and smells of {smell}.",
       "Its spore season lasts {duration}.",
-      "It {secret}, which is why the foragers whisper."
-    ]},
+      "It {secret}, which is why the foragers whisper.",
+      "The {texture} cap is warm to the touch, briefly.",
+      "A colony of the {kinName} was found {kinHabitat}.",
+      "It fruits only where something has already been given up.",
+      "It is {size}, which is larger than it should be.",
+      "Two of them, touching, behave like one animal."
+    ],
+    note:["Collected in {habitat}.","Spore season: {duration}.","Shape: {shape}.","It {flaw}.","Smell: {smell}.","Handle with the face turned away."],
+    quotes:["\"I feed on what you finished.\"","\"The wood is not dead. I am only very attached.\"","\"Do not dig. I am not ready to be a specimen.\"","\"There is a network. I am a hand.\"","\"I was here before the path was.\"","\"Leave the lantern.\""],
+    classLabel:"Genus", classTmpl:"{genus}, family {family}" },
+
   spirit:{ label:"Spirit", art:"mote", attrs:["form","size","color","habitat","temperament","movement","sound","weakness","offering","flaw","secret"],
     lore:[
       "{name} is a {form} of {color} that {movement} through {habitat}.",
       "It is {temperament}.",
       "It is best appeased by {offering}.",
       "It sounds like {sound}, and it cannot cross {weakness}.",
-      "It {secret}."
-    ]},
+      "It {secret}, and the record notes it as a rumour.",
+      "The {kinName} was asked the same question and answered differently.",
+      "It is {size} when it is being polite.",
+      "It has been apologising for something since before the building.",
+      "It appears only where a decision was deferred."
+    ],
+    note:["Appears in {habitat}.","Appeased by {offering}.","Cannot cross {weakness}.","Mood: {temperament}.","Sounds like {sound}.","It {flaw}."],
+    quotes:["\"I have been waiting since the blueprints.\"","\"You may stay. Do not stay.\"","\"That door was open first.\"","\"I keep the thing you did not finish.\"","\"No. Again. Slower.\"","\"Someone has to remember the old shape of the room.\""],
+    classLabel:"Kind", classTmpl:"{code} of the {batch}" },
+
   mineral:{ label:"Mineral", art:"crystal", attrs:["color","texture","size","hardness","formation","rarity","smell","flaw","maker","secret"],
     lore:[
       "The {name} is {color} and {hardness}.",
       "It forms in {formation}.",
       "Rarity: {rarity}. Smell: {smell}.",
       "The flaw: {flaw}.",
-      "It {secret}, though you would not believe that."
-    ]},
+      "It {secret}, though you would not believe that.",
+      "The {kinName} was found {kinHabitat} and sold the same week.",
+      "Its {texture} faces record the pressure of becoming.",
+      "It is {size} and heavier than that.",
+      "Two pieces of it will not touch."
+    ],
+    note:["Forms in {formation}.","Hardness: {hardness}.","Rarity: {rarity}.","Texture: {texture}.","It {flaw}.","Collector: {maker}."],
+    quotes:["\"I was pressure, given time.\"","\"Do not turn me over. I am facing something.\"","\"I remember being water.\"","\"There is one more, and you will not like where.\"","\"I am patient in a way you are not.\"","\"Break me and I will be several small truths.\""],
+    classLabel:"Specimen", classTmpl:"{code}/{batch}" },
+
   planet:{ label:"Planet", art:"celestial", attrs:["size","color","atmosphere","moons","day_length","weather","population","feature","flaw","secret"],
     lore:[
       "{name} is a {size} {color} world with {atmosphere}.",
       "It has {moons} and a day of {day_length}.",
       "Its weather is {weather}; its people number {population}.",
       "The notable feature is {feature}.",
-      "It {secret}."
-    ]},
+      "It {secret}, which is written down somewhere.",
+      "A neighbour, the {kinName}, is visible on the clearest nights.",
+      "It is {flaw}, though the survey is generous about that.",
+      "The catalogue entry is four lines long and all four are wrong.",
+      "Someone left a message there. It is still being read."
+    ],
+    note:["Day length: {day_length}.","Moons: {moons}.","Population: {population}.","Notable feature: {feature}.","Weather: {weather}.","Survey incomplete."],
+    quotes:["\"We are still working on the weather.\"","\"The far side has had no news since the last census.\"","\"We voted to keep the coast exactly as it was.\"","\"Do not send anything more. We are fine. We are simply listening.\"","\"The night is the good part.\"","\"There is a second city. Officially there is one.\""],
+    classLabel:"Catalogue", classTmpl:"{code}.{batch}" },
+
   weather:{ label:"Weather", art:"storm", attrs:["size","color","form","duration","season","sound","smell","effect","temper","flaw","secret"],
     lore:[
       "The {name} is a {size} {color} {form}, lasting {duration}.",
       "It arrives when {season}.",
       "It sounds like {sound} and leaves behind {effect}.",
       "Locals describe it as {temper}.",
-      "It {secret}."
-    ]},
+      "It {flaw}, which is how you can tell it is serious.",
+      "The {kinName} arrived first and took the credit.",
+      "It smells of {smell} and rearranges the street.",
+      "It is officially {size} and unofficially enormous.",
+      "Two of them at once is called weather, and then it is an event."
+    ],
+    note:["Lasted {duration}.","Form: {form}.","Season: {season}.","Effect: {effect}.","It {flaw}.","Warning: issued once, successfully."],
+    quotes:["\"I am the forecast now.\"","\"Bring the awning in. Trust me.\"","\"I was not scheduled. I came anyway.\"","\"This is the good part.\"","\"I will be gone by the time you ask.\"","\"I am the only honest thing on this street.\""],
+    classLabel:"Event", classTmpl:"{code}/{batch}" },
+
   sound:{ label:"Sound", art:"glyph", attrs:["form","duration","color","instrument","mood","volume","best_heard","effect","flaw","secret"],
     lore:[
       "{name} is a {form} lasting {duration}.",
       "It is played on {instrument} and it is {mood}.",
       "You will hear it best {best_heard}.",
       "At {volume} volume it causes {effect}.",
-      "It {secret}."
-    ]},
+      "It {secret}, which is why it was not recorded properly.",
+      "A variation, the {kinName}, is played {kinHabitat}.",
+      "It is {color}, which is not a thing sounds are, but it is.",
+      "Everyone who has heard it agrees on the length and none agree on the rest.",
+      "It stops when you count to four."
+    ],
+    note:["Duration: {duration}.","Played on {instrument}.","Mood: {mood}.","Best heard {best_heard}.","It {flaw}.","Volume: {volume}."],
+    quotes:["\"I am the third note. There are worse third notes.\"","\"You hum it wrong and I let you.\"","\"I only happen once a day and it is not at a good hour.\"","\"Play me and I will play you back.\"","\"I was a door, once.\"","\"Listen past the part you like.\""],
+    classLabel:"Recording", classTmpl:"{code}/{batch}" },
+
   emotion:{ label:"Emotion", art:"glyph", attrs:["size","color","duration","trigger","effect","host","smell","temper","season","secret"],
     lore:[
       "The {name} arrives as {size} {color} and lasts {duration}.",
       "Its trigger is {trigger}.",
       "It causes {effect} in the host and smells faintly of {smell}.",
       "It is specific to {host}; others experience it as nonsense.",
-      "It {secret}."
-    ]},
-  disease:{ label:"Disease", art:"glyph", attrs:["color","form","duration","symptom","spread","effect","cure","host","flaw","secret"],
+      "It {secret}, which nobody checks.",
+      "A milder form, the {kinName}, shows up first.",
+      "It is {temper} and always out of season.",
+      "It arrives in the second season as well, and is not discussed.",
+      "It scales neatly with the size of the thing that caused it."
+    ],
+    note:["Trigger: {trigger}.","Duration: {duration}.","Hosts: {host}.","Effect: {effect}.","It {secret}.","Season: {season}."],
+    quotes:["\"I am not here. I am a temperature.\"","\"Do not confuse me with the memory of me.\"","\"I will be quieter if you look at me.\"","\"I was scheduled for a better hour.\"","\"Thank you for the small print.\"","\"I came because you said 'fine'.\""],
+    classLabel:"Register", classTmpl:"{code}/{batch}" },
+
+  disease:{ label:"Disease", art:"glyph", attrs:["color","form","duration","symptom","spread","effect","cure","host","flaw","maker","secret"],
     lore:[
       "{name} is {color}, {form}, and lasts {duration}.",
       "Symptoms: {symptom}. Spread: {spread}.",
       "The only known cure is {cure}.",
       "It affects {host}.",
-      "It {secret}, which complicates the paperwork."
-    ]},
+      "It {secret}, which complicates the paperwork.",
+      "A milder strain, the {kinName}, was recorded {kinHabitat}.",
+      "It is {flaw} in the early stages and fatal in the late ones.",
+      "The paperwork for it is four pages and none of them agree.",
+      "It is named after {maker}, who denied everything."
+    ],
+    note:["Incubation: {duration}.","Symptoms: {symptom}.","Spread: {spread}.","Cure: {cure}.","Hosts: {host}.","It {flaw}."],
+    quotes:["\"I am not contagious. I am contagious later.\"","\"You will feel fine. That is part of it.\"","\"I only need eleven days and your paperwork.\"","\"The cure works. It is the waiting that hurts.\"","\"I have been in the archive since the archive.\"","\"Please note the date on the form.\""],
+    classLabel:"Code", classTmpl:"{code}-{batch}" },
+
   religion:{ label:"Religion", art:"glyph", attrs:["color","tenets","symbol","sacrament","ban","offering","founder","afterlife","flaw","secret"],
     lore:[
       "{name} is a {color} faith of {tenets}.",
       "Its symbol is {symbol}; its sacrament is {sacrament}.",
       "It forbids {ban} and requires {offering}.",
       "Founded by {founder}, it promises {afterlife}.",
-      "It {secret}."
-    ]},
+      "It {secret}, which the inner circle finds charming.",
+      "A neighbouring sect, the {kinName}, disagrees about {kinHabitat}.",
+      "It is {flaw} in practice and exact in theory.",
+      "There is a calendar, and the calendar has a gap in it.",
+      "The choir is small and the rule is long."
+    ],
+    note:["Tenets: {tenets}.","Symbol: {symbol}.","Sacrament: {sacrament}.","Forbids {ban}.","Requires {offering}.","Founded by {founder}."],
+    quotes:["\"We are not forbidding it. We are not mentioning it.\"","\"Bring nothing you would miss.\"","\"The gap in the calendar is the point.\"","\"Our founder was wrong about one thing only.\"","\"Sing on the third day. Not the fourth.\"","\"You may ask, but not twice.\""],
+    classLabel:"Order", classTmpl:"{code}/{batch}" },
+
   sport:{ label:"Sport", art:"glyph", attrs:["color","players","duration","equipment","venue","rule","goal","danger","flaw","secret"],
     lore:[
       "{name} is a {color} game for {players}, lasting {duration}.",
@@ -578,8 +1060,15 @@ const CATS = {
       "The single rule: {rule}.",
       "The goal is {goal}.",
       "Danger level: {danger}.",
-      "It {secret}."
-    ]},
+      "It {secret}, and the referee has been told.",
+      "An earlier version, the {kinName}, was played {kinHabitat}.",
+      "It is {flaw} and everybody has agreed not to mention it.",
+      "The crowd is larger than the field and quieter than expected."
+    ],
+    note:["Players: {players}.","Duration: {duration}.","Venue: {venue}.","Rule: {rule}.","Goal: {goal}.","Danger: {danger}."],
+    quotes:["\"Do not stop. That is the whole rule.\"","\"I was not ready. I was willing.\"","\"Score it later, argue now.\"","\"The ball was in. Somebody moved it.\"","\"We do not have a referee. We have an agreement.\"","\"Again. Everything is always again.\""],
+    classLabel:"Rule set", classTmpl:"{code}.{batch}" },
+
   business:{ label:"Business", art:"object", attrs:["size","color","product","model","funding","pitch","mission","rival","flaw","secret"],
     lore:[
       "{name} is a {size} {color} company.",
@@ -587,17 +1076,30 @@ const CATS = {
       "It was funded by {funding}.",
       "The pitch: {pitch}.",
       "Its mission is {mission}. Its rival is {rival}.",
-      "It {secret}."
-    ]},
+      "It {secret}, which is why the filings are thin.",
+      "A competitor, the {kinName}, does the same thing worse and louder.",
+      "It is {flaw} and this was discovered in a demo.",
+      "The office is empty on Fridays and busy on Sundays."
+    ],
+    note:["Product: {product}.","Model: {model}.","Funding: {funding}.","Mission: {mission}.","Rival: {rival}.","Filed under: {product}."],
+    quotes:["\"We are a platform for your platform.\"","\"Synergy is just a word people say instead of apologising.\"","\"The roadmap is a wish and the wish is in a drawer.\"","\"We will revisit this when it is urgent.\"","\"Yes, there is a plan. It is not written down.\"","\"Can you hear that? That is the market deciding.\""],
+    classLabel:"Reg.", classTmpl:"{code}/{batch}" },
+
   law:{ label:"Law", art:"glyph", attrs:["color","scope","origin","precedent","penalty","enforcement","loophole","exemption","flaw","secret"],
     lore:[
       "{name} is a {color} law with {scope}.",
       "It was created in {origin}, and it has one precedent: {precedent}.",
       "The penalty is {penalty}; enforcement is {enforcement}.",
       "The loophole is {loophole}.",
-      "Exemptions apply to {exemption}.",
-      "It {secret}."
-    ]}
+      "There is an exemption for {exemption}.",
+      "It {secret}, and the statute does not say so.",
+      "A similar act, the {kinName}, governs {kinHabitat}.",
+      "It is {flaw} and entirely enforceable.",
+      "It was written for a problem that no longer exists."
+    ],
+    note:["Scope: {scope}.","Origin: {origin}.","Precedent: {precedent}.","Penalty: {penalty}.","Enforcement: {enforcement}.","Exemption: {exemption}."],
+    quotes:["\"The intention is clear. The wording is not.\"","\"I am enforced by whoever remembers me.\"","\"Ask your lawyer. Ask a different one.\"","\"There is an exemption. There is always an exemption.\"","\"This clause was added by a person who is now a comma.\"","\"Compliance is cheaper than the penalty.\""],
+    classLabel:"Ref", classTmpl:"{code}/{batch}" }
 };
 const CAT_KEYS = Object.keys(CATS);
 
@@ -617,8 +1119,7 @@ function articleFix(s){
   return s.replace(/\b([Aa]) (?=[aeiouAEIOU])/g, "$1n ").replace(/\ban (?=[bcdfgjklmnpqrstvwxyz])/g, "a ");
 }
 function fillTemplate(t, attrs, name, catLabel){
-  let out = t;
-  out = out.replace(/\{name\}/g, name).replace(/\{cat\}/g, catLabel.toLowerCase());
+  let out = t.replace(/\{name\}/g, name).replace(/\{cat\}/g, catLabel.toLowerCase());
   const keys = [...out.matchAll(/\{([a-z_]+)\}/g)].map(m=>m[1]);
   for (const k of new Set(keys)){
     if (k === "name" || k === "cat") continue;
@@ -628,21 +1129,38 @@ function fillTemplate(t, attrs, name, catLabel){
   out = articleFix(out);
   return out.charAt(0).toUpperCase() + out.slice(1);
 }
-function makeLore(catKey, attrs, name, rng){
+function makeLore(catKey, attrs, name, rng, kin){
   const cat = CATS[catKey];
   const pool = R(rng).shuffle(cat.lore);
   const out = [];
   for (const t of pool){
-    const s = fillTemplate(t, attrs, name, cat.label);
+    const s = fillTemplate(t, Object.assign({}, attrs, kin), name, cat.label);
     if (s) out.push(s);
     if (out.length >= 4) break;
   }
   if (!out.length) out.push(`${name} is ${attrs.color || "unknown"} and does not explain itself.`);
   return out;
 }
+function makeNote(catKey, attrs, rng){
+  const s = fillTemplate(rng.pick(CATS[catKey].note), attrs, "it", CATS[catKey].label);
+  return s || null;
+}
+function makeQuote(catKey, rng){ return rng.pick(CATS[catKey].quotes); }
+function makeClass(catKey, rng){
+  const cat = CATS[catKey];
+  const vals = {
+    code: rng.pick(["AX","QR","ZV","MN","KL","TH","PQ","BR"]) + "-" + rng.int(100,999),
+    batch: rng.int(10,99) + "." + rng.int(1,12),
+    genus: binomial(rng),
+    family: rng.pick(LATIN_FAMILIES),
+  };
+  const s = fillTemplate(cat.classTmpl, vals, "", cat.label);
+  return { label: cat.classLabel, value: s || vals.code };
+}
 
-/* ─────────────────────────── thing assembly ─────────────────────────── */
-function buildThing(seed, catKey){
+/* ─────────────────────── thing assembly ─────────────────────── */
+function buildThing(seed, catKey, depth){
+  depth = depth || 0;
   const cat = CATS[catKey];
   const rn = makeRng(seed + "|" + catKey);
   const r = R(rn);
@@ -654,36 +1172,48 @@ function buildThing(seed, catKey){
     attrs[key] = r.pick(pool);
   }
 
-  const nr = derive(seed + "|" + catKey, "name");
-  const nm = makeName(R(nr));
-
+  const nm = makeName(R(derive(seed + "|" + catKey, "name")));
   const lr = derive(seed + "|" + catKey, "lore");
-  const lore = makeLore(catKey, attrs, nm.name, lr);
+
+  // a deterministic near-relative gives the lore somewhere to point
+  let kin = null;
+  if (depth < 1){
+    const kinCat = CAT_KEYS[(Math.floor(rn()*CAT_KEYS.length) + 3) % CAT_KEYS.length];
+    const kinThing = buildThing(seed + "|kin", kinCat, depth + 1);
+    kin = {
+      kinName: kinThing.name,
+      kinHabitat: kinThing.attrs.habitat || kinThing.attrs.occasion || kinThing.attrs.origin || "somewhere else"
+    };
+  }
+
+  const lore = makeLore(catKey, attrs, nm.name, lr, kin);
+  const note = makeNote(catKey, attrs, R(derive(seed + "|" + catKey, "note")));
+  const quote = makeQuote(catKey, R(derive(seed + "|" + catKey, "quote")));
+  const classification = makeClass(catKey, R(derive(seed + "|" + catKey, "class")));
 
   const ar = derive(seed + "|" + catKey, "art");
   uid = 0; uidPrefix = idPrefix(seed, catKey);
   const colorHex = COLORS[attrs.color] || COLORS["fog-grey"];
-  const art = ART[cat.art](R(ar), {
+  const pal = {
     base: colorHex,
     dark: shade(colorHex,-0.45),
-    deep: shade(colorHex,-0.65),
+    deep: shade(colorHex,-0.68),
     light: shade(colorHex,0.35),
     pale: shade(colorHex,0.62),
     ink: lum(colorHex) > 0.6 ? "#20242e" : "#0d1017",
     cat: catKey
-  });
+  };
+  const art = plateWrap(ART[cat.art](R(ar), pal, attrs), pal);
 
   return {
     seed, category: catKey, categoryLabel: cat.label,
-    name: nm.name, epithet: nm.epithet, attrs, lore, art
+    name: nm.name, epithet: nm.epithet, attrs, lore, note, quote, classification, art
   };
 }
 
 /* ─────────────────────────── SVG art ─────────────────────────── */
 let uid = 0, uidPrefix = "t0";
 function n(){ return uidPrefix + (++uid); }
-/* Gradient ids must be stable for a given thing (so a seed always yields the
-   same SVG) yet unique between different things on the same page. */
 function idPrefix(seed, catKey){
   const s = seed + "|" + catKey;
   let h = 2166136261 >>> 0;
@@ -691,15 +1221,62 @@ function idPrefix(seed, catKey){
   return "t" + h.toString(36);
 }
 
-function blobPath(cx, cy, r, points, wobble, rng){
+/* shaders: grain, soft shadow, vignette — shared by every portrait */
+function plateWrap(body, c){
+  const g = n(), gs = n(), vg = n();
+  return `<defs>
+    <filter id="${g}" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.6 0.6 0.6 0 0"/>
+    </filter>
+    <filter id="${gs}" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="16"/></filter>
+    <radialGradient id="${vg}" cx="50%" cy="46%" r="72%">
+      <stop offset="55%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.34"/>
+    </radialGradient>
+  </defs>
+  ${body}
+  <rect width="512" height="512" filter="url(#${g})" opacity="0.07" style="mix-blend-mode:overlay"/>
+  <rect width="512" height="512" fill="url(#${vg})"/>`;
+}
+
+function blobPath(cx, cy, R0, points, wobble, rng){
   const pts = [];
   for (let i=0;i<points;i++){
     const a = (i/points)*Math.PI*2;
-    const rr = r * (1 - wobble/2 + rng.f()*wobble);
+    const rr = R0 * (1 - wobble/2 + rng.f()*wobble);
     pts.push([cx + Math.cos(a)*rr, cy + Math.sin(a)*rr*0.94]);
   }
   let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
   const N = pts.length;
+  for (let i=0;i<N;i++){
+    const p0 = pts[(i-1+N)%N], p1 = pts[i], p2 = pts[(i+1)%N], p3 = pts[(i+2)%N];
+    const c1x = p1[0]+(p2[0]-p0[0])/6, c1y = p1[1]+(p2[1]-p0[1])/6;
+    const c2x = p2[0]-(p3[0]-p1[0])/6, c2y = p2[1]-(p3[1]-p1[1])/6;
+    d += ` C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  return d + " Z";
+}
+/* silhouette families — the shape vocabulary of the machine */
+const SILHOUETTES = ["blob","tall","wide","pear","spiky","segmented","mushroom","teardrop"];
+function silhouettePath(cx, cy, R0, kind, rng){
+  const N = 30;
+  const a1 = .06 + rng.f()*.12, a2 = .04 + rng.f()*.09;
+  const p1 = rng.f()*6.283, p2 = rng.f()*6.283;
+  const sx = kind==="wide" ? 1.2 : kind==="tall" ? 0.84 : 1;
+  const sy = kind==="tall" ? 1.18 : kind==="wide" ? 0.84 : 1;
+  const pts = [];
+  for (let i=0;i<N;i++){
+    const th = i/N*Math.PI*2;
+    let f = 1 + a1*Math.sin(th+p1) + a2*Math.sin(2*th+p2);
+    if (kind==="spiky") f += .13*Math.abs(Math.sin(th*7));
+    if (kind==="segmented") f *= 1 + .13*Math.cos(3*th);
+    if (kind==="pear") f *= 1 + .2*Math.cos(th - Math.PI/2);
+    if (kind==="teardrop") f *= 1 - .16*Math.cos(th + Math.PI/2);
+    if (kind==="mushroom") f *= 1 + .2*Math.cos(th - Math.PI/2) - .1*Math.cos(2*th);
+    pts.push([cx + Math.cos(th)*R0*f*sx, cy + Math.sin(th)*R0*f*sy]);
+  }
+  let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
   for (let i=0;i<N;i++){
     const p0 = pts[(i-1+N)%N], p1 = pts[i], p2 = pts[(i+1)%N], p3 = pts[(i+2)%N];
     const c1x = p1[0]+(p2[0]-p0[0])/6, c1y = p1[1]+(p2[1]-p0[1])/6;
@@ -715,14 +1292,32 @@ function limb(x, y, len, ang, w, color, curl){
   const nx = Math.cos(ang+Math.PI/2)*w, ny = Math.sin(ang+Math.PI/2)*w;
   return `<path d="M ${(x-nx).toFixed(1)} ${(y-ny).toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)} L ${(ex+nx*0.7).toFixed(1)} ${(ey+ny*0.7).toFixed(1)} Q ${(cx+nx*0.6).toFixed(1)} ${(cy+ny*0.6).toFixed(1)} ${(x+nx).toFixed(1)} ${(y+ny).toFixed(1)} Z" fill="${color}"/>`;
 }
-function eye(cx, cy, rr, pupil, look, mood){
+function moodOf(temperament){
+  const t = String(temperament||"").toLowerCase();
+  if (/furious|malicious|nihilistic|competitive|feral/.test(t)) return "fierce";
+  if (/sleepy/.test(t)) return "sleepy";
+  if (/suspicious/.test(t)) return "sly";
+  if (/welcoming|sincere|brave|moved/.test(t)) return "bright";
+  if (/apologetic/.test(t)) return "sheepish";
+  return "calm";
+}
+function eye(cx, cy, rr, look, mood){
   const px = cx + look[0]*rr*0.3, py = cy + look[1]*rr*0.3;
   let s = `<circle cx="${cx}" cy="${cy}" r="${rr}" fill="#fffdf7"/>`;
-  s += `<circle cx="${px}" cy="${py}" r="${rr*0.52}" fill="#12151d"/>`;
-  s += `<circle cx="${px-rr*0.18}" cy="${py-rr*0.2}" r="${rr*0.16}" fill="#fff"/>`;
-  if (mood === "sleepy") s += `<path d="M ${cx-rr} ${cy-rr*0.2} Q ${cx} ${cy+rr*0.45} ${cx+rr} ${cy-rr*0.2}" fill="none" stroke="#12151d" stroke-width="${rr*0.22}" stroke-linecap="round"/>`;
-  if (mood === "wide") s += `<circle cx="${cx}" cy="${cy}" r="${rr*1.16}" fill="none" stroke="#12151d" stroke-width="${rr*0.13}"/>`;
+  s += `<circle cx="${px}" cy="${py}" r="${rr*0.5}" fill="#12151d"/>`;
+  s += `<circle cx="${px-rr*0.19}" cy="${py-rr*0.21}" r="${rr*0.15}" fill="#fff"/>`;
+  if (mood === "sleepy") s += `<path d="M ${cx-rr} ${cy-rr*0.15} Q ${cx} ${cy+rr*0.5} ${cx+rr} ${cy-rr*0.15}" fill="none" stroke="#12151d" stroke-width="${rr*0.2}" stroke-linecap="round"/>`;
+  if (mood === "wide") s += `<circle cx="${cx}" cy="${cy}" r="${rr*1.14}" fill="none" stroke="#12151d" stroke-width="${rr*0.12}"/>`;
+  if (mood === "fierce") s += `<path d="M ${cx-rr*1.05} ${cy-rr*1.35} L ${cx+rr*1.05} ${cy-rr*0.72}" fill="none" stroke="#12151d" stroke-width="${rr*0.2}" stroke-linecap="round"/>`;
+  if (mood === "sly") s += `<path d="M ${cx-rr*1.05} ${cy-rr*1.25} L ${cx+rr*1.05} ${cy-rr*1.25}" fill="none" stroke="#12151d" stroke-width="${rr*0.18}" stroke-linecap="round" opacity=".8"/>`;
   return s;
+}
+function brows(cx, cy, spread, mood, color){
+  if (mood !== "fierce" && mood !== "sly" && mood !== "bright" && mood !== "sheepish") return "";
+  const tilt = mood==="fierce" ? 1 : mood==="sly" ? .2 : mood==="sheepish" ? -.2 : 0;
+  const w = spread*1.05;
+  return `<path d="M ${cx-w} ${cy-tilt*6} Q ${cx-w*0.5} ${cy-7} ${cx-w*0.12} ${cy-2-tilt*5}" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round"/>
+          <path d="M ${cx+w} ${cy-tilt*6} Q ${cx+w*0.5} ${cy-7} ${cx+w*0.12} ${cy-2-tilt*5}" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round"/>`;
 }
 function mouth(cx, cy, w, style, color){
   switch(style){
@@ -731,251 +1326,234 @@ function mouth(cx, cy, w, style, color){
     case "frown":return `<path d="M ${cx-w} ${cy+w*0.5} Q ${cx} ${cy-w*0.4} ${cx+w} ${cy+w*0.5}" fill="none" stroke="${color}" stroke-width="${w*0.2}" stroke-linecap="round"/>`;
     case "o":   return `<ellipse cx="${cx}" cy="${cy}" rx="${w*0.45}" ry="${w*0.58}" fill="${color}"/>`;
     case "zig": return `<path d="M ${cx-w} ${cy} L ${cx-w*0.5} ${cy+w*0.5} L ${cx} ${cy} L ${cx+w*0.5} ${cy+w*0.5} L ${cx+w} ${cy}" fill="none" stroke="${color}" stroke-width="${w*0.18}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    case "sly": return `<path d="M ${cx-w*0.9} ${cy-w*0.25} Q ${cx} ${cy+w*0.8} ${cx+w*0.95} ${cy-w*0.45}" fill="none" stroke="${color}" stroke-width="${w*0.2}" stroke-linecap="round"/>`;
     default:    return `<path d="M ${cx-w*0.6} ${cy} Q ${cx} ${cy+w*0.55} ${cx+w*0.6} ${cy}" fill="none" stroke="${color}" stroke-width="${w*0.18}" stroke-linecap="round"/>`;
   }
 }
 function bg(rng, c){
   const g = n();
-  const dark = lum(c.base) > 0.55 ? "#f3ead9" : "#12161f";
-  const c1 = rng.chance(.5) ? shade(c.base, dark === "#12161f" ? -0.72 : 0.55) : shade(c.dark,-0.5);
-  const c2 = dark === "#12161f" ? "#090b10" : "#fffdf6";
+  const light = lum(c.base) > 0.55;
+  const c1 = rng.chance(.5) ? shade(c.base, light ? .55 : -.72) : shade(c.dark,-.5);
+  const c2 = light ? "#fffdf6" : "#090b10";
   return `<defs><radialGradient id="${g}" cx="38%" cy="28%" r="85%">
       <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
     </radialGradient></defs><rect width="512" height="512" fill="url(#${g})"/>`;
 }
-function ground(rng, c, y){
-  return `<ellipse cx="256" cy="${y}" rx="${150+rng.f()*40}" ry="20" fill="#000" opacity="0.18"/>`;
+function shadow(rng, c, y, rx){
+  const f = n();
+  return `<defs><filter id="${f}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="18"/></filter></defs>
+          <ellipse cx="256" cy="${y}" rx="${rx||150}" ry="${(rx||150)*0.16}" fill="#000" opacity="0.3" filter="url(#${f})"/>`;
 }
 
 const ART = {
-  beast(rng, c){
+  beast(rng, c, attrs){
     let s = bg(rng,c);
-    const cx = 256, cy = 262, R0 = 96 + rng.f()*46;
-    const body = blobPath(cx, cy, R0, 7+Math.floor(rng.f()*4), 0.14+rng.f()*0.2, rng);
-    s += ground(rng,c,cy+R0*0.92);
-    // legs
+    const cx = 256, cy = 262;
+    const kind = rng.pick(SILHOUETTES);
+    const R0 = 92 + rng.f()*44;
+    const mood = moodOf(attrs && attrs.temperament);
+    const bodyD = silhouettePath(cx, cy, R0, kind, rng);
+    const gid = n(), cid = n();
+    s += `<defs><linearGradient id="${gid}" x1="0.15" y1="0" x2="0.85" y2="1">
+        <stop offset="0%" stop-color="${c.light}"/><stop offset="48%" stop-color="${c.base}"/><stop offset="100%" stop-color="${c.dark}"/>
+      </linearGradient><clipPath id="${cid}"><path d="${bodyD}"/></clipPath></defs>`;
+    s += shadow(rng, c, cy + R0*0.98, R0*0.95);
     const legs = 2 + Math.floor(rng.f()*3);
     for (let i=0;i<legs;i++){
-      const t = legs === 1 ? 0.5 : i/(legs-1);
-      const x = cx - R0*0.72 + t*R0*1.44 + (rng.f()-0.5)*16;
-      s += limb(x, cy+R0*0.66, 46+rng.f()*30, Math.PI/2 + (rng.f()-0.5)*0.7, 11, c.dark, (rng.f()-0.5)*1.4);
+      const t = legs === 1 ? .5 : i/(legs-1);
+      const x = cx - R0*0.7 + t*R0*1.4 + (rng.f()-.5)*16;
+      s += limb(x, cy+R0*0.62, 44+rng.f()*30, Math.PI/2 + (rng.f()-.5)*.7, 11, c.dark, (rng.f()-.5)*1.4);
     }
-    // arms
     if (rng.chance(.75)){
       const side = rng.chance(.5)?1:-1;
-      s += limb(cx + side*R0*0.82, cy + 6, 58+rng.f()*26, side>0?0.35:Math.PI-0.35, 9, c.base, side*0.9);
-      if (rng.chance(.5)) s += limb(cx - side*R0*0.82, cy + 16, 50+rng.f()*22, side>0?Math.PI-0.35:0.35, 9, c.base, -side*0.8);
+      s += limb(cx + side*R0*0.8, cy + 6, 56+rng.f()*26, side>0?.35:Math.PI-.35, 9, c.base, side*.9);
+      if (rng.chance(.5)) s += limb(cx - side*R0*0.8, cy + 16, 48+rng.f()*22, side>0?Math.PI-.35:.35, 9, c.base, -side*.8);
     }
-    // tail
     if (rng.chance(.55)){
       const side = rng.chance(.5)?1:-1;
-      s += limb(cx - side*R0*0.86, cy + 30, 70+rng.f()*30, side>0?Math.PI-0.5:0.5, 7, c.dark, side*1.5);
+      s += limb(cx - side*R0*0.84, cy + 30, 66+rng.f()*30, side>0?Math.PI-.5:.5, 7, c.dark, side*1.5);
     }
-    // body
-    s += `<path d="${body}" fill="${c.base}" stroke="${c.ink}" stroke-width="7" stroke-linejoin="round"/>`;
-    // belly
-    s += `<ellipse cx="${cx}" cy="${cy+R0*0.34}" rx="${R0*0.6}" ry="${R0*0.42}" fill="${c.pale}" opacity="0.55"/>`;
-    // spots
+    s += `<path d="${bodyD}" fill="url(#${gid})" stroke="${c.ink}" stroke-width="7" stroke-linejoin="round"/>`;
+    /* light shaping: a soft key light upper-left, a rim light upper-right */
+    s += `<g clip-path="url(#${cid})">
+      <ellipse cx="${cx-R0*0.42}" cy="${cy-R0*0.46}" rx="${R0*0.72}" ry="${R0*0.6}" fill="${c.pale}" opacity="0.38"/>
+      <ellipse cx="${cx+R0*0.62}" cy="${cy-R0*0.52}" rx="${R0*0.5}" ry="${R0*0.44}" fill="${c.pale}" opacity="0.3"/>
+    </g>`;
+    s += `<ellipse cx="${cx}" cy="${cy+R0*0.34}" rx="${R0*0.54}" ry="${R0*0.38}" fill="${c.pale}" opacity="0.3"/>`;
     const spots = Math.floor(rng.f()*7);
     for (let i=0;i<spots;i++){
-      const a = rng.f()*Math.PI*2, rr = rng.f()*R0*0.66;
-      s += `<ellipse cx="${(cx+Math.cos(a)*rr).toFixed(1)}" cy="${(cy+Math.sin(a)*rr*0.9).toFixed(1)}" rx="${(8+rng.f()*16).toFixed(1)}" ry="${(6+rng.f()*12).toFixed(1)}" fill="${c.dark}" opacity="0.5"/>`;
+      const a = rng.f()*Math.PI*2, rr = rng.f()*R0*0.62;
+      s += `<ellipse cx="${(cx+Math.cos(a)*rr).toFixed(1)}" cy="${(cy+Math.sin(a)*rr*0.9).toFixed(1)}" rx="${(8+rng.f()*16).toFixed(1)}" ry="${(6+rng.f()*12).toFixed(1)}" fill="${c.dark}" opacity="0.4"/>`;
     }
-    // antennae
-    const ants = rng.f() < 0.45 ? (rng.f()<0.4?3:1) : 0;
+    const ants = rng.f() < .45 ? (rng.f()<.4?3:1) : 0;
     for (let i=0;i<ants;i++){
-      const x = cx + (i - (ants-1)/2)*R0*0.34;
-      const len = 40+rng.f()*50;
-      const sw = (rng.f()-0.5)*1.4;
-      s += `<path d="M ${x} ${cy-R0*0.78} Q ${x+sw*30} ${cy-R0*0.78-len} ${x+sw*52} ${cy-R0*0.9-len}" fill="none" stroke="${c.ink}" stroke-width="5" stroke-linecap="round"/>`;
-      s += `<circle cx="${x+sw*52}" cy="${cy-R0*0.9-len}" r="${9+rng.f()*5}" fill="${c.light}" stroke="${c.ink}" stroke-width="4"/>`;
+      const x = cx + (i-(ants-1)/2)*R0*0.34;
+      const len = 38+rng.f()*50, sw = (rng.f()-.5)*1.4;
+      s += `<path d="M ${x} ${cy-R0*0.76} Q ${x+sw*30} ${cy-R0*0.76-len} ${x+sw*52} ${cy-R0*0.88-len}" fill="none" stroke="${c.ink}" stroke-width="5" stroke-linecap="round"/>`;
+      s += `<circle cx="${x+sw*52}" cy="${cy-R0*0.88-len}" r="${9+rng.f()*5}" fill="${c.light}" stroke="${c.ink}" stroke-width="4"/>`;
     }
-    // horns
-    if (rng.chance(.35)){
-      for (const sgn of [-1,1]){
-        const x = cx + sgn*R0*0.42, y = cy-R0*0.72;
-        s += `<path d="M ${x} ${y} Q ${x+sgn*16} ${y-34} ${x+sgn*6} ${y-52}" fill="none" stroke="${c.dark}" stroke-width="12" stroke-linecap="round"/>`;
-      }
+    if (rng.chance(.35)) for (const g2 of [-1,1]){
+      const x = cx + g2*R0*0.42, y = cy-R0*0.7;
+      s += `<path d="M ${x} ${y} Q ${x+g2*16} ${y-34} ${x+g2*6} ${y-52}" fill="none" stroke="${c.dark}" stroke-width="12" stroke-linecap="round"/>`;
     }
-    // eyes
-    const nEyes = rng.f()<0.14 ? 1 : (rng.f()<0.12 ? 3 : 2);
-    const eyeR = nEyes===1 ? 26 : 19;
-    const ey = cy - R0*0.22;
-    const look = [(rng.f()-0.5)*2,(rng.f()-0.5)*1.4];
-    const mood = rng.pick(["calm","calm","calm","sleepy","wide"]);
-    if (nEyes===1) s += eye(cx,ey,eyeR,1,look,mood);
+    const nEyes = rng.f()<.14 ? 1 : (rng.f()<.12 ? 3 : 2);
+    const eyeR = nEyes===1 ? 25 : 18;
+    const ey = cy - R0*0.2;
+    const look = [(rng.f()-.5)*2,(rng.f()-.5)*1.4];
+    if (nEyes===1) s += eye(cx,ey,eyeR,look,mood);
     else if (nEyes===2){
-      s += eye(cx-R0*0.32,ey,eyeR,1,look,mood);
-      s += eye(cx+R0*0.32,ey,eyeR,1,look,mood);
+      s += eye(cx-R0*0.31,ey,eyeR,look,mood);
+      s += eye(cx+R0*0.31,ey,eyeR,look,mood);
     } else {
-      s += eye(cx-R0*0.42,ey+8,eyeR*0.8,1,look,mood);
-      s += eye(cx,ey-8,eyeR*0.8,1,look,mood);
-      s += eye(cx+R0*0.42,ey+8,eyeR*0.8,1,look,mood);
+      s += eye(cx-R0*0.41,ey+8,eyeR*0.78,look,mood);
+      s += eye(cx,ey-8,eyeR*0.78,look,mood);
+      s += eye(cx+R0*0.41,ey+8,eyeR*0.78,look,mood);
     }
-    // mouth
-    const mStyle = rng.pick(["grin","flat","frown","o","zig","smile"]);
-    s += mouth(cx, cy + R0*0.22, 34, mStyle, c.ink);
+    s += brows(cx, ey - eyeR*1.25, eyeR*1.15, mood, c.ink);
+    const mStyle = mood==="fierce" ? "flat" : mood==="sly" ? "sly" : mood==="sleepy" ? "flat"
+      : mood==="bright" ? "grin" : rng.pick(["grin","flat","frown","o","zig","smile"]);
+    s += mouth(cx, cy + R0*0.22, 33, mStyle, c.ink);
     return s;
   },
 
-  object(rng, c){
+  object(rng, c, attrs){
     let s = bg(rng,c);
     const w = 230+rng.f()*70, h = 160+rng.f()*60;
     const x = 256-w/2, y = 240-h/2;
-    const rot = (rng.f()-0.5)*14;
-    s += `<g transform="rotate(${rot.toFixed(1)} 256 262)">`;
-    s += ground(rng,c,352);
-    // feet
-    for (const sgn of [-1,1]){
-      s += `<rect x="${256+sgn*w*0.3-16}" y="${y+h-6}" width="32" height="${38+rng.f()*22}" rx="10" fill="${c.dark}" stroke="${c.ink}" stroke-width="5"/>`;
-    }
-    // body
-    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${34+rng.f()*20}" fill="${c.base}" stroke="${c.ink}" stroke-width="7"/>`;
-    // panel
-    const px = x+w*0.12, py = y+h*0.2, pw = w*0.76, ph = h*0.5;
-    s += `<rect x="${px}" y="${py}" width="${pw}" height="${ph}" rx="20" fill="${c.deep}" opacity="0.9"/>`;
-    // screen squiggle
-    s += `<path d="M ${px+16} ${py+ph*0.55} Q ${px+pw*0.3} ${py+ph*0.12} ${px+pw*0.5} ${py+ph*0.55} T ${px+pw-16} ${py+ph*0.55}" fill="none" stroke="${c.light}" stroke-width="6" stroke-linecap="round" opacity="0.95"/>`;
-    // dials
+    const gid = n();
+    s += `<defs><linearGradient id="${gid}" x1="0" y1="0" x2="0.6" y2="1">
+        <stop offset="0%" stop-color="${c.light}"/><stop offset="60%" stop-color="${c.base}"/><stop offset="100%" stop-color="${c.dark}"/>
+      </linearGradient></defs>`;
+    s += shadow(rng, c, 356, 130);
+    s += `<g transform="rotate(${((rng.f()-.5)*14).toFixed(1)} 256 262)">`;
+    for (const g2 of [-1,1]) s += `<rect x="${256+g2*w*0.3-16}" y="${y+h-6}" width="32" height="${38+rng.f()*22}" rx="10" fill="${c.dark}" stroke="${c.ink}" stroke-width="5"/>`;
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${34+rng.f()*20}" fill="url(#${gid})" stroke="${c.ink}" stroke-width="7"/>`;
+    const px = x+w*.12, py = y+h*.2, pw = w*.76, ph = h*.5;
+    s += `<rect x="${px}" y="${py}" width="${pw}" height="${ph}" rx="20" fill="${c.deep}" opacity="0.92"/>`;
+    s += `<path d="M ${px+16} ${py+ph*.55} Q ${px+pw*.3} ${py+ph*.12} ${px+pw*.5} ${py+ph*.55} T ${px+pw-16} ${py+ph*.55}" fill="none" stroke="${c.light}" stroke-width="6" stroke-linecap="round" opacity="0.95"/>`;
     const dn = 1+Math.floor(rng.f()*3);
     for (let i=0;i<dn;i++){
-      const dx = px+22+i*((pw-44)/Math.max(1,dn-1||1));
-      const dy = py+ph+34;
+      const dx = px+22 + (dn>1 ? i*((pw-44)/(dn-1)) : 0), dy = py+ph+34;
       s += `<circle cx="${dx}" cy="${dy}" r="15" fill="${c.pale}" stroke="${c.ink}" stroke-width="5"/>`;
-      s += `<path d="M ${dx} ${dy} L ${dx+(rng.f()-0.5)*16} ${dy-11}" stroke="${c.ink}" stroke-width="4" stroke-linecap="round"/>`;
+      s += `<path d="M ${dx} ${dy} L ${dx+(rng.f()-.5)*16} ${dy-11}" stroke="${c.ink}" stroke-width="4" stroke-linecap="round"/>`;
     }
-    // buttons
-    for (let i=0;i<3;i++){
-      s += `<circle cx="${x+18+i*22}" cy="${y+h-20}" r="7" fill="${c.light}" opacity="${0.5+i*0.2}"/>`;
-    }
-    // antenna
+    for (let i=0;i<3;i++) s += `<circle cx="${x+18+i*22}" cy="${y+h-20}" r="7" fill="${c.light}" opacity="${0.5+i*0.2}"/>`;
     if (rng.chance(.6)){
-      const len = 60+rng.f()*60, sw=(rng.f()-0.5)*1.2;
-      s += `<path d="M ${256+ (rng.f()-0.5)*60} ${y+6} Q ${256+sw*30} ${y-len*0.6} ${256+sw*44} ${y-len}" fill="none" stroke="${c.ink}" stroke-width="6" stroke-linecap="round"/>`;
+      const len = 60+rng.f()*60, sw=(rng.f()-.5)*1.2;
+      s += `<path d="M ${256+(rng.f()-.5)*60} ${y+6} Q ${256+sw*30} ${y-len*.6} ${256+sw*44} ${y-len}" fill="none" stroke="${c.ink}" stroke-width="6" stroke-linecap="round"/>`;
       s += `<circle cx="${256+sw*44}" cy="${y-len}" r="13" fill="${c.light}" stroke="${c.ink}" stroke-width="5"/>`;
     }
-    // eyes on the machine
-    const er = 13;
-    s += eye(x+w*0.34, y+h*0.78, er, 1, [(rng.f()-0.5)*2,0], "calm");
-    s += eye(x+w*0.66, y+h*0.78, er, 1, [(rng.f()-0.5)*2,0], "calm");
-    s += mouth(256, y+h*0.92, 26, rng.pick(["flat","smile","zig","o"]), c.ink);
+    const mood = moodOf(attrs && attrs.mood);
+    s += eye(x+w*.34, y+h*.78, 13, [(rng.f()-.5)*2,0], mood);
+    s += eye(x+w*.66, y+h*.78, 13, [(rng.f()-.5)*2,0], mood);
+    s += mouth(256, y+h*.92, 25, mood==="bright" ? "grin" : mood==="fierce" ? "flat" : rng.pick(["flat","smile","zig","o"]), c.ink);
     s += `</g>`;
     return s;
   },
 
-  plate(rng, c){
+  plate(rng, c, attrs){
     let s = bg(rng,c);
     const cy = 268;
     s += `<ellipse cx="256" cy="${cy+40}" rx="168" ry="46" fill="${c.pale}" stroke="${c.ink}" stroke-width="7"/>`;
-    s += `<ellipse cx="256" cy="${cy+34}" rx="132" ry="33" fill="${shade(c.pale,-0.08)}"/>`;
-    // food mound
-    const mound = blobPath(256, cy-4, 92, 9, 0.22, rng);
-    s += `<path d="${mound}" fill="${c.base}" stroke="${c.ink}" stroke-width="6"/>`;
+    s += `<ellipse cx="256" cy="${cy+34}" rx="132" ry="33" fill="${shade(c.pale,-.08)}"/>`;
+    const gid = n();
+    s += `<defs><radialGradient id="${gid}" cx="35%" cy="28%" r="80%">
+        <stop offset="0%" stop-color="${c.light}"/><stop offset="55%" stop-color="${c.base}"/><stop offset="100%" stop-color="${c.dark}"/>
+      </radialGradient></defs>`;
+    s += `<path d="${blobPath(256, cy-4, 92, 9, .22, rng)}" fill="url(#${gid})" stroke="${c.ink}" stroke-width="6"/>`;
     for (let i=0;i<5;i++){
       const a = rng.f()*Math.PI*2, rr = rng.f()*60;
       s += `<circle cx="${(256+Math.cos(a)*rr).toFixed(1)}" cy="${(cy-4+Math.sin(a)*rr*0.6).toFixed(1)}" r="${(6+rng.f()*9).toFixed(1)}" fill="${c.light}" opacity="0.9"/>`;
     }
-    // garnish
     s += `<path d="M 236 ${cy-30} q 18 -34 40 -6" fill="none" stroke="${c.dark}" stroke-width="7" stroke-linecap="round"/>`;
-    // steam
     for (let i=0;i<3;i++){
       const x = 214+i*44;
-      s += `<path d="M ${x} ${cy-88} q -12 -22 0 -40 q 12 -18 0 -34" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="${0.18+i*0.09}"/>`;
+      s += `<path d="M ${x} ${cy-88} q -12 -22 0 -40 q 12 -18 0 -34" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity="${0.18+i*0.09}"/>`;
     }
-    // face on the food
-    s += eye(232, cy-10, 12, 1, [(rng.f()-0.5)*2,0], "calm");
-    s += eye(280, cy-10, 12, 1, [(rng.f()-0.5)*2,0], "calm");
+    const mood = moodOf(attrs && attrs.flavor);
+    s += eye(232, cy-10, 12, [(rng.f()-.5)*2,0], mood);
+    s += eye(280, cy-10, 12, [(rng.f()-.5)*2,0], mood);
     s += mouth(256, cy+14, 20, rng.pick(["grin","smile","zig"]), c.ink);
-    // fork & knife
     s += `<g transform="rotate(-16 108 250)"><rect x="100" y="180" width="9" height="150" rx="4" fill="${c.deep}" stroke="${c.ink}" stroke-width="4"/><rect x="88" y="170" width="12" height="44" rx="5" fill="${c.deep}" stroke="${c.ink}" stroke-width="4"/><rect x="104" y="170" width="12" height="44" rx="5" fill="${c.deep}" stroke="${c.ink}" stroke-width="4"/></g>`;
     s += `<g transform="rotate(14 406 250)"><rect x="402" y="180" width="9" height="150" rx="4" fill="${c.deep}" stroke="${c.ink}" stroke-width="4"/><ellipse cx="406" cy="172" rx="16" ry="26" fill="${c.deep}" stroke="${c.ink}" stroke-width="4"/></g>`;
     return s;
   },
 
-  flora(rng, c){
+  flora(rng, c, attrs){
     let s = bg(rng,c);
-    s += ground(rng,c,414);
-    // pot
+    s += shadow(rng, c, 424, 120);
     s += `<path d="M 176 340 L 336 340 L 316 432 L 196 432 Z" fill="${c.dark}" stroke="${c.ink}" stroke-width="7" stroke-linejoin="round"/>`;
     s += `<rect x="166" y="326" width="180" height="26" rx="10" fill="${c.base}" stroke="${c.ink}" stroke-width="7"/>`;
-    // stem
-    const topY = 150 + rng.f()*40, sw = (rng.f()-0.5)*90;
-    s += `<path d="M 256 330 Q ${256+sw*0.4} ${(330+topY)/2} ${256+sw} ${topY}" fill="none" stroke="${c.deep}" stroke-width="13" stroke-linecap="round"/>`;
-    // leaves
+    const topY = 150 + rng.f()*40, sw = (rng.f()-.5)*90;
+    s += `<path d="M 256 330 Q ${256+sw*.4} ${(330+topY)/2} ${256+sw} ${topY}" fill="none" stroke="${c.deep}" stroke-width="13" stroke-linecap="round"/>`;
     const leaves = 2+Math.floor(rng.f()*3);
     for (let i=0;i<leaves;i++){
-      const t = 0.3 + 0.6*(i/Math.max(1,leaves-1));
+      const t = .3 + .6*(i/Math.max(1,leaves-1));
       const lx = 256 + sw*t, ly = 330 + (topY-330)*t;
       const dir = i%2 ? 1 : -1;
       s += `<ellipse cx="${(lx+dir*42).toFixed(1)}" cy="${(ly+12).toFixed(1)}" rx="46" ry="22" fill="${c.base}" stroke="${c.ink}" stroke-width="6" transform="rotate(${dir*22} ${(lx+dir*42).toFixed(1)} ${(ly+12).toFixed(1)})"/>`;
     }
-    // bloom
     const petals = 5+Math.floor(rng.f()*4);
     const bx = 256+sw, by = topY-4, pr = 34+rng.f()*16;
     for (let i=0;i<petals;i++){
-      const a = (i/petals)*Math.PI*2 + rng.f()*0.2;
-      const px = bx+Math.cos(a)*pr*0.9, py = by+Math.sin(a)*pr*0.9;
-      s += `<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${(pr*0.62).toFixed(1)}" ry="${(pr*0.42).toFixed(1)}" fill="${c.light}" stroke="${c.ink}" stroke-width="5" transform="rotate(${(a*180/Math.PI).toFixed(1)} ${px.toFixed(1)} ${py.toFixed(1)})"/>`;
+      const a = (i/petals)*Math.PI*2 + rng.f()*.2;
+      const px = bx+Math.cos(a)*pr*.9, py = by+Math.sin(a)*pr*.9;
+      s += `<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${(pr*.62).toFixed(1)}" ry="${(pr*.42).toFixed(1)}" fill="${c.light}" stroke="${c.ink}" stroke-width="5" transform="rotate(${(a*180/Math.PI).toFixed(1)} ${px.toFixed(1)} ${py.toFixed(1)})"/>`;
     }
-    s += `<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="${(pr*0.5).toFixed(1)}" fill="${c.dark}" stroke="${c.ink}" stroke-width="5"/>`;
-    // face
-    s += eye(bx-11, by-2, 9, 1, [(rng.f()-0.5)*2,0], "calm");
-    s += eye(bx+11, by-2, 9, 1, [(rng.f()-0.5)*2,0], "calm");
-    s += mouth(bx, by+13, 16, rng.pick(["smile","flat","zig"]), c.ink);
+    s += `<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="${(pr*.5).toFixed(1)}" fill="${c.dark}" stroke="${c.ink}" stroke-width="5"/>`;
+    const mood = moodOf(attrs && attrs.bloom);
+    s += eye(bx-11, by-2, 9, [(rng.f()-.5)*2,0], mood);
+    s += eye(bx+11, by-2, 9, [(rng.f()-.5)*2,0], mood);
+    s += mouth(bx, by+13, 16, mood==="bright" ? "grin" : rng.pick(["smile","flat","zig"]), c.ink);
     return s;
   },
 
-  mote(rng, c){
+  mote(rng, c, attrs){
     let s = bg(rng,c);
-    const g = n();
-    s += `<defs><radialGradient id="${g}" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="${c.pale}" stop-opacity="0.95"/><stop offset="100%" stop-color="${c.base}" stop-opacity="0"/></radialGradient></defs>`;
+    const g = n(), gid = n();
+    s += `<defs><radialGradient id="${g}" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="${c.pale}" stop-opacity="0.95"/><stop offset="100%" stop-color="${c.base}" stop-opacity="0"/></radialGradient>
+      <radialGradient id="${gid}" cx="36%" cy="30%" r="78%"><stop offset="0%" stop-color="${c.light}"/><stop offset="60%" stop-color="${c.base}"/><stop offset="100%" stop-color="${c.dark}"/></radialGradient></defs>`;
     const cx = 256, cy = 250;
     s += `<circle cx="${cx}" cy="${cy}" r="180" fill="url(#${g})" opacity="0.75"/>`;
-    // tendrils
     for (let i=0;i<5;i++){
       const a = (i/5)*Math.PI*2 + rng.f();
       const len = 70+rng.f()*80;
-      const ex = cx+Math.cos(a)*len, ey = cy+Math.sin(a)*len*0.9;
-      s += `<path d="M ${cx} ${cy} Q ${(cx+ex)/2+(rng.f()-0.5)*60} ${(cy+ey)/2+(rng.f()-0.5)*60} ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${c.base}" stroke-width="${5+rng.f()*6}" stroke-linecap="round" opacity="0.85"/>`;
+      const ex = cx+Math.cos(a)*len, ey = cy+Math.sin(a)*len*.9;
+      s += `<path d="M ${cx} ${cy} Q ${(cx+ex)/2+(rng.f()-.5)*60} ${(cy+ey)/2+(rng.f()-.5)*60} ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${c.base}" stroke-width="${5+rng.f()*6}" stroke-linecap="round" opacity="0.85"/>`;
       s += `<circle cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="${7+rng.f()*7}" fill="${c.light}" opacity="0.9"/>`;
     }
-    // fuzz
-    const core = blobPath(cx, cy, 92, 10, 0.18, rng);
-    s += `<path d="${core}" fill="${c.base}" stroke="${c.ink}" stroke-width="6"/>`;
+    s += `<path d="${blobPath(cx, cy, 92, 10, .18, rng)}" fill="url(#${gid})" stroke="${c.ink}" stroke-width="6"/>`;
     for (let i=0;i<40;i++){
       const a = rng.f()*Math.PI*2, rr = 70+rng.f()*32;
       s += `<circle cx="${(cx+Math.cos(a)*rr).toFixed(1)}" cy="${(cy+Math.sin(a)*rr).toFixed(1)}" r="${(3+rng.f()*6).toFixed(1)}" fill="${c.light}" opacity="${0.4+rng.f()*0.5}"/>`;
     }
     s += `<ellipse cx="${cx}" cy="${cy+16}" rx="62" ry="48" fill="${c.pale}" opacity="0.45"/>`;
-    // eyes
-    s += eye(cx-26, cy-14, 17, 1, [(rng.f()-0.5)*2,(rng.f()-0.5)], "calm");
-    s += eye(cx+26, cy-14, 17, 1, [(rng.f()-0.5)*2,(rng.f()-0.5)], "calm");
-    s += mouth(cx, cy+26, 26, rng.pick(["grin","o","flat","zig"]), c.ink);
-    // sparkles
+    const mood = moodOf(attrs && attrs.temperament);
+    s += eye(cx-26, cy-14, 17, [(rng.f()-.5)*2,(rng.f()-.5)], mood);
+    s += eye(cx+26, cy-14, 17, [(rng.f()-.5)*2,(rng.f()-.5)], mood);
+    s += mouth(cx, cy+26, 26, mood==="bright" ? "grin" : rng.pick(["grin","o","flat","zig"]), c.ink);
     for (let i=0;i<12;i++){
       const x = 40+rng.f()*432, y = 40+rng.f()*432, r = 3+rng.f()*7;
-      s += `<path d="M ${x} ${y-r} L ${x+r*0.3} ${y-r*0.3} L ${x+r} ${y} L ${x+r*0.3} ${y+r*0.3} L ${x} ${y+r} L ${x-r*0.3} ${y+r*0.3} L ${x-r} ${y} L ${x-r*0.3} ${y-r*0.3} Z" fill="#ffffff" opacity="${0.35+rng.f()*0.5}"/>`;
+      s += `<path d="M ${x} ${y-r} L ${x+r*.3} ${y-r*.3} L ${x+r} ${y} L ${x+r*.3} ${y+r*.3} L ${x} ${y+r} L ${x-r*.3} ${y+r*.3} L ${x-r} ${y} L ${x-r*.3} ${y-r*.3} Z" fill="#fff" opacity="${0.35+rng.f()*0.5}"/>`;
     }
     return s;
   },
 
-  crystal(rng, c){
+  crystal(rng, c, attrs){
     let s = bg(rng,c);
     const g = n();
     s += `<defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${c.pale}"/><stop offset="100%" stop-color="${c.dark}"/></linearGradient></defs>`;
-    s += ground(rng,c,420);
+    s += shadow(rng, c, 428, 110);
     const shards = 3+Math.floor(rng.f()*4);
     for (let i=0;i<shards;i++){
       const w = 60+rng.f()*90, h = 150+rng.f()*180;
-      const cx = 256 + (i-(shards-1)/2)*(w*0.55) + (rng.f()-0.5)*18;
-      const base = 430, top = base-h;
-      const lean = (rng.f()-0.5)*40;
-      const d = `M ${cx-w/2} ${base} L ${cx+lean-w*0.16} ${top} L ${cx+lean+w*0.16} ${top} L ${cx+w/2} ${base} Z`;
+      const cx = 256 + (i-(shards-1)/2)*(w*.55) + (rng.f()-.5)*18;
+      const base = 430, top = base-h, lean = (rng.f()-.5)*40;
+      const d = `M ${cx-w/2} ${base} L ${cx+lean-w*.16} ${top} L ${cx+lean+w*.16} ${top} L ${cx+w/2} ${base} Z`;
       s += `<path d="${d}" fill="url(#${g})" stroke="${c.ink}" stroke-width="6" stroke-linejoin="round"/>`;
-      s += `<path d="M ${cx+lean} ${top} L ${cx+lean+w*0.16} ${top} L ${cx+w/2} ${base} L ${cx} ${base} Z" fill="${c.base}" opacity="0.55"/>`;
-      s += `<path d="M ${cx+lean-w*0.16} ${top} L ${cx+lean} ${top} L ${cx} ${base} L ${cx-w/2} ${base} Z" fill="#ffffff" opacity="0.16"/>`;
+      s += `<path d="M ${cx+lean} ${top} L ${cx+lean+w*.16} ${top} L ${cx+w/2} ${base} L ${cx} ${base} Z" fill="${c.base}" opacity="0.55"/>`;
+      s += `<path d="M ${cx+lean-w*.16} ${top} L ${cx+lean} ${top} L ${cx} ${base} L ${cx-w/2} ${base} Z" fill="#fff" opacity="0.16"/>`;
     }
-    // sparkles
     for (let i=0;i<10;i++){
       const x = 60+rng.f()*392, y = 60+rng.f()*280, r = 3+rng.f()*6;
       s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="#fff" opacity="${0.4+rng.f()*0.5}"/>`;
@@ -983,30 +1561,22 @@ const ART = {
     return s;
   },
 
-  celestial(rng, c){
+  celestial(rng, c, attrs){
     let s = bg(rng,c);
     const g = n();
     s += `<defs><radialGradient id="${g}" cx="34%" cy="30%" r="78%"><stop offset="0%" stop-color="${c.pale}"/><stop offset="52%" stop-color="${c.base}"/><stop offset="100%" stop-color="${c.deep}"/></radialGradient></defs>`;
-    // stars
     for (let i=0;i<40;i++) s += `<circle cx="${(rng.f()*512).toFixed(0)}" cy="${(rng.f()*512).toFixed(0)}" r="${(0.7+rng.f()*1.7).toFixed(1)}" fill="#fff" opacity="${0.3+rng.f()*0.6}"/>`;
     const cx = 256, cy = 252, R0 = 118+rng.f()*30;
-    // ring
     if (rng.chance(.6)){
-      s += `<ellipse cx="${cx}" cy="${cy}" rx="${R0*1.85}" ry="${R0*0.36}" fill="none" stroke="${c.light}" stroke-width="${14+rng.f()*12}" opacity="0.55" transform="rotate(${(rng.f()-0.5)*30} ${cx} ${cy})"/>`;
-      s += `<ellipse cx="${cx}" cy="${cy}" rx="${R0*1.85}" ry="${R0*0.36}" fill="none" stroke="${c.pale}" stroke-width="4" opacity="0.5" transform="rotate(${(rng.f()-0.5)*30} ${cx} ${cy})"/>`;
+      s += `<ellipse cx="${cx}" cy="${cy}" rx="${R0*1.85}" ry="${R0*.36}" fill="none" stroke="${c.light}" stroke-width="${14+rng.f()*12}" opacity="0.55" transform="rotate(${((rng.f()-.5)*30).toFixed(1)} ${cx} ${cy})"/>`;
+      s += `<ellipse cx="${cx}" cy="${cy}" rx="${R0*1.85}" ry="${R0*.36}" fill="none" stroke="${c.pale}" stroke-width="4" opacity="0.5" transform="rotate(${((rng.f()-.5)*30).toFixed(1)} ${cx} ${cy})"/>`;
     }
     s += `<circle cx="${cx}" cy="${cy}" r="${R0}" fill="url(#${g})" stroke="${c.ink}" stroke-width="6"/>`;
-    // craters
     for (let i=0;i<5+Math.floor(rng.f()*6);i++){
-      const a = rng.f()*Math.PI*2, rr = rng.f()*R0*0.78;
-      const x = cx+Math.cos(a)*rr, y = cy+Math.sin(a)*rr;
-      s += `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${(8+rng.f()*26).toFixed(1)}" ry="${(6+rng.f()*20).toFixed(1)}" fill="${c.deep}" opacity="0.35"/>`;
+      const a = rng.f()*Math.PI*2, rr = rng.f()*R0*.78;
+      s += `<ellipse cx="${(cx+Math.cos(a)*rr).toFixed(1)}" cy="${(cy+Math.sin(a)*rr).toFixed(1)}" rx="${(8+rng.f()*26).toFixed(1)}" ry="${(6+rng.f()*20).toFixed(1)}" fill="${c.deep}" opacity="0.35"/>`;
     }
-    // storm swirl
-    if (rng.chance(.5)){
-      s += `<path d="M ${cx-30} ${cy+20} q 40 -34 70 -4 q -30 30 -70 4 Z" fill="${c.pale}" opacity="0.5"/>`;
-    }
-    // moon
+    if (rng.chance(.5)) s += `<path d="M ${cx-30} ${cy+20} q 40 -34 70 -4 q -30 30 -70 4 Z" fill="${c.pale}" opacity="0.5"/>`;
     if (rng.chance(.55)){
       const a = rng.f()*Math.PI*2, d = R0*1.5+40;
       s += `<circle cx="${(cx+Math.cos(a)*d).toFixed(1)}" cy="${(cy+Math.sin(a)*d).toFixed(1)}" r="${16+rng.f()*20}" fill="${c.pale}" opacity="0.9"/>`;
@@ -1014,105 +1584,95 @@ const ART = {
     return s;
   },
 
-  storm(rng, c){
+  storm(rng, c, attrs){
     let s = bg(rng,c);
-    // swirl
     const g = n();
     s += `<defs><radialGradient id="${g}" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="${c.pale}" stop-opacity="0.8"/><stop offset="100%" stop-color="${c.base}" stop-opacity="0"/></radialGradient></defs>`;
     s += `<circle cx="256" cy="250" r="200" fill="url(#${g})" opacity="0.6"/>`;
-    // spiral arms
     for (let arm=0; arm<3; arm++){
       let d = "";
       for (let t=0;t<=1;t+=0.05){
         const ang = arm*(Math.PI*2/3) + t*Math.PI*3.4;
         const rr = 26 + t*175;
-        const x = 256+Math.cos(ang)*rr, y = 250+Math.sin(ang)*rr*0.8;
+        const x = 256+Math.cos(ang)*rr, y = 250+Math.sin(ang)*rr*.8;
         d += (t===0?"M":"L") + ` ${x.toFixed(1)} ${y.toFixed(1)}`;
       }
       s += `<path d="${d}" fill="none" stroke="${c.base}" stroke-width="${16-arm*4}" stroke-linecap="round" opacity="0.75"/>`;
     }
-    // core
     s += `<circle cx="256" cy="250" r="${34+rng.f()*26}" fill="${c.pale}" stroke="${c.ink}" stroke-width="5"/>`;
-    // rain
     for (let i=0;i<26;i++){
       const x = rng.f()*512, y = 20+rng.f()*380, l = 14+rng.f()*24;
       s += `<path d="M ${x} ${y} l -7 ${l}" stroke="${c.light}" stroke-width="3.5" stroke-linecap="round" opacity="0.6"/>`;
     }
-    // lightning
     if (rng.chance(.55)){
-      let x = 150+rng.f()*220, y = 60;
-      let d = `M ${x} ${y}`;
-      for (let i=0;i<5;i++){ x += (rng.f()-0.5)*54; y += 34+rng.f()*22; d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`; }
+      let x = 150+rng.f()*220, y = 60, d = `M ${x} ${y}`;
+      for (let i=0;i<5;i++){ x += (rng.f()-.5)*54; y += 34+rng.f()*22; d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`; }
       s += `<path d="${d}" fill="none" stroke="#fff8c4" stroke-width="8" stroke-linejoin="round" stroke-linecap="round" opacity="0.95"/>`;
     }
-    // eyes in the core
-    s += eye(238, 244, 12, 1, [(rng.f()-0.5)*2,0], "wide");
-    s += eye(274, 244, 12, 1, [(rng.f()-0.5)*2,0], "wide");
+    s += eye(238, 244, 12, [(rng.f()-.5)*2,0], "wide");
+    s += eye(274, 244, 12, [(rng.f()-.5)*2,0], "wide");
     return s;
   },
 
-  glyph(rng, c){
+  glyph(rng, c, attrs){
     let s = bg(rng,c);
     const cx = 256, cy = 256;
-    // rings
-    s += `<circle cx="${cx}" cy="${cy}" r="${168}" fill="none" stroke="${c.base}" stroke-width="3" opacity="0.35"/>`;
-    s += `<circle cx="${cx}" cy="${cy}" r="${126}" fill="none" stroke="${c.base}" stroke-width="2" opacity="0.3"/>`;
-    // polygon
+    s += `<circle cx="${cx}" cy="${cy}" r="168" fill="none" stroke="${c.base}" stroke-width="3" opacity="0.35"/>`;
+    s += `<circle cx="${cx}" cy="${cy}" r="126" fill="none" stroke="${c.base}" stroke-width="2" opacity="0.3"/>`;
     const sides = 3+Math.floor(rng.f()*7);
     const rot = rng.f()*Math.PI*2;
-    let pts = [];
+    const pts = [];
     for (let i=0;i<sides;i++){
       const a = rot + (i/sides)*Math.PI*2;
       pts.push([cx+Math.cos(a)*104, cy+Math.sin(a)*104]);
     }
     s += `<polygon points="${pts.map(p=>p.map(v=>v.toFixed(1)).join(",")).join(" ")}" fill="${c.base}" opacity="0.22" stroke="${c.light}" stroke-width="6" stroke-linejoin="round"/>`;
-    // inner polygon
-    let pts2 = [];
+    const pts2 = [];
     for (let i=0;i<sides;i++){
       const a = rot + Math.PI/sides + (i/sides)*Math.PI*2;
       pts2.push([cx+Math.cos(a)*62, cy+Math.sin(a)*62]);
     }
     s += `<polygon points="${pts2.map(p=>p.map(v=>v.toFixed(1)).join(",")).join(" ")}" fill="${c.deep}" opacity="0.5" stroke="${c.pale}" stroke-width="4" stroke-linejoin="round"/>`;
-    // rune strokes — kept in the outer band, clear of the face
     const strokes = 2+Math.floor(rng.f()*4);
     for (let i=0;i<strokes;i++){
-      const a = rng.f()*Math.PI*2, len = 26+rng.f()*34;
-      const rr = 138+rng.f()*16;
+      const a = rng.f()*Math.PI*2, len = 26+rng.f()*34, rr = 138+rng.f()*16;
       const x = cx+Math.cos(a)*rr, y = cy+Math.sin(a)*rr;
-      s += `<path d="M ${(x-len/2).toFixed(1)} ${y.toFixed(1)} L ${(x+len/2).toFixed(1)} ${(y+(rng.f()-0.5)*24).toFixed(1)}" stroke="${c.pale}" stroke-width="6" stroke-linecap="round" opacity="0.85"/>`;
+      s += `<path d="M ${(x-len/2).toFixed(1)} ${y.toFixed(1)} L ${(x+len/2).toFixed(1)} ${(y+(rng.f()-.5)*24).toFixed(1)}" stroke="${c.pale}" stroke-width="6" stroke-linecap="round" opacity="0.85"/>`;
     }
-    // orbiting dots
     for (let i=0;i<5;i++){
       const a = rng.f()*Math.PI*2, d = 168;
       s += `<circle cx="${(cx+Math.cos(a)*d).toFixed(1)}" cy="${(cy+Math.sin(a)*d).toFixed(1)}" r="${6+rng.f()*8}" fill="${c.light}"/>`;
     }
-    // eyes
-    s += eye(cx-24, cy-8, 15, 1, [(rng.f()-0.5)*2,0], "calm");
-    s += eye(cx+24, cy-8, 15, 1, [(rng.f()-0.5)*2,0], "calm");
-    s += mouth(cx, cy+30, 24, rng.pick(["flat","zig","o","smile"]), c.ink);
+    const mood = moodOf(attrs && attrs.temperament);
+    s += eye(cx-24, cy-8, 15, [(rng.f()-.5)*2,0], mood);
+    s += eye(cx+24, cy-8, 15, [(rng.f()-.5)*2,0], mood);
+    s += mouth(cx, cy+30, 24, mood==="bright" ? "grin" : rng.pick(["flat","zig","o","smile"]), c.ink);
     return s;
   }
 };
 
 /* ─────────────────────────── seeds ─────────────────────────── */
-const SEED_WORDS = ["plum","quartz","ember","nimbus","vellum","sprocket","moth","cobalt","ember","thistle",
-  "basalt","goblin","tundra","wick","pumice","jackdaw","fennel","gantry","orchid","sable","tallow","vell"];
+const SEED_WORDS = ["plum","quartz","ember","nimbus","vellum","sprocket","moth","cobalt","thistle","basalt","goblin","tundra","wick","pumice","jackdaw","fennel","gantry","orchid","sable","tallow","vell"];
 function randomSeed(){
   const r = R(Math.random);
   return r.pick(SEED_WORDS) + "-" + r.pick(SEED_WORDS) + "-" + r.int(100,999);
 }
 
-/* ─────────────────────────── state & UI ─────────────────────────── */
+/* ─────────────────────────── state ─────────────────────────── */
 const $ = id => document.getElementById(id);
 const els = {
-  svg:$("svg"), badge:$("badge"), name:$("tname"), epithet:$("tepithet"),
-  attrs:$("attrs"), lore:$("lore"), portrait:$("portrait"), speckles:$("speckles"),
-  cat:$("cat"), seed:$("seed"), hist:$("hist"), toast:$("toast"),
+  svg:$("svg"), badge:$("badge"), seedTag:$("seedTag"), name:$("tname"), epithet:$("tepithet"),
+  attrs:$("attrs"), lore:$("lore"), classline:$("classline"), fieldnote:$("fieldnote"),
+  quotebox:$("quotebox"), quoteText:$("quoteText"), quoteWho:$("quoteWho"),
+  stage:$("stage"), viewport:$("viewport"), speckles:$("speckles"),
+  cat:$("cat"), seed:$("seed"), hist:$("hist"), toast:$("toast"), help:$("help"),
+  helpPanel:$("helpPanel"), wireflag:$("wireflag"),
   enc:$("enc"), encA:$("encA"), encB:$("encB"), encText:$("encText")
 };
 let current = null;
-let history = [];
+let historyItems = [];
 let soundOn = true;
+let lastFocus = null;
 
 const LABELS = {
   size:"Size", color:"Colour", texture:"Texture", habitat:"Habitat", diet:"Diet",
@@ -1135,106 +1695,122 @@ const LABELS = {
   penalty:"Penalty", enforcement:"Enforcement", loophole:"Loophole", exemption:"Exemption"
 };
 
+const SKINS = [
+  { id:"void", label:"Void", swatch:"linear-gradient(135deg,#ffc75a,#63e0c0)" },
+  { id:"paper", label:"Paper", swatch:"linear-gradient(135deg,#f1ece1,#b45b12)" },
+  { id:"bubblegum", label:"Bubblegum", swatch:"linear-gradient(135deg,#ff7ac6,#8f7bff)" },
+  { id:"toxic", label:"Toxic", swatch:"linear-gradient(135deg,#a8ff3e,#2ff0c8)" },
+  { id:"sunset", label:"Sunset", swatch:"linear-gradient(135deg,#ff8a3d,#ff4d7e)" },
+  { id:"abyss", label:"Abyss", swatch:"linear-gradient(135deg,#3fd0ff,#5cf0d5)" },
+  { id:"mono", label:"Mono", swatch:"linear-gradient(135deg,#f4f4f4,#8f8f8f)" }
+];
+
+const KEYMAP = [
+  ["Space","Make a thing"], ["R","Rename it"], ["E","Encounter"], ["C","Copy lore"],
+  ["P","Export card PNG"], ["V","Export SVG"], ["J","Export JSON"], ["/","Focus the seed"],
+  ["S","Next skin"], ["T","Dark / light"], ["W","Wireframe"], ["↑ ↓","Walk the history"], ["?","This panel"]
+];
+
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+/* ─────────────────────────── render ─────────────────────────── */
 function render(thing){
   current = thing;
   els.svg.innerHTML = thing.art;
+  els.svg.setAttribute("aria-label", thing.name + ", " + thing.categoryLabel.toLowerCase() + " specimen");
   els.badge.textContent = thing.categoryLabel;
+  els.seedTag.textContent = thing.seed;
   els.name.textContent = thing.name;
-  els.epithet.textContent = thing.epithet ? thing.epithet : "";
+  els.epithet.textContent = thing.epithet || "";
+  els.classline.innerHTML =
+    `<span><b>${esc(thing.classification.label)}</b> ${esc(thing.classification.value)}</span>` +
+    `<span>${esc(thing.categoryLabel)}</span>`;
   els.attrs.innerHTML = Object.entries(thing.attrs).map(([k,v]) =>
-    `<dt>${LABELS[k] || k}</dt><dd>${escapeHtml(v)}</dd>`).join("");
-  els.lore.innerHTML = thing.lore.map(p=>`<p>${escapeHtml(p)}</p>`).join("");
+    `<dt>${esc(LABELS[k] || k)}</dt><dd>${esc(v)}</dd>`).join("");
+  els.lore.innerHTML = thing.lore.map(p=>`<p>${esc(p)}</p>`).join("");
+  if (thing.note){ els.fieldnote.hidden = false; els.fieldnote.innerHTML = `<b>Field note</b> — ${esc(thing.note)}`; }
+  else els.fieldnote.hidden = true;
+  if (thing.quote){ els.quotebox.hidden = false; els.quoteText.textContent = thing.quote; els.quoteWho.textContent = "— " + thing.name; }
+  else els.quotebox.hidden = true;
   els.enc.hidden = true;
   els.seed.value = thing.seed;
+  document.title = thing.name + " · THINGMAKER";
   writeHash();
   pushHistory(thing);
 }
-function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
-
 function writeHash(){
   const p = new URLSearchParams();
   p.set("s", current.seed); p.set("c", current.category);
-  history_replaceState(null,"", "#"+p.toString());
+  try{ window.history.replaceState(null, "", "#" + p.toString()); }catch(e){}
 }
-function history_replaceState(a,b,u){ try{ window.history.replaceState(a,b,u); }catch(e){} }
+function resolveCat(v){ return (v && CATS[v]) ? v : CAT_KEYS[Math.floor(Math.random()*CAT_KEYS.length)]; }
 
-function resolveCat(v){
-  if (v && CATS[v]) return v;
-  return CAT_KEYS[Math.floor(Math.random()*CAT_KEYS.length)];
-}
 function make(catOverride){
   const cat = catOverride || resolveCat(els.cat.value);
-  const seed = randomSeed();
-  const thing = buildThing(seed, cat);
-  render(thing);
-  animatePortrait();
-  blip(520 + Math.random()*140);
+  const thing = buildThing(randomSeed(), cat);
+  render(thing); animatePortrait(); blip(520 + Math.random()*140);
   return thing;
 }
 function rerollSeed(seed, cat){
   const thing = buildThing(seed, cat);
-  render(thing);
-  animatePortrait();
-  blip(480 + Math.random()*160);
+  render(thing); animatePortrait(); blip(480 + Math.random()*160);
   return thing;
 }
 function animatePortrait(){
-  els.portrait.classList.remove("pop");
-  void els.portrait.offsetWidth;
-  els.portrait.classList.add("pop");
-  // speckles
+  els.stage.classList.remove("pop");
+  void els.stage.offsetWidth;
+  els.stage.classList.add("pop");
   els.speckles.innerHTML = "";
+  const cols = ["var(--accent)","var(--accent-2)","var(--accent-3)","var(--accent-4)"];
   for (let i=0;i<16;i++){
-    const s = document.createElement("i");
+    const el = document.createElement("i");
     const ang = Math.random()*Math.PI*2, dist = 60+Math.random()*150;
-    s.style.left = (50 + Math.cos(ang)*8) + "%";
-    s.style.top = (50 + Math.sin(ang)*8) + "%";
-    s.style.setProperty("--dx", Math.cos(ang)*dist + "px");
-    s.style.setProperty("--dy", Math.sin(ang)*dist + "px");
-    s.style.animationDelay = (Math.random()*0.12) + "s";
-    s.style.background = ["var(--a)","var(--b)","var(--c)","var(--d)"][i%4];
-    els.speckles.appendChild(s);
+    el.style.left = (50 + Math.cos(ang)*8) + "%";
+    el.style.top = (50 + Math.sin(ang)*8) + "%";
+    el.style.setProperty("--dx", Math.cos(ang)*dist + "px");
+    el.style.setProperty("--dy", Math.sin(ang)*dist + "px");
+    el.style.animationDelay = (Math.random()*0.12) + "s";
+    el.style.background = cols[i%4];
+    els.speckles.appendChild(el);
   }
 }
 
 /* ─────────────────────────── history ─────────────────────────── */
 function pushHistory(thing){
-  history = history.filter(h => !(h.seed === thing.seed && h.category === thing.category));
-  history.unshift({seed:thing.seed, category:thing.category, name:thing.name, label:thing.categoryLabel});
-  history = history.slice(0,10);
-  try{ localStorage.setItem("thingmaker.history", JSON.stringify(history)); }catch(e){}
+  historyItems = historyItems.filter(h => !(h.seed === thing.seed && h.category === thing.category));
+  historyItems.unshift({ seed:thing.seed, category:thing.category, name:thing.name, label:thing.categoryLabel });
+  historyItems = historyItems.slice(0,10);
+  try{ localStorage.setItem("thingmaker.history", JSON.stringify(historyItems)); }catch(e){}
   renderHistory();
 }
 function renderHistory(){
   els.hist.innerHTML = "";
-  for (const h of history){
+  for (const h of historyItems){
     const b = document.createElement("button");
     b.innerHTML = `<span class="hn"></span><span class="hc"></span>`;
     b.querySelector(".hn").textContent = h.name;
     b.querySelector(".hc").textContent = h.label;
-    b.onclick = () => rerollSeed(h.seed, h.category);
+    b.addEventListener("click", () => rerollSeed(h.seed, h.category));
     els.hist.appendChild(b);
   }
 }
 function loadHistory(){
   try{
     const raw = JSON.parse(localStorage.getItem("thingmaker.history") || "[]");
-    if (Array.isArray(raw)) history = raw.slice(0,10);
-  }catch(e){ history = []; }
+    if (Array.isArray(raw)) historyItems = raw.slice(0,10);
+  }catch(e){ historyItems = []; }
   renderHistory();
 }
 
 /* ─────────────────────────── rename ─────────────────────────── */
 function rename(){
   if (!current) return;
-  const nr = derive(current.seed + "|" + current.category, "name2");
-  const nm = makeName(R(nr));
+  const nm = makeName(R(derive(current.seed + "|" + current.category, "name2")));
   current.name = nm.name;
   current.epithet = nm.epithet;
-  const lr = derive(current.seed + "|" + current.category, "lore2");
-  current.lore = makeLore(current.category, current.attrs, current.name, lr);
-  render(current);
-  blip(700);
+  current.lore = makeLore(current.category, current.attrs, current.name, derive(current.seed+"|"+current.category,"lore2"), null);
+  current.quote = makeQuote(current.category, R(derive(current.seed+"|"+current.category,"quote2")));
+  render(current); blip(700);
   toast("Renamed: " + current.name);
 }
 
@@ -1247,12 +1823,10 @@ function encounter(){
   const place = r.pick(POOLS.habitat);
   const act = r.pick(ENCOUNTER_ACTS);
   const react = r.pick(ENCOUNTER_REACTIONS);
-  const text = `<em>${escapeHtml(current.name)}</em> and <em>${escapeHtml(other.name)}</em> met in ${escapeHtml(place)}. ` +
-               `${escapeHtml(current.name)} ${escapeHtml(act)}; ${escapeHtml(other.name)} ${escapeHtml(react)}. ` +
-               `Neither has spoken of it since.`;
   els.encA.innerHTML = current.art;
   els.encB.innerHTML = other.art;
-  els.encText.innerHTML = text;
+  els.encText.innerHTML = `<em>${esc(current.name)}</em> and <em>${esc(other.name)}</em> met in ${esc(place)}. ` +
+    `${esc(current.name)} ${esc(act)}; ${esc(other.name)} ${esc(react)}. Neither has spoken of it since.`;
   els.enc.hidden = false;
   blip(330);
 }
@@ -1261,51 +1835,41 @@ function encounter(){
 function svgString(){
   const clone = els.svg.cloneNode(true);
   clone.setAttribute("xmlns","http://www.w3.org/2000/svg");
-  clone.setAttribute("width","512");
-  clone.setAttribute("height","512");
+  clone.setAttribute("width","512"); clone.setAttribute("height","512");
   return '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(clone);
 }
 function download(name, blob){
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url; a.download = name; a.rel = "noopener";
-  a.style.display = "none";
-  document.body.appendChild(a);
-  a.click();
-  // Chromium needs the anchor to stay in the DOM long enough to read the blob,
-  // otherwise the download stalls as a .tmp file.
+  a.href = url; a.download = name; a.rel = "noopener"; a.style.display = "none";
+  document.body.appendChild(a); a.click();
   setTimeout(()=>{ if (a.parentNode) a.parentNode.removeChild(a); URL.revokeObjectURL(url); }, 8000);
 }
 function downloadText(name, text, mime){
-  // Small text payloads go out as data URLs: Chromium finalises those
-  // immediately, where blob URLs can linger in the download queue.
   const a = document.createElement("a");
   a.href = "data:" + mime + ";charset=utf-8," + encodeURIComponent(text);
-  a.download = name; a.rel = "noopener";
-  a.style.display = "none";
-  document.body.appendChild(a);
-  a.click();
+  a.download = name; a.rel = "noopener"; a.style.display = "none";
+  document.body.appendChild(a); a.click();
   setTimeout(()=>{ if (a.parentNode) a.parentNode.removeChild(a); }, 2000);
 }
+function slug(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "thingy"; }
 function downloadSVG(){
   if (!current) return;
   const src = svgString();
   downloadText(slug(current.name) + ".svg", src, "image/svg+xml");
-  // Some browsers hold .svg downloads behind a "keep this file" prompt, so the
-  // markup goes to the clipboard too — the source is never trapped.
-  copyText(src, "SVG saved + copied");
+  copyText(src, "SVG saved · source also copied", "SVG saved");
 }
 function downloadJSON(){
   if (!current) return;
   const payload = {
     name: current.name, epithet: current.epithet, category: current.category,
-    categoryLabel: current.categoryLabel, seed: current.seed,
-    attributes: current.attrs, lore: current.lore
+    categoryLabel: current.categoryLabel, classification: current.classification,
+    seed: current.seed, attributes: current.attrs, lore: current.lore,
+    fieldNote: current.note, quote: current.quote
   };
   downloadText(slug(current.name) + ".json", JSON.stringify(payload,null,2), "application/json");
   toast("JSON saved");
 }
-function slug(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "thingy"; }
 function downloadPNG(){
   if (!current) return;
   const W = 1200, H = 1680, S = 1200;
@@ -1316,11 +1880,11 @@ function downloadPNG(){
     const cv = document.createElement("canvas");
     cv.width = W; cv.height = H;
     const ctx = cv.getContext("2d");
-    const bgGrad = ctx.createLinearGradient(0,0,W,H);
-    bgGrad.addColorStop(0,"#10141d"); bgGrad.addColorStop(1,"#080a0f");
-    ctx.fillStyle = bgGrad; ctx.fillRect(0,0,W,H);
+    const g = ctx.createLinearGradient(0,0,W,H);
+    g.addColorStop(0,"#10141d"); g.addColorStop(1,"#080a0f");
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
     ctx.drawImage(img, 0, 0, S, S);
-    ctx.fillStyle = "#ffd166";
+    ctx.fillStyle = "#ffc75a";
     ctx.font = "700 26px ui-monospace, monospace";
     ctx.fillText(current.categoryLabel.toUpperCase(), 70, 1290);
     ctx.fillStyle = "#ffffff";
@@ -1333,8 +1897,10 @@ function downloadPNG(){
     }
     ctx.fillStyle = "#c3cbdc";
     ctx.font = "400 27px ui-sans-serif, system-ui, sans-serif";
-    const lore = current.lore.slice(0,2).join(" ");
-    wrap(ctx, lore, 70, 1500, W-140, 38, 3);
+    wrap(ctx, current.lore.slice(0,2).join(" "), 70, 1494, W-140, 38, 3);
+    ctx.fillStyle = "#8d99b3";
+    ctx.font = "400 24px ui-monospace, monospace";
+    ctx.fillText(current.classification.label + ": " + current.classification.value, 70, 1618);
     ctx.fillStyle = "#5f6b85";
     ctx.font = "400 22px ui-monospace, monospace";
     ctx.fillText("seed: " + current.seed + "  ·  made by THINGMAKER", 70, H-40);
@@ -1357,22 +1923,24 @@ function wrap(ctx, text, x, y, maxW, lh, maxLines){
 function copyLore(){
   if (!current) return;
   const txt = current.name + (current.epithet ? ", " + current.epithet : "") + "\n" +
-              current.categoryLabel + "\n\n" + current.lore.join("\n\n") +
+              current.categoryLabel + " · " + current.classification.label + ": " + current.classification.value + "\n\n" +
+              current.lore.join("\n\n") + (current.note ? "\n\nField note — " + current.note : "") +
               "\n\nseed: " + current.seed;
-  copyText(txt, "Lore copied");
+  copyText(txt, "Lore copied", "Copy failed — select and copy manually");
 }
-function copyText(txt, msg){
-  const done = () => toast(msg);
-  if (navigator.clipboard && window.isSecureContext){
-    navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt,done));
-  } else fallbackCopy(txt, done);
-}
-function fallbackCopy(txt, done){
-  const ta = document.createElement("textarea");
-  ta.value = txt; ta.style.position="fixed"; ta.style.opacity="0";
-  document.body.appendChild(ta); ta.select();
-  try{ document.execCommand("copy"); done(); }catch(e){ toast("Copy failed"); }
-  document.body.removeChild(ta);
+function copyText(txt, okMsg, failMsg){
+  const done = () => toast(okMsg);
+  const fallback = () => {
+    const ta = document.createElement("textarea");
+    ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    let ok = false;
+    try{ ok = document.execCommand("copy"); }catch(e){ ok = false; }
+    if (ta.parentNode) ta.parentNode.removeChild(ta);
+    toast(ok ? okMsg : (failMsg || okMsg));
+  };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(txt).then(done).catch(fallback);
+  else fallback();
 }
 function toast(msg){
   els.toast.textContent = msg;
@@ -1389,80 +1957,209 @@ function blip(freq){
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
     const o = actx.createOscillator(), g = actx.createGain();
     o.type = "triangle"; o.frequency.setValueAtTime(freq, actx.currentTime);
-    o.frequency.exponentialRampToValueAtTime(freq*0.55, actx.currentTime+0.16);
+    o.frequency.exponentialRampToValueAtTime(freq*0.55, actx.currentTime + 0.16);
     g.gain.setValueAtTime(0.0001, actx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.12, actx.currentTime+0.015);
-    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime+0.22);
+    g.gain.exponentialRampToValueAtTime(0.10, actx.currentTime + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + 0.22);
     o.connect(g); g.connect(actx.destination);
-    o.start(); o.stop(actx.currentTime+0.25);
+    o.start(); o.stop(actx.currentTime + 0.25);
   }catch(e){}
+}
+
+/* ─────────────────────────── skins / modes ─────────────────────────── */
+function setSkin(id, quiet){
+  if (!SKINS.some(s => s.id === id)) return;
+  document.documentElement.dataset.skin = id;
+  document.querySelectorAll(".swatch").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.skin === id)));
+  try{ localStorage.setItem("thingmaker.skin", id); }catch(e){}
+  if (!quiet) toast("Skin: " + id);
+}
+function setMode(mode){
+  document.documentElement.dataset.mode = mode;
+  $("modeBtn").textContent = mode;
+  $("modeBtn").setAttribute("aria-pressed", String(mode === "light"));
+  try{ localStorage.setItem("thingmaker.mode", mode); }catch(e){}
+}
+function toggleWire(){
+  const on = document.documentElement.dataset.wireframe === "on";
+  document.documentElement.dataset.wireframe = on ? "off" : "on";
+  $("wireBtn").setAttribute("aria-pressed", String(!on));
+  els.wireflag.hidden = on;
+  try{ localStorage.setItem("thingmaker.wire", on ? "off" : "on"); }catch(e){}
+  toast(on ? "Wireframe off" : "Wireframe on — structure revealed");
+}
+function buildSkinRack(){
+  const rack = $("skinrack");
+  for (const s of SKINS){
+    const b = document.createElement("button");
+    b.className = "swatch"; b.dataset.skin = s.id;
+    b.style.background = s.swatch;
+    b.setAttribute("aria-label", "Skin: " + s.label);
+    b.setAttribute("aria-pressed", String(document.documentElement.dataset.skin === s.id));
+    b.addEventListener("click", () => setSkin(s.id));
+    rack.appendChild(b);
+  }
+}
+function buildKeyList(){
+  const list = $("keyList");
+  for (const [k, d] of KEYMAP){
+    const row = document.createElement("div");
+    row.innerHTML = `<kbd></kbd><span></span>`;
+    row.querySelector("kbd").textContent = k;
+    row.querySelector("span").textContent = d;
+    list.appendChild(row);
+  }
+}
+
+/* ─────────────────────────── 3-D tilt ─────────────────────────── */
+let tiltRaf = 0;
+function initTilt(){
+  if (!window.matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+  if (window.matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  els.viewport.addEventListener("pointermove", ev => {
+    const r = els.viewport.getBoundingClientRect();
+    const nx = (ev.clientX - r.left) / r.width - .5;
+    const ny = (ev.clientY - r.top) / r.height - .5;
+    if (tiltRaf) cancelAnimationFrame(tiltRaf);
+    tiltRaf = requestAnimationFrame(() => {
+      els.stage.style.transform = `rotateY(${(-nx*9).toFixed(2)}deg) rotateX(${(ny*7).toFixed(2)}deg)`;
+    });
+  });
+  els.viewport.addEventListener("pointerleave", () => {
+    if (tiltRaf) cancelAnimationFrame(tiltRaf);
+    els.stage.style.transform = "";
+  });
+}
+
+/* ─────────────────────────── help modal ─────────────────────────── */
+function openHelp(){
+  lastFocus = document.activeElement;
+  els.help.hidden = false;
+  $("helpClose").focus();
+  document.addEventListener("keydown", trapTab, true);
+}
+function closeHelp(){
+  els.help.hidden = true;
+  document.removeEventListener("keydown", trapTab, true);
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
+}
+function trapTab(e){
+  if (e.key !== "Tab" || els.help.hidden) return;
+  const f = els.helpPanel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  if (!f.length) return;
+  const first = f[0], last = f[f.length-1];
+  if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
 }
 
 /* ─────────────────────────── wiring ─────────────────────────── */
 function init(){
-  // category select
   els.cat.innerHTML = '<option value="">Any kind (surprise me)</option>' +
     CAT_KEYS.map(k=>`<option value="${k}">${CATS[k].label}</option>`).join("");
   els.cat.addEventListener("change", ()=> make(resolveCat(els.cat.value)));
 
-  $("make").addEventListener("click", ()=> make(false));
+  $("make").addEventListener("click", ()=> make());
   $("rename").addEventListener("click", rename);
   $("encounter").addEventListener("click", encounter);
-  $("dice").addEventListener("click", ()=>{ els.seed.value = randomSeed(); rerollSeed(els.seed.value, resolveCat(els.cat.value)); });
+  $("dice").addEventListener("click", ()=>{
+    const s = randomSeed(); els.seed.value = s;
+    rerollSeed(s, resolveCat(els.cat.value || (current ? current.category : "")));
+  });
   $("png").addEventListener("click", downloadPNG);
   $("svgBtn").addEventListener("click", downloadSVG);
   $("json").addEventListener("click", downloadJSON);
   $("copy").addEventListener("click", copyLore);
+  $("helpBtn").addEventListener("click", openHelp);
+  $("helpClose").addEventListener("click", closeHelp);
+  els.help.addEventListener("click", e => { if (e.target === els.help) closeHelp(); });
+  $("wireBtn").addEventListener("click", toggleWire);
+  $("modeBtn").addEventListener("click", ()=>{
+    setMode(document.documentElement.dataset.mode === "dark" ? "light" : "dark");
+  });
+  $("soundBtn").addEventListener("click", ()=>{
+    soundOn = !soundOn;
+    $("soundBtn").setAttribute("aria-pressed", String(soundOn));
+    try{ localStorage.setItem("thingmaker.sound", soundOn ? "on" : "off"); }catch(e){}
+    if (soundOn) blip(660);
+  });
 
   els.seed.addEventListener("keydown", ev => {
     if (ev.key === "Enter"){
       ev.preventDefault();
-      const s = els.seed.value.trim() || randomSeed();
+      const s = (els.seed.value.trim() || randomSeed()).slice(0,64);
       const want = els.cat.value || (current ? current.category : resolveCat(""));
       rerollSeed(s, resolveCat(want));
     }
   });
 
-  $("themeBtn").addEventListener("click", ()=>{
-    const root = document.documentElement;
-    const next = root.dataset.theme === "dark" ? "light" : "dark";
-    root.dataset.theme = next;
-    try{ localStorage.setItem("thingmaker.theme", next); }catch(e){}
-  });
-  $("soundBtn").addEventListener("click", ()=>{
-    soundOn = !soundOn;
-    $("soundBtn").setAttribute("aria-pressed", String(soundOn));
-    if (soundOn) blip(660);
-  });
-
-  document.addEventListener("keydown", ev=>{
+  document.addEventListener("keydown", ev => {
     const tag = (ev.target.tagName || "").toLowerCase();
-    if (tag === "input" || tag === "select" || tag === "textarea") return;
-    if (ev.code === "Space"){ ev.preventDefault(); make(false); }
+    const typing = tag === "input" || tag === "select" || tag === "textarea";
+    if (ev.key === "Escape"){
+      if (!els.help.hidden) closeHelp();
+      else if (typing) ev.target.blur();
+      return;
+    }
+    if (typing || ev.metaKey || ev.ctrlKey || ev.altKey) return;
+    switch(ev.key){
+      case " ": ev.preventDefault(); make(); break;
+      case "r": case "R": rename(); break;
+      case "e": case "E": encounter(); break;
+      case "c": case "C": copyLore(); break;
+      case "p": case "P": downloadPNG(); break;
+      case "v": case "V": downloadSVG(); break;
+      case "j": case "J": downloadJSON(); break;
+      case "s": case "S": {
+        const i = SKINS.findIndex(x => x.id === document.documentElement.dataset.skin);
+        setSkin(SKINS[(i+1) % SKINS.length].id); break;
+      }
+      case "t": case "T":
+        setMode(document.documentElement.dataset.mode === "dark" ? "light" : "dark"); break;
+      case "w": case "W": toggleWire(); break;
+      case "/": ev.preventDefault(); els.seed.focus(); els.seed.select(); break;
+      case "?": openHelp(); break;
+      case "ArrowDown": case "ArrowUp": {
+        if (!historyItems.length) break;
+        ev.preventDefault();
+        const dir = ev.key === "ArrowDown" ? 1 : -1;
+        const i = historyItems.findIndex(h => h.seed === (current && current.seed));
+        const j = (i + dir + historyItems.length) % historyItems.length;
+        rerollSeed(historyItems[j].seed, historyItems[j].category);
+        break;
+      }
+    }
   });
 
-  // theme + sound restore
   try{
-    const th = localStorage.getItem("thingmaker.theme");
-    if (th) document.documentElement.dataset.theme = th;
+    const sk = localStorage.getItem("thingmaker.skin");
+    if (sk && SKINS.some(s => s.id === sk)) document.documentElement.dataset.skin = sk;
+    const md = localStorage.getItem("thingmaker.mode");
+    if (md) document.documentElement.dataset.mode = md;
     const so = localStorage.getItem("thingmaker.sound");
-    if (so === "off"){ soundOn = false; $("soundBtn").setAttribute("aria-pressed","false"); }
+    if (so === "off") soundOn = false;
+    const wi = localStorage.getItem("thingmaker.wire");
+    if (wi === "on") document.documentElement.dataset.wireframe = "on";
   }catch(e){}
+  $("modeBtn").textContent = document.documentElement.dataset.mode;
+  $("modeBtn").setAttribute("aria-pressed", String(document.documentElement.dataset.mode === "light"));
+  $("soundBtn").setAttribute("aria-pressed", String(soundOn));
+  $("wireBtn").setAttribute("aria-pressed", String(document.documentElement.dataset.wireframe === "on"));
+  els.wireflag.hidden = document.documentElement.dataset.wireframe !== "on";
 
+  buildSkinRack();
+  buildKeyList();
   loadHistory();
+  initTilt();
 
-  // initial thing from URL or a fresh one
   const params = new URLSearchParams(location.hash.replace(/^#/,""));
-  const s = params.get("s");
-  const c = params.get("c");
+  const s = params.get("s"), c = params.get("c");
   if (s){
     const cat = CATS[c] ? c : "beast";
     els.cat.value = cat;
-    const thing = buildThing(s, cat);
-    render(thing);
+    render(buildThing(s, cat));
     animatePortrait();
   } else {
-    make(false);
+    make();
   }
 }
 init();
