@@ -135,16 +135,17 @@ const report = vm.runInContext(`(() => {
       if (!/<svg|</.test(t.art)) errs.push("art is not markup");
       if (Object.keys(t.attrs).length < 6) errs.push("too few attributes");
       const loreText = t.lore.join(" ");
-      if (/\\{[a-z_]+\\}/.test(loreText)) errs.push("unfilled lore slot");
+      if (/\{[^}]+\}/.test(loreText)) errs.push("unfilled lore slot: " + loreText.match(/\{[^}]+\}/)[0]);
       if (/(^|\\s)a (aeiou)/.test(loreText)) errs.push("a/an error");
       if (/\\s\\bthe the\\b/.test(loreText)) errs.push("doubled word");
       // the lore core: every category must yield a field note, a voice and a classification
       if (!t.note) errs.push("no field note (unresolvable note template?)");
-      else if (/\\{[a-z_]+\\}/.test(t.note)) errs.push("unfilled slot in field note: " + t.note);
+      else if (/\{[^}]+\}/.test(t.note)) errs.push("unfilled slot in field note: " + t.note);
       if (!t.quote || !/^"/.test(t.quote)) errs.push("missing or malformed quote");
       if (!t.classification || !t.classification.label) errs.push("missing classification");
-      else if (/\\{[a-z_]+\\}/.test(t.classification.value)) errs.push("unfilled slot in classification");
+      else if (/\{[^}]+\}/.test(t.classification.value)) errs.push("unfilled slot in classification");
       else if (t.classification.value.length < 3) errs.push("empty classification value");
+      if (!t.classification.recorded) errs.push("missing recorded date");
 
       if (errs.length) failures.push({ seed, cat, errs });
       names.add(t.name);

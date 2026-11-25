@@ -1,0 +1,57 @@
+name: Deployed site smoke test
+
+on:
+  schedule:
+    # 05:23 UTC daily — outside the working day, so a broken deploy is
+    # caught on the first morning run rather than at the next push.
+    - cron: "23 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: check the live site
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Fetch the deployed page
+        run: |
+          set -euo pipefail
+          url="https://0thernes.github.io/thingmaker/"
+          code=$(curl -sS -o /tmp/page.html -w '%{http_code}' "$url")
+          echo "GET $url -> $code"
+          if [ "$code" != "200" ]; then
+            echo "the deployed site returned $code"
+            exit 1
+          fi
+
+      - name: Check the build markers
+        run: |
+          set -euo pipefail
+          for marker in 'data-skin' 'skinrack' 'wireframe' 'fieldnote' 'classline' 'thingmaker.shelf' 'TH?NGMAKER v2'; do
+            if ! grep -q "$marker" /tmp/page.html; then
+              echo "missing marker: $marker"
+              exit 1
+            fi
+          done
+          echo "all build markers present"
+
+      - name: Check the deployed page matches the repository
+        run: |
+          set -euo pipefail
+          local_bytes=$(wc -c < index.html)
+          live_bytes=$(wc -c < /tmp/page.html)
+          echo "index.html $local_bytes bytes, deployed $live_bytes bytes"
+          if [ "$local_bytes" != "$live_bytes" ]; then
+            echo "the deployed page has drifted from index.html — a deploy is stale"
+            exit 1
+          fi
+
+      - name: Check the README is published alongside it
+        run: |
+          set -euo pipefail
+          code=$(curl -sS -o /dev/null -w '%{http_code}' "https://0thernes.github.io/thingmaker/README.md")
+          echo "README -> $code"
+          test "$code" = "200"

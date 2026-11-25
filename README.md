@@ -21,7 +21,8 @@ seriously.
 | **18 kinds of thing** | Creature, Artifact, Appliance, Vehicle, Food, Plant, Fungus, Spirit, Mineral, Planet, Weather, Sound, Emotion, Disease, Religion, Sport, Business, Law |
 | **9 portrait engines** | Each category has its own procedural SVG illustrator — blob beasts, machines, plated food, flora, fuzzy spirits, crystal shards, planets, storm systems, geometric glyphs |
 | **8 silhouette families** | Every creature picks a body shape vocabulary — blob, tall, wide, pear, spiky, segmented, mushroom, teardrop — then gets shaded, lit and rim‑lit |
-| **The lore core** | Four sentences of lore, a field note in the category's own register, a first‑person quote, and a classification line (*Genus Vexella, family Volventidae* · *Specimen MN‑492/45.12*). Every category has its own voice |
+| **The lore core** | Four-to-seven sentences of lore in narrative order, a field note in the category's own register, a first‑person quote, and a classification line with a recorded date (*Genus Vexella, family Volventidae* · *Specimen MN‑492/45.12* · *recorded 21 June 2024*). Every category has its own voice |
+| **The shelf** | Pin up to six specimens and hold them side by side. Pinned items store only their seed and kind, so the shelf costs nothing and never drifts |
 | **Seeded** | The same seed and kind always produce the same thing, down to the pixel. Seeds are human‑readable (`vellum-pumice-594`) so you can write one down |
 | **Shareable** | The URL updates with every thing. Copy the address bar and someone else opens exactly your thing |
 | **7 skins** | Void, Paper, Bubblegum, Toxic, Sunset, Abyss, Mono — plus a dark/light switch. A skin only changes colour; type, space and motion stay identical |
@@ -38,7 +39,8 @@ seriously.
 | A fresh random seed | The **⚄** button |
 | Rename the current thing | **Rename it** (`R`) |
 | Two things meet | **Encounter** (`E`) — generates a partner and a vignette of the two of them |
-| Export | Card PNG (`P`), SVG (`V`), JSON (`J`), lore to clipboard (`C`) |
+| Hold a specimen to compare | **Pin** (`⇧`+`P`) — up to six on the shelf |
+| Export | Card PNG (`P`), SVG (`V`), JSON (`J`), lore to clipboard (`C`), link to clipboard (`L`) |
 | Skins, mode, wireframe, keys | `S`, `T`, `W`, `?` |
 | Walk the last ten things | `↑` / `↓` |
 
@@ -53,9 +55,11 @@ system never reshuffles the others:
 2. **Name** — a syllable grammar (`ONSET + NUCLEI + CODA` over nine patterns) assembled
    into a single word, a two‑word name, a titled name, or a hyphenated one, with an
    optional epithet (*"the Very Loud"*, *"of the Glass Sea"*).
-3. **Lore** — the category's templates are shuffled and filled from the attributes, with
-   an a/an pass so *"a enormous"* becomes *"an enormous"*. Each thing also gets a
-   deterministic near‑relative, so the lore has somewhere to point.
+3. **Lore** — the category's templates are read in narrative order (identity →
+   situation → catalogue detail) from a rotating window, so the prose reads as a
+   dossier rather than a bag of sentences. A line is skipped when it would
+   repeat an attribute value already used. Each thing also gets a deterministic
+   near‑relative, so the lore has somewhere to point.
 4. **Portrait** — the art engine draws into the SVG using its own stream, then a shared
    shader pass adds film grain, a soft ground shadow and a vignette.
 
@@ -95,8 +99,8 @@ categories      : 18 over 9 art engines
 deterministic   : true
 distinct names  : 719 over 720 draws
 distinct attrs  : 400 over 400 draws
-avg art length  : 4838 chars
-avg lore lines  : 4
+avg art length  : 5373 chars
+avg lore lines  : 6.88
 avg attributes  : 10.83
 
 All checks passed.
@@ -108,10 +112,13 @@ All checks passed.
 |---|---|---|
 | `ci.yml` | pull request, push to `main` | lint → self‑test → size budget, Node 20, least privilege, cancels superseded runs |
 | `pages.yml` | push to `main` | stages the site, uploads the Pages artifact, deploys with an `id-token` |
+| `smoke.yml` | nightly at 05:23 UTC, or on demand | fetches the **deployed** site, checks the build markers, and fails if the published page has drifted from `index.html` |
 | `release.yml` | tag `v*` | builds a release zip, checksums it, creates a GitHub Release with generated notes |
 | `dependabot.yml` | weekly | keeps the GitHub Actions pinned up to date |
 
-Pages deploys from the Actions workflow; `main` is the branch that ships.
+Pages deploys from the Actions workflow; `main` is the branch that ships, and
+`main` is protected — the CI check is required, history must be linear, and
+force‑pushes and deletions are refused.
 
 ## Files
 
@@ -123,9 +130,12 @@ Thingmaker/
 │   ├── lint-html.mjs       markup / a11y / offline / JS-syntax linter
 │   └── size-budget.mjs     size ceilings
 ├── .github/
-│   ├── workflows/          ci · pages · release
+│   ├── workflows/          ci · pages · smoke · release
 │   └── dependabot.yml
-└── samples/                a few things it has already made
+├── samples/                a few things it has already made
+├── CHANGELOG.md
+├── LICENSE
+└── .gitignore
 ```
 
 ## Notes
