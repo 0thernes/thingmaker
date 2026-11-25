@@ -41,6 +41,11 @@ jobs:
         with:
           path: '_site'
 
+      - name: Wait for the artifact to become visible
+        # deploy-pages reads the artifact list straight after upload; the list API
+        # is eventually consistent and can briefly report zero artifacts.
+        run: sleep 25
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
