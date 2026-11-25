@@ -30,8 +30,8 @@ jobs:
       - name: Check the build markers
         run: |
           set -euo pipefail
-          for marker in 'data-skin' 'skinrack' 'wireframe' 'fieldnote' 'classline' 'thingmaker.shelf' 'TH?NGMAKER v2'; do
-            if ! grep -q "$marker" /tmp/page.html; then
+          for marker in 'data-skin' 'skinrack' 'wireframe' 'fieldnote' 'classline' 'thingmaker.shelf' 'THINGMAKER v2'; do
+            if ! grep -qF "$marker" /tmp/page.html; then
               echo "missing marker: $marker"
               exit 1
             fi
