@@ -1,0 +1,11 @@
+# THINGMAKER (`0thernes/thingmaker`)
+
+> Single-file, zero-dependency, offline-first procedural generator of 18 categories of imaginary things with 9 procedural SVG portrait engines and deterministic seeded lore.
+
+- [README.md](README.md): Overview, controls, generation architecture, and checks
+- [AGENTS.md](AGENTS.md): Canonical contributor & agent guidelines (Build Standard v1.2.0)
+- [CLAIMS.md](CLAIMS.md): Falsifiable technical claims and refutation criteria
+- [LIMITATIONS.md](LIMITATIONS.md): Scope boundaries and non-claims
+- [REPLICATION.md](REPLICATION.md): Clean-clone local verification protocol
+- [SECURITY.md](SECURITY.md): Security policy and vulnerability disclosure
+- [CITATION.cff](CITATION.cff): Machine-readable citation metadata

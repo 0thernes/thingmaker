@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you reference THINGMAKER, please cite it using the metadata below."
+type: software
+title: "THINGMAKER: Offline Single-File Procedural Specimen & Lore Generator"
+version: "2.1.0"
+date-released: "2026-11-25"
+license: MIT
+repository-code: "https://github.com/0thernes/thingmaker"
+url: "https://0thernes.github.io/thingmaker/"
+authors:
+  - family-names: "Donahue"
+    given-names: "Alexander Stephen"
+    orcid: "https://orcid.org/0009-0006-8168-9648"
+    affiliation: "Independent Researcher (0thernes, Spokane, WA, USA)"
+    email: "0_0@0thernes.art"

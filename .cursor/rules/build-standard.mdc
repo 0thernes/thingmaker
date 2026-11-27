@@ -1,0 +1,5 @@
+---
+description: Canonical Build Standard v1.2.0 rules for THINGMAKER
+alwaysApply: true
+---
+Follow `AGENTS.md` strictly: commit straight to `main`, never add R4 banned files (Dependabot/CodeRabbit/PR templates), preserve zero-dependency offline single-file HTML architecture, and verify with `node tools/lint-html.mjs && node tools/selftest.mjs && node tools/size-budget.mjs`.

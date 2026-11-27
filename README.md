@@ -110,14 +110,12 @@ All checks passed.
 
 | Workflow | Trigger | What it does |
 |---|---|---|
-| `ci.yml` | pull request, push to `main` | lint → self‑test → size budget, Node 20, least privilege, cancels superseded runs |
+| `ci.yml` | push to `main`, pull request, manual | lint → self‑test → size budget, Node 20, least privilege, cancels superseded runs |
 | `pages.yml` | push to `main` | stages the site, uploads the Pages artifact, deploys with an `id-token` |
 | `smoke.yml` | nightly at 05:23 UTC, or on demand | fetches the **deployed** site, checks the build markers, and fails if the published page has drifted from `index.html` |
 | `release.yml` | tag `v*` | builds a release zip, checksums it, creates a GitHub Release with generated notes |
-| `dependabot.yml` | weekly | keeps the GitHub Actions pinned up to date |
 
-Pages deploys from the Actions workflow; `main` is the branch that ships, and
-`main` is protected — the CI check is required, history must be linear, and
+Pages deploys from the Actions workflow; `main` is the canonical branch and CI is informational per Build Standard v1.2.0 (`R1`–`R4`).
 force‑pushes and deletions are refused.
 
 ## Files
